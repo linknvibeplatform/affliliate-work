@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>SHARPI . Affiliate</title>
@@ -62,6 +61,7 @@
             --text-neon: #7cb342;
             --text-skyblue: #0ea5e9;
             --text-lightblue: #60a5fa;
+            --text-cyan: #22d3ee;
             --border-glass: rgba(255, 255, 255, 0.7);
             --border-glass-light: rgba(255, 255, 255, 0.5);
             --border-glass-dark: rgba(255, 255, 255, 0.3);
@@ -125,6 +125,7 @@
             --text-neon: #a3e635;
             --text-skyblue: #38bdf8;
             --text-lightblue: #93c5fd;
+            --text-cyan: #22d3ee;
             --border-glass: rgba(255, 255, 255, 0.12);
             --border-glass-light: rgba(255, 255, 255, 0.08);
             --border-glass-dark: rgba(255, 255, 255, 0.05);
@@ -1437,786 +1438,816 @@
             }
         }
         [data-theme="dark"] .register-header-btn,
-[data-theme="dark"] .back-btn,
-[data-theme="dark"] .cta-button,
-[data-theme="dark"] #landingRegisterBtn,
-[data-theme="dark"] #headerRegisterBtn {
-    background: white !important;
-    color: #0b1e33 !important;
-}
-[data-theme="dark"] .copy-btn,
-[data-theme="dark"] .merchant-row .copy-btn,
-[data-theme="dark"] #copyLinkBtn,
-[data-theme="dark"] .key-copy-btn {
-    background: white !important;
-    color: #0b1e33 !important;
-}
-/* ============================================================
-   AFFILIATE DASHBOARD – FULL SCREEN MOBILE
-   ============================================================ */
-
-/* Remove all padding and make app full screen */
-html, body {
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    overflow: hidden !important;
-}
-
-/* App frame takes FULL screen */
-.app-frame {
-    width: 100% !important;
-    max-width: 100% !important;
-    height: 100vh !important;
-    max-height: 100vh !important;
-    min-height: 100vh !important;
-    border-radius: 0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    overflow: hidden !important;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-}
-
-/* Pages container – full height, no gap */
-.pages-container {
-    padding: 0 !important;
-    gap: 0 !important;
-    height: calc(100% - 70px) !important;
-    min-height: 0 !important;
-}
-
-/* Each page full width */
-.page {
-    flex: 0 0 100% !important;
-    padding: 12px 12px 20px 12px !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-}
-
-/* App header – sticky */
-.app-header {
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 100 !important;
-    padding: 12px 16px !important;
-    width: 100% !important;
-    background: var(--bg-secondary) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-}
-
-/* Hide scrollbar */
-.page::-webkit-scrollbar {
-    width: 3px !important;
-    background: transparent !important;
-}
-.page::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.1) !important;
-    border-radius: 10px !important;
-}
-
-/* Toast on mobile */
-#welcomeToast {
-    max-width: 90% !important;
-    bottom: 20px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    font-size: 13px !important;
-    padding: 10px 18px !important;
-    border-radius: 30px !important;
-}
-
-/* Balance card – fits screen */
-.balance-card {
-    border-radius: 16px !important;
-    padding: 16px 18px !important;
-}
-
-/* Stats row – better spacing */
-.stats-row {
-    gap: 6px !important;
-}
-.stat-box {
-    padding: 10px 6px !important;
-}
-.stat-box .value {
-    font-size: 18px !important;
-}
-.stat-box .label {
-    font-size: 10px !important;
-}
-
-/* Commission cards – full width */
-.commission-card {
-    padding: 12px 14px !important;
-}
-
-/* Mobile specific */
-@media (max-width: 480px) {
-    .app-frame {
-        border-radius: 0 !important;
-        height: 100vh !important;
-    }
-    body {
-        padding: 0 !important;
-        align-items: stretch !important;
-    }
-    .page {
-        padding: 8px 10px 16px 10px !important;
-    }
-    .stats-row {
-        gap: 4px !important;
-    }
-    .stat-box {
-        padding: 8px 4px !important;
-    }
-    .stat-box .value {
-        font-size: 16px !important;
-    }
-    .balance-card .balance-amount {
-        font-size: 24px !important;
-    }
-    .commission-card .header .amount {
-        font-size: 16px !important;
-    }
-    .jackpot-card {
-        flex-direction: column !important;
-        text-align: center !important;
-        padding: 16px !important;
-    }
-}
-/* ============================================================
-   POPUP OVERLAY – MOBILE FIX
-   ============================================================ */
-
-   .popup-overlay {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    background: rgba(0, 0, 0, 0.6) !important;
-    backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
-    z-index: 99999 !important;
-    display: none !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 20px !important;
-    border-radius: 0 !important;
-}
-
-.popup-overlay.active {
-    display: flex !important;
-}
-
-.popup-card {
-    max-width: 340px !important;
-    width: 90% !important;
-    margin: 20px auto !important;
-    padding: 32px 24px 28px !important;
-    background: var(--bg-popup) !important;
-    border-radius: 28px !important;
-    text-align: center !important;
-    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.3) !important;
-    position: relative !important;
-    animation: popIn 0.3s ease !important;
-    border: 1px solid var(--border-glass) !important;
-    max-height: 80vh !important;
-    overflow-y: auto !important;
-}
-
-[data-theme="dark"] .popup-card {
-    border: 1px solid var(--border-glass) !important;
-}
-
-@keyframes popIn {
-    from {
-        transform: scale(0.9);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-.popup-close {
-    position: absolute !important;
-    top: 12px !important;
-    right: 16px !important;
-    font-size: 22px !important;
-    cursor: pointer !important;
-    color: var(--text-muted) !important;
-    background: none !important;
-    border: none !important;
-    font-weight: 300 !important;
-    line-height: 1 !important;
-    padding: 4px 8px !important;
-    border-radius: 50% !important;
-    transition: background 0.2s !important;
-}
-
-.popup-close:hover {
-    background: rgba(255,255,255,0.05) !important;
-}
-
-.popup-card .icon {
-    font-size: 48px !important;
-    margin-bottom: 8px !important;
-    color: var(--text-red) !important;
-    display: block !important;
-}
-
-.popup-card h3 {
-    font-size: 20px !important;
-    color: var(--text-primary) !important;
-    margin-bottom: 6px !important;
-    font-weight: 700 !important;
-}
-
-.popup-card p {
-    font-size: 14px !important;
-    color: var(--text-muted) !important;
-    line-height: 1.6 !important;
-    margin-bottom: 16px !important;
-    padding: 0 4px !important;
-}
-
-.popup-card .highlight {
-    color: var(--text-red) !important;
-    font-weight: 700 !important;
-}
-
-.popup-card .cta-button {
-    background: var(--text-primary) !important;
-    color: white !important;
-    border: none !important;
-    padding: 14px 32px !important;
-    border-radius: 60px !important;
-    font-weight: 600 !important;
-    font-size: 15px !important;
-    width: 100% !important;
-    box-shadow: var(--shadow-btn) !important;
-    cursor: pointer !important;
-    font-family: inherit !important;
-    max-width: 200px !important;
-    margin: 0 auto !important;
-    display: block !important;
-}
-
-@media (max-width: 480px) {
-    .popup-card {
-        padding: 24px 18px 22px !important;
-        max-width: 320px !important;
-    }
-    .popup-card .icon {
-        font-size: 40px !important;
-    }
-    .popup-card h3 {
-        font-size: 18px !important;
-    }
-    .popup-card p {
-        font-size: 13px !important;
-    }
-    .popup-card .cta-button {
-        font-size: 14px !important;
-        padding: 12px 24px !important;
-    }
-}
-/* ============================================================
-   AFFILIATE TOAST – FULL SCREEN MOBILE
-   ============================================================ */
-/* ============================================================
-   TOAST FIX – REAL TOAST SHAPE (Short Height, Wide Width)
-   ============================================================ */
-/* ============================================================
-   TOAST FIX – FULL WIDTH (×3)
-   ============================================================ */
-
-/* Base toast – FULL WIDTH */
-.toast,
-#welcomeToast,
-.admin-toast,
-.toast-container,
-.notification-toast {
-    position: fixed !important;
-    bottom: 30px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    background: var(--bg-card) !important;
-    backdrop-filter: blur(16px) !important;
-    -webkit-backdrop-filter: blur(16px) !important;
-    border: 1px solid var(--border) !important;
-    padding: 10px 20px !important;
-    border-radius: 50px !important;
-    z-index: 999999 !important;
-    font-size: 14px !important;
-    color: var(--text-primary) !important;
-    width: 92% !important;
-    max-width: 600px !important;
-    min-width: 92% !important;
-    text-align: center !important;
-    box-shadow: var(--shadow) !important;
-    animation: toastSlideUp 0.35s ease !important;
-    pointer-events: auto !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 10px !important;
-    height: auto !important;
-    min-height: 48px !important;
-    max-height: 64px !important;
-    line-height: 1.4 !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-}
-
-/* Success toast */
-.toast.success,
-.toast-container.success {
-    border-color: var(--text-green) !important;
-    border-left: 4px solid var(--text-green) !important;
-}
-
-/* Error toast */
-.toast.error,
-.toast-container.error {
-    border-color: var(--text-red) !important;
-    border-left: 4px solid var(--text-red) !important;
-}
-
-/* Warning toast */
-.toast.warning,
-.toast-container.warning {
-    border-color: var(--text-gold) !important;
-    border-left: 4px solid var(--text-gold) !important;
-}
-
-/* Hide toasts by default */
-.toast:not(.show),
-.toast-container:not(.show),
-#welcomeToast.hidden {
-    display: none !important;
-}
-
-/* Welcome toast specific */
-#welcomeToast {
-    background: var(--toast-bg) !important;
-    color: var(--toast-text) !important;
-    border: 1px solid var(--border) !important;
-    padding: 10px 18px !important;
-    gap: 12px !important;
-    min-height: 48px !important;
-    max-height: 64px !important;
-    border-radius: 50px !important;
-    width: 92% !important;
-    max-width: 600px !important;
-    min-width: 92% !important;
-}
-
-#welcomeToast .pointer-arrow {
-    font-size: 20px !important;
-    color: #25D366 !important;
-    animation: pointPulse 1.6s infinite !important;
-    flex-shrink: 0 !important;
-}
-
-#welcomeToast.hidden {
-    opacity: 0 !important;
-    transform: translateX(-50%) translateY(20px) scale(0.9) !important;
-    pointer-events: none !important;
-    display: flex !important;
-}
-
-/* Toast animations */
-@keyframes toastSlideUp {
-    from {
-        opacity: 0;
-        transform: translateX(-50%) translateY(30px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0) scale(1);
-    }
-}
-
-@keyframes pointPulse {
-    0% {
-        transform: translateX(0) rotate(0deg);
-        opacity: 0.6;
-    }
-    50% {
-        transform: translateX(12px) rotate(-6deg);
-        opacity: 1;
-    }
-    100% {
-        transform: translateX(0) rotate(0deg);
-        opacity: 0.6;
-    }
-}
-
-/* Mobile screens */
-@media (max-width: 480px) {
-    .toast,
-    #welcomeToast,
-    .admin-toast,
-    .toast-container,
-    .notification-toast {
-        bottom: 20px !important;
-        font-size: 13px !important;
-        padding: 8px 16px !important;
-        border-radius: 40px !important;
-        width: 96% !important;
-        max-width: 96% !important;
-        min-width: 96% !important;
-        min-height: 40px !important;
-        max-height: 56px !important;
-        gap: 8px !important;
-    }
-    #welcomeToast .pointer-arrow {
-        font-size: 18px !important;
-    }
-}
-
-/* Extra small screens */
-@media (max-width: 360px) {
-    .toast,
-    #welcomeToast,
-    .admin-toast,
-    .toast-container,
-    .notification-toast {
-        bottom: 16px !important;
-        font-size: 12px !important;
-        padding: 6px 14px !important;
-        border-radius: 30px !important;
-        width: 98% !important;
-        max-width: 98% !important;
-        min-width: 98% !important;
-        min-height: 36px !important;
-        max-height: 48px !important;
-    }
-    #welcomeToast .pointer-arrow {
-        font-size: 16px !important;
-    }
-}
-/* ============================================================
-   FIX: REMOVED BOTTOM CUTOFF OVERLAP - FULL SCREEN FIX
-   ============================================================ */
-
-/* Remove excessive padding that was causing footer overlap */
-.page-scroll,
-.dashboard-content,
-.pages-container,
-.page,
-#root,
-.page-container {
-    padding-bottom: 20px !important;
-    margin-bottom: 0 !important;
-}
-
-/* Ensure footer sits naturally */
-.footer,
-.admin-footer,
-.app-footer {
-    position: relative !important;
-    z-index: 10 !important;
-    margin-top: 10px !important;
-}
-
-/* Mobile fix - reduced padding */
-@media (max-width: 480px) {
-    .page-scroll,
-    .dashboard-content,
-    .pages-container,
-    .page {
-        padding-bottom: 16px !important;
-    }
-}
-
-/* ============================================================
-   FIX: POPUP BUTTON TEXT IN DARK MODE
-   ============================================================ */
-[data-theme="dark"] .popup-card .cta-button {
-    color: #0b1e33 !important;
-    background: #ffffff !important;
-}
-
-/* ============================================================
-   WITHDRAWAL MODAL STYLES
-   ============================================================ */
-.withdrawal-modal-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    z-index: 500;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    border-radius: 48px 48px 32px 32px;
-    padding: 20px;
-}
-.withdrawal-modal-overlay.active {
-    display: flex;
-}
-.withdrawal-modal {
-    background: var(--bg-popup);
-    border-radius: 28px;
-    padding: 28px 24px;
-    max-width: 380px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: var(--shadow-popup);
-    border: 1px solid var(--border-glass);
-    position: relative;
-}
-.withdrawal-modal .modal-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--text-primary);
-    text-align: center;
-    margin-bottom: 4px;
-}
-.withdrawal-modal .modal-subtitle {
-    font-size: 13px;
-    color: var(--text-secondary);
-    text-align: center;
-    margin-bottom: 16px;
-    opacity: 0.7;
-}
-.withdrawal-modal .summary-box {
-    background: var(--bg-input);
-    border-radius: 12px;
-    padding: 12px 16px;
-    margin-bottom: 16px;
-    border: 1px solid var(--border-glass-light);
-}
-.withdrawal-modal .summary-box .summary-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 13px;
-    color: var(--text-primary);
-    padding: 4px 0;
-}
-.withdrawal-modal .summary-box .summary-row .label {
-    opacity: 0.6;
-}
-.withdrawal-modal .summary-box .summary-row .value {
-    font-weight: 600;
-}
-.withdrawal-modal .form-group {
-    margin-bottom: 14px;
-}
-.withdrawal-modal .form-group label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 4px;
-}
-.withdrawal-modal .form-group label .required {
-    color: var(--text-red);
-}
-.withdrawal-modal .form-group input,
-.withdrawal-modal .form-group select {
-    width: 100%;
-    padding: 14px 16px;
-    border-radius: 12px;
-    border: 1px solid var(--border-glass);
-    background: var(--bg-input);
-    font-size: 15px;
-    color: var(--text-primary);
-    outline: none;
-    font-family: inherit;
-}
-.withdrawal-modal .form-group input:focus,
-.withdrawal-modal .form-group select:focus {
-    border-color: var(--text-link);
-    background: var(--bg-input-focus);
-}
-.withdrawal-modal .form-group input::placeholder {
-    color: var(--text-muted);
-}
-.withdrawal-modal .form-group .error-message {
-    font-size: 11px;
-    color: var(--text-red);
-    margin-top: 4px;
-    display: none;
-}
-.withdrawal-modal .form-group .error-message.show {
-    display: block;
-}
-.withdrawal-modal .form-group .match-indicator {
-    font-size: 11px;
-    margin-top: 4px;
-}
-.withdrawal-modal .form-group .match-indicator.match {
-    color: var(--text-green);
-}
-.withdrawal-modal .form-group .match-indicator.no-match {
-    color: var(--text-red);
-}
-.withdrawal-modal .modal-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 8px;
-}
-.withdrawal-modal .modal-actions button {
-    flex: 1;
-    padding: 14px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 14px;
-    border: none;
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.2s;
-}
-.withdrawal-modal .modal-actions .btn-cancel {
-    background: var(--bg-input);
-    color: var(--text-secondary);
-    border: 1px solid var(--border-glass-light);
-}
-.withdrawal-modal .modal-actions .btn-cancel:hover {
-    background: var(--bg-card-hover);
-}
-.withdrawal-modal .modal-actions .btn-confirm {
-    background: var(--text-red);
-    color: white;
-}
-.withdrawal-modal .modal-actions .btn-confirm:hover {
-    opacity: 0.9;
-}
-.withdrawal-modal .modal-actions .btn-confirm:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-[data-theme="dark"] .withdrawal-modal {
-    border: 1px solid var(--border-glass);
-}
-[data-theme="dark"] .withdrawal-modal .modal-actions .btn-cancel {
-    background: rgba(255,255,255,0.08);
-    color: var(--text-secondary);
-}
-@media (max-width: 480px) {
-    .withdrawal-modal {
-        padding: 20px 16px;
-        max-width: 340px;
-    }
-    .withdrawal-modal .modal-title {
-        font-size: 18px;
-    }
-    .withdrawal-modal .form-group input,
-    .withdrawal-modal .form-group select {
-        padding: 12px 14px;
-        font-size: 14px;
-    }
-    .withdrawal-modal .modal-actions button {
-        padding: 12px;
-        font-size: 13px;
-    }
-}
-
-/* ============================================================
-   PULL TO REFRESH STYLES
-   ============================================================ */
-.pull-to-refresh-indicator {
-    position: fixed;
-    top: -60px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--bg-card);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding: 8px 16px;
-    border-radius: 30px;
-    border: 1px solid var(--border-glass);
-    box-shadow: var(--shadow-card);
-    z-index: 50;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
-    color: var(--text-primary);
-    transition: top 0.2s ease;
-    pointer-events: none;
-}
-.pull-to-refresh-indicator .refresh-icon {
-    font-size: 20px;
-    animation: none;
-}
-.pull-to-refresh-indicator .refresh-icon.spinning {
-    animation: spin 0.8s linear infinite;
-}
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-.pull-to-refresh-tutorial {
-    position: fixed;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--bg-card);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    padding: 12px 20px;
-    border-radius: 30px;
-    border: 1px solid var(--border-glass);
-    box-shadow: var(--shadow-card);
-    z-index: 60;
-    display: none;
-    align-items: center;
-    gap: 12px;
-    font-size: 13px;
-    color: var(--text-primary);
-    animation: tutorialBounce 2s ease infinite;
-}
-.pull-to-refresh-tutorial.show {
-    display: flex;
-}
-.pull-to-refresh-tutorial .finger-icon {
-    font-size: 28px;
-    animation: fingerPulse 1.5s ease infinite;
-}
-@keyframes fingerPulse {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-8px) rotate(-10deg); }
-}
-@keyframes tutorialBounce {
-    0%, 100% { transform: translateX(-50%) translateY(0); }
-    50% { transform: translateX(-50%) translateY(-4px); }
-}
-[data-theme="dark"] .pull-to-refresh-indicator,
-[data-theme="dark"] .pull-to-refresh-tutorial {
-    background: var(--bg-card);
-    border-color: var(--border-glass);
-    color: var(--text-primary);
-}
-@media (max-width: 480px) {
-    .pull-to-refresh-tutorial {
-        bottom: 70px;
-        padding: 10px 16px;
-        font-size: 12px;
-        max-width: 90%;
-    }
-    .pull-to-refresh-tutorial .finger-icon {
-        font-size: 24px;
-    }
-}
+        [data-theme="dark"] .back-btn,
+        [data-theme="dark"] .cta-button,
+        [data-theme="dark"] #landingRegisterBtn,
+        [data-theme="dark"] #headerRegisterBtn {
+            background: white !important;
+            color: #0b1e33 !important;
+        }
+        [data-theme="dark"] .copy-btn,
+        [data-theme="dark"] .merchant-row .copy-btn,
+        [data-theme="dark"] #copyLinkBtn,
+        [data-theme="dark"] .key-copy-btn {
+            background: white !important;
+            color: #0b1e33 !important;
+        }
+        /* ============================================================
+           AFFILIATE DASHBOARD – FULL SCREEN MOBILE
+           ============================================================ */
+        html,
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            overflow: hidden !important;
+        }
+        .app-frame {
+            width: 100% !important;
+            max-width: 100% !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
+            min-height: 100vh !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: hidden !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+        }
+        .pages-container {
+            padding: 0 !important;
+            gap: 0 !important;
+            height: calc(100% - 70px) !important;
+            min-height: 0 !important;
+        }
+        .page {
+            flex: 0 0 100% !important;
+            padding: 12px 12px 20px 12px !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+        .app-header {
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 100 !important;
+            padding: 12px 16px !important;
+            width: 100% !important;
+            background: var(--bg-secondary) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+        }
+        .page::-webkit-scrollbar {
+            width: 3px !important;
+            background: transparent !important;
+        }
+        .page::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-radius: 10px !important;
+        }
+        #welcomeToast {
+            max-width: 90% !important;
+            bottom: 20px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            font-size: 13px !important;
+            padding: 10px 18px !important;
+            border-radius: 30px !important;
+        }
+        .balance-card {
+            border-radius: 16px !important;
+            padding: 16px 18px !important;
+        }
+        .stats-row {
+            gap: 6px !important;
+        }
+        .stat-box {
+            padding: 10px 6px !important;
+        }
+        .stat-box .value {
+            font-size: 18px !important;
+        }
+        .stat-box .label {
+            font-size: 10px !important;
+        }
+        .commission-card {
+            padding: 12px 14px !important;
+        }
+        @media (max-width: 480px) {
+            .app-frame {
+                border-radius: 0 !important;
+                height: 100vh !important;
+            }
+            body {
+                padding: 0 !important;
+                align-items: stretch !important;
+            }
+            .page {
+                padding: 8px 10px 16px 10px !important;
+            }
+            .stats-row {
+                gap: 4px !important;
+            }
+            .stat-box {
+                padding: 8px 4px !important;
+            }
+            .stat-box .value {
+                font-size: 16px !important;
+            }
+            .balance-card .balance-amount {
+                font-size: 24px !important;
+            }
+            .commission-card .header .amount {
+                font-size: 16px !important;
+            }
+            .jackpot-card {
+                flex-direction: column !important;
+                text-align: center !important;
+                padding: 16px !important;
+            }
+        }
+        .popup-overlay {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: rgba(0, 0, 0, 0.6) !important;
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+            z-index: 99999 !important;
+            display: none !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 20px !important;
+            border-radius: 0 !important;
+        }
+        .popup-overlay.active {
+            display: flex !important;
+        }
+        .popup-card {
+            max-width: 340px !important;
+            width: 90% !important;
+            margin: 20px auto !important;
+            padding: 32px 24px 28px !important;
+            background: var(--bg-popup) !important;
+            border-radius: 28px !important;
+            text-align: center !important;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.3) !important;
+            position: relative !important;
+            animation: popIn 0.3s ease !important;
+            border: 1px solid var(--border-glass) !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+        }
+        [data-theme="dark"] .popup-card {
+            border: 1px solid var(--border-glass) !important;
+        }
+        @keyframes popIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        .popup-close {
+            position: absolute !important;
+            top: 12px !important;
+            right: 16px !important;
+            font-size: 22px !important;
+            cursor: pointer !important;
+            color: var(--text-muted) !important;
+            background: none !important;
+            border: none !important;
+            font-weight: 300 !important;
+            line-height: 1 !important;
+            padding: 4px 8px !important;
+            border-radius: 50% !important;
+            transition: background 0.2s !important;
+        }
+        .popup-close:hover {
+            background: rgba(255, 255, 255, 0.05) !important;
+        }
+        .popup-card .icon {
+            font-size: 48px !important;
+            margin-bottom: 8px !important;
+            color: var(--text-red) !important;
+            display: block !important;
+        }
+        .popup-card h3 {
+            font-size: 20px !important;
+            color: var(--text-primary) !important;
+            margin-bottom: 6px !important;
+            font-weight: 700 !important;
+        }
+        .popup-card p {
+            font-size: 14px !important;
+            color: var(--text-muted) !important;
+            line-height: 1.6 !important;
+            margin-bottom: 16px !important;
+            padding: 0 4px !important;
+        }
+        .popup-card .highlight {
+            color: var(--text-red) !important;
+            font-weight: 700 !important;
+        }
+        .popup-card .cta-button {
+            background: var(--text-primary) !important;
+            color: white !important;
+            border: none !important;
+            padding: 14px 32px !important;
+            border-radius: 60px !important;
+            font-weight: 600 !important;
+            font-size: 15px !important;
+            width: 100% !important;
+            box-shadow: var(--shadow-btn) !important;
+            cursor: pointer !important;
+            font-family: inherit !important;
+            max-width: 200px !important;
+            margin: 0 auto !important;
+            display: block !important;
+        }
+        @media (max-width: 480px) {
+            .popup-card {
+                padding: 24px 18px 22px !important;
+                max-width: 320px !important;
+            }
+            .popup-card .icon {
+                font-size: 40px !important;
+            }
+            .popup-card h3 {
+                font-size: 18px !important;
+            }
+            .popup-card p {
+                font-size: 13px !important;
+            }
+            .popup-card .cta-button {
+                font-size: 14px !important;
+                padding: 12px 24px !important;
+            }
+        }
+        .toast,
+        #welcomeToast,
+        .admin-toast,
+        .toast-container,
+        .notification-toast {
+            position: fixed !important;
+            bottom: 30px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            background: var(--bg-card) !important;
+            backdrop-filter: blur(16px) !important;
+            -webkit-backdrop-filter: blur(16px) !important;
+            border: 1px solid var(--border) !important;
+            padding: 10px 20px !important;
+            border-radius: 50px !important;
+            z-index: 999999 !important;
+            font-size: 14px !important;
+            color: var(--text-primary) !important;
+            width: 92% !important;
+            max-width: 600px !important;
+            min-width: 92% !important;
+            text-align: center !important;
+            box-shadow: var(--shadow) !important;
+            animation: toastSlideUp 0.35s ease !important;
+            pointer-events: auto !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 10px !important;
+            height: auto !important;
+            min-height: 48px !important;
+            max-height: 64px !important;
+            line-height: 1.4 !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
+        .toast.success,
+        .toast-container.success {
+            border-color: var(--text-green) !important;
+            border-left: 4px solid var(--text-green) !important;
+        }
+        .toast.error,
+        .toast-container.error {
+            border-color: var(--text-red) !important;
+            border-left: 4px solid var(--text-red) !important;
+        }
+        .toast.warning,
+        .toast-container.warning {
+            border-color: var(--text-gold) !important;
+            border-left: 4px solid var(--text-gold) !important;
+        }
+        .toast:not(.show),
+        .toast-container:not(.show),
+        #welcomeToast.hidden {
+            display: none !important;
+        }
+        #welcomeToast {
+            background: var(--toast-bg) !important;
+            color: var(--toast-text) !important;
+            border: 1px solid var(--border) !important;
+            padding: 10px 18px !important;
+            gap: 12px !important;
+            min-height: 48px !important;
+            max-height: 64px !important;
+            border-radius: 50px !important;
+            width: 92% !important;
+            max-width: 600px !important;
+            min-width: 92% !important;
+        }
+        #welcomeToast .pointer-arrow {
+            font-size: 20px !important;
+            color: #25D366 !important;
+            animation: pointPulse 1.6s infinite !important;
+            flex-shrink: 0 !important;
+        }
+        #welcomeToast.hidden {
+            opacity: 0 !important;
+            transform: translateX(-50%) translateY(20px) scale(0.9) !important;
+            pointer-events: none !important;
+            display: flex !important;
+        }
+        @keyframes toastSlideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0) scale(1);
+            }
+        }
+        @keyframes pointPulse {
+            0% {
+                transform: translateX(0) rotate(0deg);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translateX(12px) rotate(-6deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(0) rotate(0deg);
+                opacity: 0.6;
+            }
+        }
+        @media (max-width: 480px) {
+            .toast,
+            #welcomeToast,
+            .admin-toast,
+            .toast-container,
+            .notification-toast {
+                bottom: 20px !important;
+                font-size: 13px !important;
+                padding: 8px 16px !important;
+                border-radius: 40px !important;
+                width: 96% !important;
+                max-width: 96% !important;
+                min-width: 96% !important;
+                min-height: 40px !important;
+                max-height: 56px !important;
+                gap: 8px !important;
+            }
+            #welcomeToast .pointer-arrow {
+                font-size: 18px !important;
+            }
+        }
+        @media (max-width: 360px) {
+            .toast,
+            #welcomeToast,
+            .admin-toast,
+            .toast-container,
+            .notification-toast {
+                bottom: 16px !important;
+                font-size: 12px !important;
+                padding: 6px 14px !important;
+                border-radius: 30px !important;
+                width: 98% !important;
+                max-width: 98% !important;
+                min-width: 98% !important;
+                min-height: 36px !important;
+                max-height: 48px !important;
+            }
+            #welcomeToast .pointer-arrow {
+                font-size: 16px !important;
+            }
+        }
+        .page-scroll,
+        .dashboard-content,
+        .pages-container,
+        .page,
+        #root,
+        .page-container {
+            padding-bottom: 20px !important;
+            margin-bottom: 0 !important;
+        }
+        .footer,
+        .admin-footer,
+        .app-footer {
+            position: relative !important;
+            z-index: 10 !important;
+            margin-top: 10px !important;
+        }
+        @media (max-width: 480px) {
+            .page-scroll,
+            .dashboard-content,
+            .pages-container,
+            .page {
+                padding-bottom: 16px !important;
+            }
+        }
+        [data-theme="dark"] .popup-card .cta-button {
+            color: #0b1e33 !important;
+            background: #ffffff !important;
+        }
+        .withdrawal-modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 500;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border-radius: 48px 48px 32px 32px;
+            padding: 20px;
+        }
+        .withdrawal-modal-overlay.active {
+            display: flex;
+        }
+        .withdrawal-modal {
+            background: var(--bg-popup);
+            border-radius: 28px;
+            padding: 28px 24px;
+            max-width: 380px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-popup);
+            border: 1px solid var(--border-glass);
+            position: relative;
+        }
+        .withdrawal-modal .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        .withdrawal-modal .modal-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 16px;
+            opacity: 0.7;
+        }
+        .withdrawal-modal .summary-box {
+            background: var(--bg-input);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-glass-light);
+        }
+        .withdrawal-modal .summary-box .summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-primary);
+            padding: 4px 0;
+        }
+        .withdrawal-modal .summary-box .summary-row .label {
+            opacity: 0.6;
+        }
+        .withdrawal-modal .summary-box .summary-row .value {
+            font-weight: 600;
+        }
+        .withdrawal-modal .form-group {
+            margin-bottom: 14px;
+        }
+        .withdrawal-modal .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        .withdrawal-modal .form-group label .required {
+            color: var(--text-red);
+        }
+        .withdrawal-modal .form-group input,
+        .withdrawal-modal .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-glass);
+            background: var(--bg-input);
+            font-size: 15px;
+            color: var(--text-primary);
+            outline: none;
+            font-family: inherit;
+        }
+        .withdrawal-modal .form-group input:focus,
+        .withdrawal-modal .form-group select:focus {
+            border-color: var(--text-link);
+            background: var(--bg-input-focus);
+        }
+        .withdrawal-modal .form-group input::placeholder {
+            color: var(--text-muted);
+        }
+        .withdrawal-modal .form-group .error-message {
+            font-size: 11px;
+            color: var(--text-red);
+            margin-top: 4px;
+            display: none;
+        }
+        .withdrawal-modal .form-group .error-message.show {
+            display: block;
+        }
+        .withdrawal-modal .form-group .match-indicator {
+            font-size: 11px;
+            margin-top: 4px;
+        }
+        .withdrawal-modal .form-group .match-indicator.match {
+            color: var(--text-green);
+        }
+        .withdrawal-modal .form-group .match-indicator.no-match {
+            color: var(--text-red);
+        }
+        .withdrawal-modal .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .withdrawal-modal .modal-actions button {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .withdrawal-modal .modal-actions .btn-cancel {
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-glass-light);
+        }
+        .withdrawal-modal .modal-actions .btn-cancel:hover {
+            background: var(--bg-card-hover);
+        }
+        .withdrawal-modal .modal-actions .btn-confirm {
+            background: var(--text-red);
+            color: white;
+        }
+        .withdrawal-modal .modal-actions .btn-confirm:hover {
+            opacity: 0.9;
+        }
+        .withdrawal-modal .modal-actions .btn-confirm:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        [data-theme="dark"] .withdrawal-modal {
+            border: 1px solid var(--border-glass);
+        }
+        [data-theme="dark"] .withdrawal-modal .modal-actions .btn-cancel {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-secondary);
+        }
+        @media (max-width: 480px) {
+            .withdrawal-modal {
+                padding: 20px 16px;
+                max-width: 340px;
+            }
+            .withdrawal-modal .modal-title {
+                font-size: 18px;
+            }
+            .withdrawal-modal .form-group input,
+            .withdrawal-modal .form-group select {
+                padding: 12px 14px;
+                font-size: 14px;
+            }
+            .withdrawal-modal .modal-actions button {
+                padding: 12px;
+                font-size: 13px;
+            }
+        }
+        .pull-to-refresh-indicator {
+            position: fixed;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid var(--border-glass);
+            box-shadow: var(--shadow-card);
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--text-primary);
+            transition: top 0.2s ease;
+            pointer-events: none;
+        }
+        .pull-to-refresh-indicator .refresh-icon {
+            font-size: 20px;
+            animation: none;
+        }
+        .pull-to-refresh-indicator .refresh-icon.spinning {
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .pull-to-refresh-tutorial {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 12px 20px;
+            border-radius: 30px;
+            border: 1px solid var(--border-glass);
+            box-shadow: var(--shadow-card);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: var(--text-primary);
+            animation: tutorialBounce 2s ease infinite;
+        }
+        .pull-to-refresh-tutorial.show {
+            display: flex;
+        }
+        .pull-to-refresh-tutorial .finger-icon {
+            font-size: 28px;
+            animation: fingerPulse 1.5s ease infinite;
+        }
+        @keyframes fingerPulse {
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-8px) rotate(-10deg);
+            }
+        }
+        @keyframes tutorialBounce {
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            50% {
+                transform: translateX(-50%) translateY(-4px);
+            }
+        }
+        [data-theme="dark"] .pull-to-refresh-indicator,
+        [data-theme="dark"] .pull-to-refresh-tutorial {
+            background: var(--bg-card);
+            border-color: var(--border-glass);
+            color: var(--text-primary);
+        }
+        @media (max-width: 480px) {
+            .pull-to-refresh-tutorial {
+                bottom: 70px;
+                padding: 10px 16px;
+                font-size: 12px;
+                max-width: 90%;
+            }
+            .pull-to-refresh-tutorial .finger-icon {
+                font-size: 24px;
+            }
+        }
+        .referral-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid var(--border-glass-light);
+            flex-shrink: 0;
+        }
+        .referral-card .referral-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .referral-card .referral-header .title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .referral-card .referral-header .title-wrap .icon {
+            font-size: 22px;
+        }
+        .referral-card .referral-header .title-wrap .label {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--text-primary);
+        }
+        .referral-card .referral-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        .referral-card .referral-stats .stat-item {
+            background: var(--bg-stat);
+            border-radius: 12px;
+            padding: 10px 6px;
+            text-align: center;
+            border: 1px solid var(--border-glass-light);
+        }
+        .referral-card .referral-stats .stat-item .number {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-gold);
+        }
+        .referral-card .referral-stats .stat-item .number.green {
+            color: var(--text-green);
+        }
+        .referral-card .referral-stats .stat-item .number.cyan {
+            color: var(--text-cyan);
+        }
+        .referral-card .referral-stats .stat-item .lbl {
+            font-size: 9px;
+            color: var(--text-secondary);
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+        .referral-card .referral-list {
+            background: var(--bg-input);
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-glass-light);
+        }
+        .referral-card .referral-list .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .referral-card .referral-list .list-header .list-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .referral-card .referral-list .list-header .list-count {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+        .referral-card .referral-link-section {
+            background: var(--bg-link);
+            border-radius: 12px;
+            padding: 12px 14px;
+            border: 1px solid var(--border-glass-light);
+        }
+        .referral-card .referral-link-section .link-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+        .referral-card .referral-link-section .link-header .link-icon {
+            font-size: 18px;
+        }
+        .referral-card .referral-link-section .link-header .link-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .referral-card .referral-link-section .link-status {
+            font-size: 10px;
+            color: var(--text-gold);
+        }
+        .referral-card .referral-link-section .link-status.locked {
+            color: var(--text-muted);
+        }
     </style>
 </head>
 <body>
@@ -2236,75 +2267,15 @@ html, body {
         </div>
 
         <div class="popup-overlay" id="popupOverlay">
-            <div class="popup-card" style="
-                max-width: 340px;
-                width: 90%;
-                margin: 20px auto;
-                padding: 32px 24px 28px;
-                background: var(--bg-popup);
-                border-radius: 28px;
-                text-align: center;
-                box-shadow: var(--shadow-popup);
-                position: relative;
-                animation: popIn 0.3s ease;
-                border: 1px solid var(--border-glass);
-                max-height: 80vh;
-                overflow-y: auto;
-            ">
-                <button class="popup-close" onclick="closePopup()" style="
-                    position: absolute;
-                    top: 12px;
-                    right: 16px;
-                    font-size: 22px;
-                    cursor: pointer;
-                    color: var(--text-muted);
-                    background: none;
-                    border: none;
-                    font-weight: 300;
-                    line-height: 1;
-                ">✕</button>
-                
-                <div class="icon" style="
-                    font-size: 48px;
-                    margin-bottom: 8px;
-                    color: var(--text-red);
-                    display: block;
-                ">⚠️</div>
-                
-                <h3 style="
-                    font-size: 20px;
-                    color: var(--text-primary);
-                    margin-bottom: 6px;
-                    font-weight: 700;
-                ">Caution</h3>
-                
-                <p style="
-                    font-size: 14px;
-                    color: var(--text-muted);
-                    line-height: 1.6;
-                    margin-bottom: 16px;
-                    padding: 0 4px;
-                ">
-                    WE DONOT ASK / REQUIRE <span class="highlight" style="color: var(--text-red); font-weight: 700;">ANY PERSONAL DETAILS / PAYMENT FROM YOU </span> sharpi-affiliate , is not a free money platform , you earn through making indirect sales , We provide everything you need , you print the cash and we share the profit, the process is simpler than you think. 
-                    Brand new opportunity .  Tap to continue
+            <div class="popup-card" style="max-width:340px;width:90%;margin:20px auto;padding:32px 24px 28px;background:var(--bg-popup);border-radius:28px;text-align:center;box-shadow:var(--shadow-popup);position:relative;animation:popIn 0.3s ease;border:1px solid var(--border-glass);max-height:80vh;overflow-y:auto;">
+                <button class="popup-close" onclick="closePopup()" style="position:absolute;top:12px;right:16px;font-size:22px;cursor:pointer;color:var(--text-muted);background:none;border:none;font-weight:300;line-height:1;">✕</button>
+                <div class="icon" style="font-size:48px;margin-bottom:8px;color:var(--text-red);display:block;">⚠️</div>
+                <h3 style="font-size:20px;color:var(--text-primary);margin-bottom:6px;font-weight:700;">Caution</h3>
+                <p style="font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:16px;padding:0 4px;">
+                    WE DONOT ASK / REQUIRE <span class="highlight" style="color:var(--text-red);font-weight:700;">ANY PERSONAL DETAILS / PAYMENT FROM YOU</span> sharpi-affiliate, is not a free money platform, you earn through making indirect sales, We provide everything you need, you print the cash and we share the profit, the process is simpler than you think.
+                    Brand new opportunity. Tap to continue
                 </p>
-                
-                <button class="cta-button" onclick="closePopup()" style="
-                    background: var(--text-primary);
-                    color: rgb(247, 237, 237);
-                    border: none;
-                    padding: 14px 32px;
-                    border-radius: 60px;
-                    font-weight: 600;
-                    font-size: 15px;
-                    width: 100%;
-                    box-shadow: var(--shadow-btn);
-                    cursor: pointer;
-                    font-family: inherit;
-                    max-width: 200px;
-                    margin: 0 auto;
-                    display: block;
-                ">I Understand</button>
+                <button class="cta-button" onclick="closePopup()" style="background:var(--text-primary);color:rgb(247,237,237);border:none;padding:14px 32px;border-radius:60px;font-weight:600;font-size:15px;width:100%;box-shadow:var(--shadow-btn);cursor:pointer;font-family:inherit;max-width:200px;margin:0 auto;display:block;">I Understand</button>
             </div>
         </div>
 
@@ -2312,15 +2283,12 @@ html, body {
         <div class="withdrawal-modal-overlay" id="withdrawalModal">
             <div class="withdrawal-modal">
                 <button onclick="closeWithdrawalModal()" style="position:absolute;top:12px;right:16px;font-size:22px;cursor:pointer;color:var(--text-muted);background:none;border:none;font-weight:300;line-height:1;">✕</button>
-                
                 <div class="modal-title">💰 Withdrawal Request</div>
                 <div class="modal-subtitle">Complete your withdrawal details below</div>
-                
                 <div class="summary-box" id="withdrawalSummary">
                     <div class="summary-row"><span class="label">📋 Keys:</span><span class="value" id="modalKeyCount">0</span></div>
                     <div class="summary-row"><span class="label">💰 Total Amount:</span><span class="value" id="modalTotalAmount">0 UGX</span></div>
                 </div>
-                
                 <div class="form-group">
                     <label>Mobile Money Network <span class="required">*</span></label>
                     <select id="withdrawNetwork">
@@ -2330,26 +2298,22 @@ html, body {
                         <option value="Other">Other</option>
                     </select>
                 </div>
-                
                 <div class="form-group">
                     <label>📱 Phone Number <span class="required">*</span></label>
                     <input type="tel" id="withdrawPhone" placeholder="Enter phone number to receive deposit" maxlength="15" />
                     <div class="error-message" id="phoneError">Please enter a valid phone number</div>
                 </div>
-                
                 <div class="form-group">
                     <label>🔄 Confirm Phone Number <span class="required">*</span></label>
                     <input type="tel" id="withdrawPhoneConfirm" placeholder="Confirm phone number" maxlength="15" />
                     <div class="match-indicator" id="phoneMatchIndicator"></div>
                     <div class="error-message" id="phoneMatchError">Phone numbers do not match</div>
                 </div>
-                
                 <div class="form-group">
                     <label>👤 Registered Name <span class="required">*</span></label>
                     <input type="text" id="withdrawName" placeholder="Full name on mobile money account" />
                     <div class="error-message" id="nameError">Please enter your registered name</div>
                 </div>
-                
                 <div class="modal-actions">
                     <button class="btn-cancel" onclick="closeWithdrawalModal()">Cancel</button>
                     <button class="btn-confirm" id="confirmWithdrawBtn" onclick="confirmWithdrawal()">Confirm Withdrawal</button>
@@ -2383,11 +2347,7 @@ html, body {
                             <div style="background:linear-gradient(135deg,var(--bg-card),var(--bg-card-hover));border-radius:14px;height:80px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border:1px solid var(--border-glass-light);">
                                 <div style="position:absolute;top:-30%;right:-20%;width:120px;height:120px;background:radial-gradient(circle,var(--bg-hero-deco1),transparent 70%);border-radius:50%;"></div>
                                 <div style="position:absolute;bottom:-20%;left:-15%;width:80px;height:80px;background:radial-gradient(circle,var(--bg-hero-deco2),transparent 70%);border-radius:50%;"></div>
-                                <div style="display:flex;gap:14px;align-items:center;z-index:2;">
-                                    <span class="material-symbols-rounded" style="font-size:28px;color:var(--text-primary);opacity:.5;">trending_up</span>
-                                    <span class="material-symbols-rounded" style="font-size:28px;color:var(--text-red);opacity:.4;">share</span>
-                                    <span class="material-symbols-rounded" style="font-size:28px;color:var(--text-primary);opacity:.5;">payments</span>
-                                </div>
+                                <div style="display:flex;gap:14px;align-items:center;z-index:2;"><span class="material-symbols-rounded" style="font-size:28px;color:var(--text-primary);opacity:.5;">trending_up</span><span class="material-symbols-rounded" style="font-size:28px;color:var(--text-red);opacity:.4;">share</span><span class="material-symbols-rounded" style="font-size:28px;color:var(--text-primary);opacity:.5;">payments</span></div>
                                 <div style="position:absolute;bottom:6px;right:8px;background:var(--bg-badge);padding:2px 10px;border-radius:16px;font-size:7px;font-weight:600;color:var(--text-primary);border:1px solid var(--border-glass-light);">YOUR LINK · YOUR EARNINGS</div>
                             </div>
                         </div>
@@ -2448,9 +2408,9 @@ html, body {
                             <div style="display:flex;align-items:center;gap:6px;"><span class="material-symbols-rounded" style="font-size:18px;color:var(--text-gold);">stars</span><span style="font-size:13px;font-weight:700;color:var(--text-primary);">Top Affiliates This Week</span></div>
                             <span style="font-size:8px;opacity:.4;font-weight:500;">🏆</span>
                         </div>
-                        <div class="leader-item"><div class="leader-rank">#1</div><div class="leader-avatar" style="background:linear-gradient(135deg,#dce3ef,#c8d2e0);display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid #f5b042;width:32px;height:32px;border-radius:50%;flex-shrink:0;"><img src="pfp1.png" alt="pfp1" style="width:100%;height:100%;object-fit:cover;display:block;"/></div><div class="leader-info"><span style="color:var(--text-gold);">@eassy_kiweewa</span><span class="leader-badge" style="color:var(--text-red);">⭐   TikTok</span></div><div class="leader-stats">207 invites <span style="color:var(--text-gold);">🏅</span></div></div>
-                        <div class="leader-item"><div class="leader-rank">#2</div><div class="leader-avatar" style="background:linear-gradient(135deg,#dce3ef,#c8d2e0);display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid #f5b042;width:32px;height:32px;border-radius:50%;flex-shrink:0;"><img src="pfp2.svg" alt="no dp" style="width:100%;height:100%;object-fit:cover;display:block;"/></div><div class="leader-info"><span style="color:var(--text-gold);">@Natasha256</span><span class="leader-badge" style="color:var(--text-red);">⭐    TikTok</span></div><div class="leader-stats">183 invites <span style="color:var(--text-gold);">🏅</span></div></div>
-                        <div class="leader-item"><div class="leader-rank">#3</div><div class="leader-avatar" style="background:linear-gradient(135deg,#dce3ef,#c8d2e0);display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid #cd7f32;width:32px;height:32px;border-radius:50%;flex-shrink:0;"><img src="pfp3.png" alt="pfp3" style="width:100%;height:100%;object-fit:cover;display:block;"/></div><div class="leader-info"><span style="color:var(--text-bronze);">@shirat_wa.saha</span><span class="leader-badge" style="color:var(--text-green);">🥉    WhatsApp</span></div><div class="leader-stats">161 invites <span style="color:var(--text-bronze);">🥉</span></div></div>
+                        <div class="leader-item"><div class="leader-rank">#1</div><div class="leader-avatar" style="background:linear-gradient(135deg,#dce3ef,#c8d2e0);display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid #f5b042;width:32px;height:32px;border-radius:50%;flex-shrink:0;"><img src="pfp1.png" alt="pfp1" style="width:100%;height:100%;object-fit:cover;display:block;"/></div><div class="leader-info"><span style="color:var(--text-gold);">@eassy_kiweewa</span><span class="leader-badge" style="color:var(--text-red);">⭐ TikTok</span></div><div class="leader-stats">207 invites <span style="color:var(--text-gold);">🏅</span></div></div>
+                        <div class="leader-item"><div class="leader-rank">#2</div><div class="leader-avatar" style="background:linear-gradient(135deg,#dce3ef,#c8d2e0);display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid #f5b042;width:32px;height:32px;border-radius:50%;flex-shrink:0;"><img src="pfp2.svg" alt="no dp" style="width:100%;height:100%;object-fit:cover;display:block;"/></div><div class="leader-info"><span style="color:var(--text-gold);">@Natasha256</span><span class="leader-badge" style="color:var(--text-red);">⭐ TikTok</span></div><div class="leader-stats">183 invites <span style="color:var(--text-gold);">🏅</span></div></div>
+                        <div class="leader-item"><div class="leader-rank">#3</div><div class="leader-avatar" style="background:linear-gradient(135deg,#dce3ef,#c8d2e0);display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid #cd7f32;width:32px;height:32px;border-radius:50%;flex-shrink:0;"><img src="pfp3.png" alt="pfp3" style="width:100%;height:100%;object-fit:cover;display:block;"/></div><div class="leader-info"><span style="color:var(--text-bronze);">@shirat_wa.saha</span><span class="leader-badge" style="color:var(--text-green);">🥉 WhatsApp</span></div><div class="leader-stats">161 invites <span style="color:var(--text-bronze);">🥉</span></div></div>
                         <a class="view-status-link" onclick="handleStatusClick()"><span style="display:flex;align-items:center;justify-content:center;gap:4px;"><span class="material-symbols-rounded" style="font-size:14px;">visibility</span>Click here to see your status<span class="material-symbols-rounded" style="font-size:12px;">arrow_forward</span></span></a>
                     </div>
 
@@ -2498,6 +2458,10 @@ html, body {
                         <div class="row-item"><div class="num" id="balanceForwarded" style="color:#f59e0b;">0 UGX</div><div class="lbl">Forwarded</div></div>
                         <div class="row-item"><div class="num" id="balancePaid" style="color:#34d399;">0 UGX</div><div class="lbl">Paid Off</div></div>
                     </div>
+                    <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:10px;">
+                        <div style="text-align:center;opacity:0.7;"><span style="color:var(--text-gold);">📊 Sales:</span> <span id="balanceSalesEarnings">0 UGX</span></div>
+                        <div style="text-align:center;opacity:0.7;"><span style="color:var(--text-cyan);">🤝 Referrals:</span> <span id="balanceReferralEarnings">0 UGX</span></div>
+                    </div>
                 </div>
 
                 <div class="bank-card" id="bankCard">
@@ -2521,6 +2485,40 @@ html, body {
                     <div class="stat-box"><div class="label">🔗 Link Clicks</div><div class="value" id="affiliateVisits">0</div></div>
                     <div class="stat-box"><div class="label">📊 Conversion</div><div class="value" id="affiliateConversion">0%</div></div>
                     <div class="stat-box"><div class="label">💰 Per Visit</div><div class="value" id="affiliatePerVisit">0 UGX</div></div>
+                </div>
+
+                <!-- REFERRAL CARD -->
+                <div class="referral-card" id="referralCard">
+                    <div class="referral-header">
+                        <div class="title-wrap">
+                            <span class="icon">🤝</span>
+                            <span class="label">Affiliate Invite Performance</span>
+                        </div>
+                        <span id="inviteLinkStatus" style="font-size:9px;padding:2px 12px;border-radius:12px;background:rgba(251,191,36,0.1);color:var(--text-gold);">
+                            🔒 Locked
+                        </span>
+                    </div>
+                    <div class="referral-stats">
+                        <div class="stat-item"><div class="number" id="totalReferrals">0</div><div class="lbl">Invited</div></div>
+                        <div class="stat-item"><div class="number green" id="activeReferrals">0</div><div class="lbl">Active</div></div>
+                        <div class="stat-item"><div class="number cyan" id="referralEarnings">0 UGX</div><div class="lbl">Referral Earn</div></div>
+                    </div>
+                    <div class="referral-list">
+                        <div class="list-header"><span class="list-label">⏳ Referral Commissions</span><span class="list-count" id="referralPendingCount">0 pending</span></div>
+                        <div id="referralEarningsList"><div style="color:var(--text-muted);font-size:12px;text-align:center;padding:10px 0;">No referral earnings yet. Invite affiliates!</div></div>
+                    </div>
+                    <div class="referral-list">
+                        <div class="list-header"><span class="list-label">👥 People You Referred</span><span class="list-count" id="referredCount">0</span></div>
+                        <div id="referralsList"><div style="color:var(--text-muted);font-size:12px;text-align:center;padding:10px 0;">No affiliates referred yet. Share your invite link!</div></div>
+                    </div>
+                    <div class="referral-link-section">
+                        <div class="link-header"><span class="link-icon">🔗</span><span class="link-label">Your Affiliate Invite Link</span></div>
+                        <div class="link-box" style="margin-top:4px;">
+                            <span class="link-text" id="affiliateInviteLinkDisplay" style="font-size:11px;color:var(--text-muted);">Complete your first sale to unlock</span>
+                            <button class="copy-btn" id="copyInviteLinkBtn" onclick="copyInviteLink()" style="padding:4px 12px;font-size:10px;" disabled>Copy</button>
+                        </div>
+                        <div class="earn-notice" style="font-size:10px;color:var(--text-gold);margin-top:4px;">💰 Invite affiliates → Earn 10% of ALL their earnings!</div>
+                    </div>
                 </div>
 
                 <!-- COMMISSIONS CARD -->
@@ -2661,66 +2659,20 @@ html, body {
                 </div>
                 <div class="glass-card" style="padding:24px 20px;">
                     <h3 style="font-weight:600;margin-bottom:12px;color:var(--text-primary);">🚀 Welcome to the SHARPI Affiliate Program</h3>
-                    
-                    <p style="font-size:14px;line-height:1.8;color:var(--text-secondary);">
-                        SHARPI is a leading technology company specializing in advanced prediction tools for the gaming industry. 
-                        Our flagship product, the <strong>SHARPI Aviator Predictor</strong>, has helped thousands of users across East Africa 
-                        make informed decisions and maximize their earnings. We're now expanding our reach through our 
-                        <strong>Affiliate Program</strong>, empowering everyday individuals to earn from their networks.
-                    </p>
-
+                    <p style="font-size:14px;line-height:1.8;color:var(--text-secondary);">SHARPI is a leading technology company specializing in advanced prediction tools for the gaming industry. Our flagship product, the <strong>SHARPI Aviator Predictor</strong>, has helped thousands of users across East Africa make informed decisions and maximize their earnings. We're now expanding our reach through our <strong>Affiliate Program</strong>, empowering everyday individuals to earn from their networks.</p>
                     <h4 style="font-weight:600;margin:16px 0 8px 0;color:var(--text-primary);">📋 What You Need to Know</h4>
-                    <p style="font-size:14px;line-height:1.8;color:var(--text-secondary);">
-                        As a SHARPI Affiliate, you become a trusted partner in our mission to provide world-class prediction technology 
-                        to users across the region. Your role is simple: <strong>share your unique affiliate link</strong> with friends, 
-                        family, or your social media followers. When someone clicks your link and makes a purchase, 
-                        <strong>you earn 20,000 UGX</strong> directly to your mobile money.
-                    </p>
-
+                    <p style="font-size:14px;line-height:1.8;color:var(--text-secondary);">As a SHARPI Affiliate, you become a trusted partner in our mission to provide world-class prediction technology to users across the region. Your role is simple: <strong>share your unique affiliate link</strong> with friends, family, or your social media followers. When someone clicks your link and makes a purchase, <strong>you earn 20,000 UGX</strong> directly to your mobile money.</p>
                     <h4 style="font-weight:600;margin:16px 0 8px 0;color:var(--text-primary);">💡 How It Works</h4>
-                    <p style="font-size:14px;line-height:1.8;color:var(--text-secondary);">
-                        <strong>1. Register</strong> – Create your affiliate account in under a minute. We'll generate a unique promo code just for you.<br>
-                        <strong>2. Share Your Link</strong> – Share your link on TikTok, Instagram, WhatsApp, or anywhere you have an audience.<br>
-                        <strong>3. Earn Commissions</strong> – Every time someone uses your link to purchase our Predictor app, you instantly earn <strong>20,000 UGX</strong>.<br>
-                        <strong>4. Track Your Success</strong> – Your dashboard shows your link clicks, sales, and earnings in real-time.<br>
-                        <strong>5. Withdraw Anytime</strong> – Request your earnings anytime. We process payouts directly to your mobile money.
-                    </p>
-
+                    <p style="font-size:14px;line-height:1.8;color:var(--text-secondary);"><strong>1. Register</strong> – Create your affiliate account in under a minute. We'll generate a unique promo code just for you.<br><strong>2. Share Your Link</strong> – Share your link on TikTok, Instagram, WhatsApp, or anywhere you have an audience.<br><strong>3. Earn Commissions</strong> – Every time someone uses your link to purchase our Predictor app, you instantly earn <strong>20,000 UGX</strong>.<br><strong>4. Track Your Success</strong> – Your dashboard shows your link clicks, sales, and earnings in real-time.<br><strong>5. Withdraw Anytime</strong> – Request your earnings anytime. We process payouts directly to your mobile money.</p>
                     <h4 style="font-weight:600;margin:16px 0 8px 0;color:var(--text-primary);">📈 Why Join SHARPI Affiliates?</h4>
-                    <p style="font-size:14px;line-height:1.8;color:var(--text-secondary);">
-                        <strong>✅ No Experience Required</strong> – You don't need to be a tech expert or a marketing professional. Just share your link.<br>
-                        <strong>✅ Real-Time Tracking</strong> – Your dashboard updates instantly. You'll see every click, every sale, and every commission.<br>
-                        <strong>✅ Instant Payments</strong> – We pay you directly to your mobile money. No waiting, no delays.<br>
-                        <strong>✅ 100% Free</strong> – There are no fees to join. You only earn when you make a sale.<br>
-                        <strong>✅ Support Team</strong> – Our team is available 24/7 on WhatsApp to help you succeed.
-                    </p>
-
+                    <p style="font-size:14px;line-height:1.8;color:var(--text-secondary);"><strong>✅ No Experience Required</strong> – You don't need to be a tech expert or a marketing professional. Just share your link.<br><strong>✅ Real-Time Tracking</strong> – Your dashboard updates instantly. You'll see every click, every sale, and every commission.<br><strong>✅ Instant Payments</strong> – We pay you directly to your mobile money. No waiting, no delays.<br><strong>✅ 100% Free</strong> – There are no fees to join. You only earn when you make a sale.<br><strong>✅ Support Team</strong> – Our team is available 24/7 on WhatsApp to help you succeed.</p>
                     <h4 style="font-weight:600;margin:16px 0 8px 0;color:var(--text-primary);">📲 How to Share Your Link</h4>
-                    <p style="font-size:14px;line-height:1.8;color:var(--text-secondary);">
-                        <strong>📱 TikTok</strong> – Post a short video showing how the SHARPI Predictor works. Add your link in the bio or comments.<br>
-                        <strong>📸 Instagram</strong> – Share a post or story with your link. Show your followers how you're earning.<br>
-                        <strong>💬 WhatsApp</strong> – Share your link with your contacts. Word of mouth is powerful.<br>
-                        <strong>📢 Your Network</strong> – Anywhere you have an audience, you have an opportunity. Share your link and start earning.
-                    </p>
-
+                    <p style="font-size:14px;line-height:1.8;color:var(--text-secondary);"><strong>📱 TikTok</strong> – Post a short video showing how the SHARPI Predictor works. Add your link in the bio or comments.<br><strong>📸 Instagram</strong> – Share a post or story with your link. Show your followers how you're earning.<br><strong>💬 WhatsApp</strong> – Share your link with your contacts. Word of mouth is powerful.<br><strong>📢 Your Network</strong> – Anywhere you have an audience, you have an opportunity. Share your link and start earning.</p>
                     <h4 style="font-weight:600;margin:16px 0 8px 0;color:var(--text-primary);">🛡️ Our Commitment to You</h4>
-                    <p style="font-size:14px;line-height:1.8;color:var(--text-secondary);">
-                        At SHARPI, we believe in transparency and fairness. We provide you with all the tools you need to succeed, 
-                        and we're always here to support you. Our platform is built on trust, and we're committed to helping our 
-                        affiliates grow and earn. When you succeed, we succeed.
-                    </p>
-
+                    <p style="font-size:14px;line-height:1.8;color:var(--text-secondary);">At SHARPI, we believe in transparency and fairness. We provide you with all the tools you need to succeed, and we're always here to support you. Our platform is built on trust, and we're committed to helping our affiliates grow and earn. When you succeed, we succeed.</p>
                     <h4 style="font-weight:600;margin:16px 0 8px 0;color:var(--text-primary);">📞 Need Help?</h4>
-                    <p style="font-size:14px;line-height:1.8;color:var(--text-secondary);">
-                        Our support team is available 24/7. Click the WhatsApp icon in the header or visit the Support page to reach us. 
-                        We're always happy to help!
-                    </p>
-
-                    <div style="background:var(--bg-card);border-radius:12px;padding:16px;margin-top:16px;border:1px solid var(--border-glass-light);">
-                        <p style="font-size:13px;line-height:1.6;color:var(--text-primary);text-align:center;font-weight:500;">
-                            🚀 <strong>Start earning today.</strong> Share your link, grow your network, and watch your earnings grow.
-                        </p>
-                    </div>
+                    <p style="font-size:14px;line-height:1.8;color:var(--text-secondary);">Our support team is available 24/7. Click the WhatsApp icon in the header or visit the Support page to reach us. We're always happy to help!</p>
+                    <div style="background:var(--bg-card);border-radius:12px;padding:16px;margin-top:16px;border:1px solid var(--border-glass-light);"><p style="font-size:13px;line-height:1.6;color:var(--text-primary);text-align:center;font-weight:500;">🚀 <strong>Start earning today.</strong> Share your link, grow your network, and watch your earnings grow.</p></div>
                 </div>
                 <button class="cta-button" onclick="goToPage(0)" style="margin-top:4px;">← Back to Home</button>
                 <div class="footer" style="margin-top:4px;">
@@ -2772,6 +2724,17 @@ html, body {
         let isRealtimeConnected = false;
         let refreshInterval = null;
         let isRefreshing = false;
+
+        // Referral data
+        let referralData = {
+            referrals: [],
+            earnings: [],
+            totalReferrals: 0,
+            activeReferrals: 0,
+            totalReferralEarnings: 0,
+            pendingEarnings: 0,
+            paidEarnings: 0
+        };
 
         // Withdrawal state
         let withdrawalData = {
@@ -2928,9 +2891,9 @@ html, body {
         }
 
         // ============================================================
-        // REGISTER AFFILIATE (WITH PIN)
+        // REGISTER AFFILIATE (WITH PIN + REFERRAL SUPPORT)
         // ============================================================
-        async function registerAffiliate(name, username, contact, platform, pin) {
+        async function registerAffiliate(name, username, contact, platform, pin, referredBy) {
             if (!name || !username || !contact || !pin || pin.length !== 4 || !/^\d{4}$/.test(pin)) {
                 return { success: false, message: 'Invalid fields. PIN must be 4 digits.' };
             }
@@ -2950,7 +2913,11 @@ html, body {
                 pin,
                 code,
                 avatar_url: '',
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                referred_by: referredBy || null,
+                referral_count: 0,
+                referral_earnings: 0,
+                invite_link_unlocked: false
             };
 
             if (profileImageFile) {
@@ -2971,9 +2938,29 @@ html, body {
                         code,
                         avatar_url: currentAffiliate.avatar_url,
                         active: true,
-                        created_at: new Date().toISOString()
+                        created_at: new Date().toISOString(),
+                        referred_by: referredBy || null,
+                        referral_count: 0,
+                        referral_earnings: 0,
+                        invite_link_unlocked: false
                     }]);
+
                     if (error) console.error('❌ Supabase insert error:', error);
+
+                    if (referredBy) {
+                        const { error: refError } = await supabaseClient
+                            .from('affiliate_referrals')
+                            .insert([{
+                                parent_code: referredBy,
+                                child_code: code,
+                                child_name: name,
+                                child_username: username,
+                                created_at: new Date().toISOString(),
+                                status: 'active'
+                            }]);
+
+                        if (refError) console.error('❌ Referral insert error:', refError);
+                    }
                 } catch (e) {
                     console.error('❌ Supabase error:', e);
                 }
@@ -2983,17 +2970,17 @@ html, body {
         }
 
         // ============================================================
-        // LOGIN AFFILIATE (WITH PIN) - FIXED WITH BETTER CONTACT MATCHING
+        // LOGIN AFFILIATE (WITH PIN)
         // ============================================================
         async function loginAffiliate(contact, pin) {
             const cleanContact = contact.replace(/[\s\-\(\)\+]/g, '');
-            
+
             console.log('🔍 Login attempt for contact:', cleanContact);
-            
+
             const lockStatus = isLoginLocked();
             if (lockStatus.locked) {
-                return { 
-                    success: false, 
+                return {
+                    success: false,
                     message: `⚠️ Suspicious activity detected. Please wait ${lockStatus.remainingMinutes} minutes before trying again.`,
                     locked: true,
                     remainingMinutes: lockStatus.remainingMinutes
@@ -3013,8 +3000,8 @@ html, body {
                         recordLoginAttempt();
                         const attempts = getLoginAttempts();
                         const remaining = LOGIN_LIMIT.maxAttempts - attempts.count;
-                        return { 
-                            success: false, 
+                        return {
+                            success: false,
                             message: `Incorrect PIN. ${remaining} attempts remaining.`,
                             attemptsLeft: remaining
                         };
@@ -3033,7 +3020,7 @@ html, body {
                         .select('*')
                         .eq('contact', cleanContact)
                         .maybeSingle();
-                    
+
                     if (!data) {
                         let variants = [];
                         if (cleanContact.startsWith('0')) {
@@ -3047,7 +3034,7 @@ html, body {
                             variants.push('256' + cleanContact);
                         }
                         variants.push(contact);
-                        
+
                         for (const variant of variants) {
                             if (variant && variant !== cleanContact && variant !== contact) {
                                 const { data: variantData, error: variantError } = await supabaseClient
@@ -3063,12 +3050,12 @@ html, body {
                             }
                         }
                     }
-                    
+
                     if (!data) {
                         const { data: allData, error: allError } = await supabaseClient
                             .from('affiliates')
                             .select('*');
-                        
+
                         if (!allError && allData && allData.length > 0) {
                             for (const record of allData) {
                                 const recordContact = record.contact ? record.contact.replace(/[\s\-\(\)\+]/g, '') : '';
@@ -3080,14 +3067,14 @@ html, body {
                             }
                         }
                     }
-                    
+
                     if (data && !error) {
                         if (data.pin !== pin) {
                             recordLoginAttempt();
                             const attempts = getLoginAttempts();
                             const remaining = LOGIN_LIMIT.maxAttempts - attempts.count;
-                            return { 
-                                success: false, 
+                            return {
+                                success: false,
                                 message: `Incorrect PIN. ${remaining} attempts remaining.`,
                                 attemptsLeft: remaining
                             };
@@ -3105,15 +3092,15 @@ html, body {
             recordLoginAttempt();
             const attempts = getLoginAttempts();
             if (attempts.count >= LOGIN_LIMIT.maxAttempts) {
-                return { 
-                    success: false, 
+                return {
+                    success: false,
                     message: `⚠️ We have detected suspicious activity. Your account has been temporarily locked for ${LOGIN_LIMIT.cooldownMinutes} minutes.`,
                     locked: true
                 };
             }
             const remaining = LOGIN_LIMIT.maxAttempts - attempts.count;
-            return { 
-                success: false, 
+            return {
+                success: false,
                 message: `No account found with this number. ${remaining} attempts remaining.`,
                 attemptsLeft: remaining
             };
@@ -3271,7 +3258,8 @@ html, body {
                     key_status: s.key_status || 'valid',
                     paid_at: s.paid_at || null,
                     token: s.token || null,
-                    raw: s
+                    raw: s,
+                    isReferral: s.recipient_type === 'referrer' || false
                 }));
 
                 affForwarded = mappedSales.filter(s => s.status === 'forwarded');
@@ -3283,6 +3271,108 @@ html, body {
             } catch (e) {
                 console.error('❌ Sales load error:', e);
                 return false;
+            }
+        }
+
+        // ============================================================
+        // LOAD REFERRAL DATA
+        // ============================================================
+        async function loadReferralData() {
+            if (!supabaseClient || !currentAffiliate) return null;
+
+            try {
+                const { data: referrals, error: refError } = await supabaseClient
+                    .from('affiliate_referrals')
+                    .select('*')
+                    .eq('parent_code', currentAffiliate.code);
+
+                if (refError) throw refError;
+
+                const { data: earnings, error: earnError } = await supabaseClient
+                    .from('referral_earnings')
+                    .select('*')
+                    .eq('parent_code', currentAffiliate.code)
+                    .order('created_at', { ascending: false });
+
+                if (earnError) throw earnError;
+
+                referralData.referrals = referrals || [];
+                referralData.earnings = earnings || [];
+                referralData.totalReferrals = referrals?.length || 0;
+                referralData.activeReferrals = referrals?.filter(r => r.status === 'active').length || 0;
+                referralData.totalReferralEarnings = earnings?.reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
+                referralData.pendingEarnings = earnings?.filter(e => e.status === 'pending' || e.status === 'forwarded')
+                    .reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
+                referralData.paidEarnings = earnings?.filter(e => e.status === 'paid')
+                    .reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
+
+                return referralData;
+            } catch (e) {
+                console.error('❌ Load referral data error:', e);
+                return null;
+            }
+        }
+
+        // ============================================================
+        // REFERRAL LINK FUNCTIONS - FIXED (No recursion)
+        // ============================================================
+        function getAffiliateInviteLink() {
+            if (!currentAffiliate) return null;
+            return `https://linknvibeplatform.github.io/sharpi-signals/?ref=${currentAffiliate.code}&mode=invite`;
+        }
+
+        // FIXED: No recursion - checks arrays directly
+        function canInviteAffiliates() {
+            if (!currentAffiliate) return false;
+            // Direct check: at least 1 sale completed (forwarded or paid)
+            const hasSale = affForwarded.length > 0 || affPaid.length > 0;
+            return hasSale;
+        }
+
+        function copyInviteLink() {
+            const link = getAffiliateInviteLink();
+            if (!link) {
+                showToast('⚠️ Please login first', 'error');
+                return;
+            }
+
+            if (!canInviteAffiliates()) {
+                showToast('🔓 Complete your first sale to unlock affiliate invites!', 'warning');
+                return;
+            }
+
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(link).then(() => {
+                    showToast('✅ Affiliate invite link copied!', 'success');
+                }).catch(() => { fallbackCopy(link); });
+            } else {
+                fallbackCopy(link);
+            }
+        }
+
+        function shareInviteLink() {
+            const link = getAffiliateInviteLink();
+            if (!link) {
+                showToast('⚠️ Please login first', 'error');
+                return;
+            }
+
+            if (!canInviteAffiliates()) {
+                showToast('🔓 Complete your first sale to unlock affiliate invites!', 'warning');
+                return;
+            }
+
+            const message =
+                `🚀 Join SHARPI as an affiliate using my invite link!\n\n🔗 ${link}\n\n💵 Earn 20,000 UGX per sale + 10% referral commissions!\n\n🦈 SHARPI Affiliate Program`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Join SHARPI Affiliate Program',
+                    text: message,
+                    url: link
+                }).catch(() => {});
+            } else {
+                window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
             }
         }
 
@@ -3327,21 +3417,26 @@ html, body {
         }
 
         // ============================================================
-        // GET DASHBOARD STATS
+        // GET DASHBOARD STATS - FIXED (No recursion)
         // ============================================================
         function getDashboardStats() {
             if (!currentAffiliate) return null;
 
-            const forwardedCount = affForwarded.length;
-            const forwardedTotal = forwardedCount * 20000;
+            // Separate sales from referral earnings
+            const salesForwarded = affForwarded.filter(s => !s.isReferral);
+            const salesPaid = affPaid.filter(s => !s.isReferral);
 
-            const paidCount = affPaid.length;
-            const paidTotal = paidCount * 20000;
+            const forwardedCount = salesForwarded.length;
+            const forwardedTotal = forwardedCount * 18000;
 
-            const totalSales = affForwarded.length + affPaid.length;
-            const totalEarned = totalSales * 20000;
+            const paidCount = salesPaid.length;
+            const paidTotal = paidCount * 18000;
 
-            const balance = forwardedTotal;
+            const totalSales = salesForwarded.length + salesPaid.length;
+            const totalEarned = totalSales * 18000;
+
+            const referralTotal = referralData.totalReferralEarnings || 0;
+            const balance = forwardedTotal + referralTotal;
 
             return {
                 totalSales,
@@ -3349,8 +3444,13 @@ html, body {
                 balance,
                 forwarded: forwardedTotal,
                 paidOff: paidTotal,
-                forwardedSales: affForwarded,
-                paidSales: affPaid,
+                forwardedSales: salesForwarded,
+                paidSales: salesPaid,
+                referralEarnings: referralTotal,
+                referralPending: referralData.pendingEarnings || 0,
+                referralPaid: referralData.paidEarnings || 0,
+                totalReferrals: referralData.totalReferrals || 0,
+                activeReferrals: referralData.activeReferrals || 0,
                 affiliateCode: currentAffiliate.code,
                 affiliateName: currentAffiliate.name
             };
@@ -3371,7 +3471,7 @@ html, body {
             document.getElementById('withdrawPhone').value = '';
             document.getElementById('withdrawPhoneConfirm').value = '';
             document.getElementById('withdrawName').value = '';
-            
+
             document.querySelectorAll('.error-message').forEach(el => el.classList.remove('show'));
             document.getElementById('phoneMatchIndicator').textContent = '';
             document.getElementById('phoneMatchIndicator').className = 'match-indicator';
@@ -3382,7 +3482,6 @@ html, body {
             const modal = document.getElementById('withdrawalModal');
             modal.classList.add('active');
 
-            // Real-time phone match checking
             const phoneInput = document.getElementById('withdrawPhone');
             const phoneConfirmInput = document.getElementById('withdrawPhoneConfirm');
             const matchIndicator = document.getElementById('phoneMatchIndicator');
@@ -3390,14 +3489,14 @@ html, body {
             function checkPhoneMatch() {
                 const phone = phoneInput.value.trim();
                 const confirm = phoneConfirmInput.value.trim();
-                
+
                 if (phone.length === 0 || confirm.length === 0) {
                     matchIndicator.textContent = '';
                     matchIndicator.className = 'match-indicator';
                     document.getElementById('phoneMatchError').classList.remove('show');
                     return;
                 }
-                
+
                 if (phone === confirm) {
                     matchIndicator.textContent = '✅ Numbers match';
                     matchIndicator.className = 'match-indicator match';
@@ -3498,21 +3597,20 @@ Name: ${name}
 Thank you! 🦈`;
 
             const phoneNumber = '256740042068';
-            
+
             closeWithdrawalModal();
-            
-            // Open WhatsApp with the message
+
             const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
-            
+
             confirmBtn.disabled = false;
             confirmBtn.textContent = 'Confirm Withdrawal';
-            
+
             showToast('📤 Withdrawal request sent to admin!', 'success');
         }
 
         // ============================================================
-        // WITHDRAW FUNCTIONS (UPDATED)
+        // WITHDRAW FUNCTIONS
         // ============================================================
         function withdrawSingleKey(key, amount) {
             if (!key) {
@@ -3539,94 +3637,6 @@ Thank you! 🦈`;
             const totalAmount = keys.length * 20000;
 
             showWithdrawalModal(keys, totalAmount, 'all');
-        }
-
-        // ============================================================
-        // PULL TO REFRESH
-        // ============================================================
-        function setupPullToRefresh() {
-            const pagesContainer = document.getElementById('pagesContainer');
-            const indicator = document.getElementById('pullToRefreshIndicator');
-            const refreshText = document.getElementById('pullToRefreshText');
-            const refreshIcon = document.getElementById('refreshIcon');
-
-            pagesContainer.addEventListener('touchstart', function(e) {
-                // Only allow pull to refresh when at the top of the page
-                const page = document.querySelector('.page:not([style*="display: none"])');
-                if (page && page.scrollTop === 0) {
-                    touchStartY = e.touches[0].clientY;
-                    isPulling = true;
-                }
-            }, { passive: true });
-
-            pagesContainer.addEventListener('touchmove', function(e) {
-                if (!isPulling) return;
-                
-                const touchY = e.touches[0].clientY;
-                const diff = touchY - touchStartY;
-                
-                if (diff > 0 && diff < 150) {
-                    indicator.style.top = (diff - 60) + 'px';
-                    if (diff > pullThreshold) {
-                        refreshText.textContent = 'Release to refresh';
-                        refreshIcon.className = 'refresh-icon material-symbols-rounded spinning';
-                    } else {
-                        refreshText.textContent = 'Pull down to refresh';
-                        refreshIcon.className = 'refresh-icon material-symbols-rounded';
-                    }
-                }
-            }, { passive: true });
-
-            pagesContainer.addEventListener('touchend', function(e) {
-                if (!isPulling) return;
-                isPulling = false;
-                
-                const diff = e.changedTouches[0].clientY - touchStartY;
-                
-                if (diff > pullThreshold) {
-                    // Trigger refresh
-                    refreshText.textContent = 'Refreshing...';
-                    refreshIcon.className = 'refresh-icon material-symbols-rounded spinning';
-                    
-                    performRefresh();
-                    
-                    setTimeout(() => {
-                        indicator.style.top = '-60px';
-                        refreshText.textContent = 'Pull down to refresh';
-                        refreshIcon.className = 'refresh-icon material-symbols-rounded';
-                    }, 1500);
-                } else {
-                    indicator.style.top = '-60px';
-                    refreshText.textContent = 'Pull down to refresh';
-                    refreshIcon.className = 'refresh-icon material-symbols-rounded';
-                }
-            }, { passive: true });
-        }
-
-        async function performRefresh() {
-            if (!currentAffiliate) return;
-            
-            showToast('🔄 Refreshing dashboard...', '');
-            
-            await loadSalesFromSupabase(currentAffiliate.code);
-            await renderDashboard();
-            
-            showToast('✅ Dashboard refreshed!', 'success');
-        }
-
-        function showPullToRefreshTutorial() {
-            // Only show if user just registered (tutorial not shown before)
-            const tutorialShown = localStorage.getItem(STORAGE_KEYS.TUTORIAL_SHOWN);
-            if (tutorialShown) return;
-            
-            const tutorial = document.getElementById('pullToRefreshTutorial');
-            tutorial.classList.add('show');
-            
-            // Hide after 6 seconds
-            setTimeout(() => {
-                tutorial.classList.remove('show');
-                localStorage.setItem(STORAGE_KEYS.TUTORIAL_SHOWN, 'true');
-            }, 6000);
         }
 
         // ============================================================
@@ -3879,9 +3889,14 @@ Thank you! 🦈`;
         }
 
         // ============================================================
-        // REGISTER MODAL (WITH PIN)
+        // REGISTER MODAL (WITH PIN + REFERRAL SUPPORT)
         // ============================================================
         function showRegisterModal() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref');
+            const mode = urlParams.get('mode');
+            const isInvite = mode === 'invite' && refCode;
+
             const overlay = document.createElement('div');
             overlay.style.cssText = `
                     position:absolute;top:0;left:0;width:100%;height:100%;
@@ -3899,10 +3914,17 @@ Thank you! 🦈`;
                     position:relative;
                 `;
 
+            const inviteMessage = isInvite ?
+                `<div style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.2);border-radius:12px;padding:10px 14px;margin-bottom:12px;text-align:center;">
+                    <span style="font-size:14px;">🤝</span>
+                    <span style="font-size:12px;color:var(--text-green);font-weight:500;">You were invited by an affiliate! Join now and start earning.</span>
+                </div>` : '';
+
             modal.innerHTML = `
                     <button onclick="closeRegisterModal()" style="position:absolute;top:12px;right:16px;font-size:24px;cursor:pointer;color:var(--text-muted);background:none;border:none;font-weight:300;">✕</button>
                     <h3 style="font-weight:600;margin-bottom:6px;color:var(--text-primary);">Create affiliate account</h3>
                     <p style="opacity:.5;font-size:14px;color:var(--text-secondary);">Earn 20,000 UGX on every verified sale</p>
+                    ${inviteMessage}
                    <form id="registerFormModal" class="reg-form" style="margin-top:16px;">
                         <input type="text" id="regNameModal" placeholder="Full name" required />
                         <input type="text" id="regUsernameModal" placeholder="Your username" required autocomplete="off" />
@@ -3925,6 +3947,7 @@ Thank you! 🦈`;
                             <option value="whatsapp">WhatsApp</option>
                             <option value="other">Other</option>
                         </select>
+                        ${isInvite ? `<input type="hidden" id="regReferredBy" value="${refCode}" />` : ''}
                         <button type="submit" class="cta-button" style="background:var(--text-primary);">Register →</button>
                     </form>
                     <p style="font-size:13px;text-align:center;margin-top:12px;opacity:.5;color:var(--text-secondary);">Already have an account? <span id="switchToLoginModal" style="color:var(--text-link);font-weight:600;cursor:pointer;">Login</span></p>
@@ -3947,8 +3970,9 @@ Thank you! 🦈`;
                 const contact = document.getElementById('regContactModal').value.trim();
                 const platform = document.getElementById('regPlatformModal').value;
                 const pin = document.getElementById('regPinModal').value.trim();
+                const referredBy = document.getElementById('regReferredBy')?.value || null;
 
-                const result = await registerAffiliate(name, username, contact, platform, pin);
+                const result = await registerAffiliate(name, username, contact, platform, pin, referredBy);
                 if (!result.success) {
                     showToast('⚠️ ' + result.message);
                     return;
@@ -3956,10 +3980,10 @@ Thank you! 🦈`;
                 closeRegisterModal();
                 goToPage(1);
                 await loadSalesFromSupabase(currentAffiliate.code);
+                await loadReferralData();
                 await renderDashboard();
                 showToast(`Welcome, ${name}!`);
-                
-                // Show pull-to-refresh tutorial after registration
+
                 setTimeout(() => {
                     showPullToRefreshTutorial();
                 }, 1500);
@@ -4042,15 +4066,15 @@ Thank you! 🦈`;
             if (loginForm) {
                 loginForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
-                    
+
                     const contactEl = document.getElementById('loginContactModal');
                     const pinEl = document.getElementById('loginPinModalInput');
-                    
+
                     if (!contactEl || !pinEl) {
                         showToast('⚠️ Form error. Please try again.', 'error');
                         return;
                     }
-                    
+
                     const contact = contactEl.value.trim();
                     const pin = pinEl.value.trim();
 
@@ -4071,6 +4095,7 @@ Thank you! 🦈`;
                     closeLoginPinModal();
                     goToPage(1);
                     await loadSalesFromSupabase(currentAffiliate.code);
+                    await loadReferralData();
                     await renderDashboard();
                     showToast(`Welcome back, ${currentAffiliate.name}!`);
                 });
@@ -4106,6 +4131,91 @@ Thank you! 🦈`;
                 showToast('👋 Register first to see your affiliate status!');
                 showRegisterModal();
             }
+        }
+
+        // ============================================================
+        // PULL TO REFRESH
+        // ============================================================
+        function setupPullToRefresh() {
+            const pagesContainer = document.getElementById('pagesContainer');
+            const indicator = document.getElementById('pullToRefreshIndicator');
+            const refreshText = document.getElementById('pullToRefreshText');
+            const refreshIcon = document.getElementById('refreshIcon');
+
+            pagesContainer.addEventListener('touchstart', function(e) {
+                const page = document.querySelector('.page:not([style*="display: none"])');
+                if (page && page.scrollTop === 0) {
+                    touchStartY = e.touches[0].clientY;
+                    isPulling = true;
+                }
+            }, { passive: true });
+
+            pagesContainer.addEventListener('touchmove', function(e) {
+                if (!isPulling) return;
+
+                const touchY = e.touches[0].clientY;
+                const diff = touchY - touchStartY;
+
+                if (diff > 0 && diff < 150) {
+                    indicator.style.top = (diff - 60) + 'px';
+                    if (diff > pullThreshold) {
+                        refreshText.textContent = 'Release to refresh';
+                        refreshIcon.className = 'refresh-icon material-symbols-rounded spinning';
+                    } else {
+                        refreshText.textContent = 'Pull down to refresh';
+                        refreshIcon.className = 'refresh-icon material-symbols-rounded';
+                    }
+                }
+            }, { passive: true });
+
+            pagesContainer.addEventListener('touchend', function(e) {
+                if (!isPulling) return;
+                isPulling = false;
+
+                const diff = e.changedTouches[0].clientY - touchStartY;
+
+                if (diff > pullThreshold) {
+                    refreshText.textContent = 'Refreshing...';
+                    refreshIcon.className = 'refresh-icon material-symbols-rounded spinning';
+
+                    performRefresh();
+
+                    setTimeout(() => {
+                        indicator.style.top = '-60px';
+                        refreshText.textContent = 'Pull down to refresh';
+                        refreshIcon.className = 'refresh-icon material-symbols-rounded';
+                    }, 1500);
+                } else {
+                    indicator.style.top = '-60px';
+                    refreshText.textContent = 'Pull down to refresh';
+                    refreshIcon.className = 'refresh-icon material-symbols-rounded';
+                }
+            }, { passive: true });
+        }
+
+        async function performRefresh() {
+            if (!currentAffiliate) return;
+
+            showToast('🔄 Refreshing dashboard...', '');
+
+            await loadSalesFromSupabase(currentAffiliate.code);
+            await loadReferralData();
+            await renderDashboard();
+
+            showToast('✅ Dashboard refreshed!', 'success');
+        }
+
+        function showPullToRefreshTutorial() {
+            const tutorialShown = localStorage.getItem(STORAGE_KEYS.TUTORIAL_SHOWN);
+            if (tutorialShown) return;
+
+            const tutorial = document.getElementById('pullToRefreshTutorial');
+            tutorial.classList.add('show');
+
+            setTimeout(() => {
+                tutorial.classList.remove('show');
+                localStorage.setItem(STORAGE_KEYS.TUTORIAL_SHOWN, 'true');
+            }, 6000);
         }
 
         // ============================================================
@@ -4154,6 +4264,7 @@ Thank you! 🦈`;
                         if (dot) dot.style.display = 'inline-block';
 
                         await loadSalesFromSupabase(currentAffiliate.code);
+                        await loadReferralData();
                         await renderDashboard();
 
                         if (row.status === 'forwarded') {
@@ -4165,6 +4276,19 @@ Thank you! 🦈`;
                         setTimeout(() => {
                             if (dot) dot.style.display = 'none';
                         }, 3000);
+                    })
+                    .on('postgres_changes', {
+                        event: 'INSERT',
+                        schema: 'public',
+                        table: 'referral_earnings'
+                    }, async (payload) => {
+                        const row = payload.new;
+                        if (row.parent_code === currentAffiliate.code) {
+                            console.log('📡 New referral earning detected!');
+                            await loadReferralData();
+                            await renderDashboard();
+                            showToast('🤝 New referral commission earned! +2,000 UGX', 'success');
+                        }
                     })
                     .subscribe((status) => {
                         console.log('📡 Realtime subscription status:', status);
@@ -4275,28 +4399,37 @@ Thank you! 🦈`;
                 return;
             }
 
+            // Update avatar
             if (currentAffiliate.avatar_url && currentAffiliate.avatar_url.startsWith('http')) {
                 updateDashboardAvatar(currentAffiliate.avatar_url);
             } else {
                 updateDashboardAvatar(null);
             }
 
+            // Profile Info
             document.getElementById('dashboardUsername').textContent = currentAffiliate.username || '@username';
             document.getElementById('dashboardName').textContent = currentAffiliate.name || 'Affiliate Name';
 
+            // Bank Card
             document.getElementById('cardCode').textContent = currentAffiliate.code || '•••• ••••';
             document.getElementById('cardHolderName').textContent = currentAffiliate.name.toUpperCase() || 'AFFILIATE';
             document.getElementById('cardBalance').textContent = stats.balance.toLocaleString() + ' UGX';
 
+            // Balance Card - Combined earnings
             document.getElementById('balanceAmount').textContent = stats.balance.toLocaleString() + ' UGX';
             document.getElementById('balanceTotalEarned').textContent = stats.totalEarned.toLocaleString() + ' UGX';
             document.getElementById('balanceForwarded').textContent = stats.forwarded.toLocaleString() + ' UGX';
             document.getElementById('balancePaid').textContent = stats.paidOff.toLocaleString() + ' UGX';
 
+            document.getElementById('balanceSalesEarnings').textContent = stats.totalEarned.toLocaleString() + ' UGX';
+            document.getElementById('balanceReferralEarnings').textContent = stats.referralEarnings.toLocaleString() + ' UGX';
+
+            // Stats
             document.getElementById('statSales').textContent = stats.totalSales;
             document.getElementById('statEarnings').textContent = stats.totalEarned.toLocaleString() + ' UGX';
             document.getElementById('statForwarded').textContent = stats.forwarded.toLocaleString() + ' UGX';
 
+            // Visit Stats
             const visitCount = await getAffiliateVisits(currentAffiliate.code);
             const conversionRate = await getConversionRate(currentAffiliate.code);
             const perVisit = visitCount > 0 ? Math.round(stats.totalEarned / visitCount) : 0;
@@ -4305,12 +4438,15 @@ Thank you! 🦈`;
             document.getElementById('affiliateConversion').textContent = conversionRate + '%';
             document.getElementById('affiliatePerVisit').textContent = perVisit.toLocaleString() + ' UGX';
 
+            // Share Stats
             document.getElementById('shareTotalEarnings').textContent = stats.totalEarned.toLocaleString() + ' UGX';
             document.getElementById('shareTotalSales').textContent = stats.totalSales;
 
+            // Affiliate Link
             const link = `https://linknvibeplatform.github.io/sharpi-signals/?ref=${currentAffiliate.code}`;
             document.getElementById('affiliateLinkDisplay').textContent = link;
 
+            // Achievements
             document.getElementById('achInvites').textContent = visitCount || 0;
             document.getElementById('achPurchases').textContent = stats.totalSales || 0;
 
@@ -4319,6 +4455,99 @@ Thank you! 🦈`;
                 document.getElementById('daysActive').textContent = days || 0;
             }
 
+            // ============================================================
+            // REFERRAL CARD UPDATE
+            // ============================================================
+            const canInvite = canInviteAffiliates();
+            const inviteStatusEl = document.getElementById('inviteLinkStatus');
+            const inviteLinkDisplay = document.getElementById('affiliateInviteLinkDisplay');
+            const copyInviteBtn = document.getElementById('copyInviteLinkBtn');
+
+            if (canInvite) {
+                inviteStatusEl.textContent = '🔓 Unlocked';
+                inviteStatusEl.style.background = 'rgba(52,211,153,0.1)';
+                inviteStatusEl.style.color = 'var(--text-green)';
+
+                const inviteLink = getAffiliateInviteLink();
+                inviteLinkDisplay.textContent = inviteLink || 'Loading...';
+                inviteLinkDisplay.style.color = 'var(--text-primary)';
+                copyInviteBtn.disabled = false;
+            } else {
+                inviteStatusEl.textContent = '🔒 Locked';
+                inviteStatusEl.style.background = 'rgba(251,191,36,0.1)';
+                inviteStatusEl.style.color = 'var(--text-gold)';
+
+                inviteLinkDisplay.textContent = 'Complete your first sale to unlock';
+                inviteLinkDisplay.style.color = 'var(--text-muted)';
+                copyInviteBtn.disabled = true;
+            }
+
+            document.getElementById('totalReferrals').textContent = stats.totalReferrals || 0;
+            document.getElementById('activeReferrals').textContent = stats.activeReferrals || 0;
+            document.getElementById('referralEarnings').textContent = stats.referralEarnings.toLocaleString() + ' UGX';
+            document.getElementById('referredCount').textContent = stats.totalReferrals || 0;
+
+            // Referral earnings list
+            const referralEarningsList = document.getElementById('referralEarningsList');
+            const pendingReferrals = referralData.earnings.filter(e => e.status === 'pending' || e.status === 'forwarded');
+            const pendingCount = pendingReferrals.length;
+            document.getElementById('referralPendingCount').textContent = pendingCount + ' pending';
+
+            if (pendingReferrals.length === 0) {
+                referralEarningsList.innerHTML = `
+                    <div style="color:var(--text-muted);font-size:12px;text-align:center;padding:10px 0;">
+                        No pending referral commissions.
+                    </div>
+                `;
+            } else {
+                let html = '';
+                pendingReferrals.slice(0, 5).forEach(e => {
+                    const statusText = e.status === 'forwarded' ? '📤 Forwarded' : '⏳ Pending';
+                    html += `
+                        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border-glass-light);font-size:11px;">
+                            <span style="color:var(--text-secondary);">${e.child_code || 'Affiliate'}</span>
+                            <span style="color:var(--text-gold);">${e.amount.toLocaleString()} UGX</span>
+                            <span style="color:var(--text-muted);font-size:9px;">${statusText}</span>
+                        </div>
+                    `;
+                });
+                if (pendingReferrals.length > 5) {
+                    html += `<div style="font-size:10px;color:var(--text-muted);text-align:center;padding:4px 0;">+${pendingReferrals.length - 5} more</div>`;
+                }
+                referralEarningsList.innerHTML = html;
+            }
+
+            // Referrals list
+            const referralsList = document.getElementById('referralsList');
+            if (referralData.referrals.length === 0) {
+                referralsList.innerHTML = `
+                    <div style="color:var(--text-muted);font-size:12px;text-align:center;padding:10px 0;">
+                        No affiliates referred yet. Share your invite link!
+                    </div>
+                `;
+            } else {
+                let html = '';
+                referralData.referrals.slice(0, 5).forEach(ref => {
+                    const childEarnings = referralData.earnings.filter(e => e.child_code === ref.child_code);
+                    const totalChildEarnings = childEarnings.reduce((sum, e) => sum + e.amount, 0);
+                    const statusText = ref.status === 'active' ? '✅ Active' : '⏳ Inactive';
+                    html += `
+                        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border-glass-light);font-size:11px;">
+                            <span style="color:var(--text-primary);">${ref.child_username || ref.child_name}</span>
+                            <span style="color:var(--text-secondary);font-size:9px;">${statusText}</span>
+                            <span style="color:var(--text-gold);">${totalChildEarnings.toLocaleString()} UGX</span>
+                        </div>
+                    `;
+                });
+                if (referralData.referrals.length > 5) {
+                    html += `<div style="font-size:10px;color:var(--text-muted);text-align:center;padding:4px 0;">+${referralData.referrals.length - 5} more</div>`;
+                }
+                referralsList.innerHTML = html;
+            }
+
+            // ============================================================
+            // COMMISSIONS LIST – ONLY FORWARDED SALES
+            // ============================================================
             const commissionList = document.getElementById('commissionList');
 
             if (affForwarded.length === 0 && affPaid.length === 0) {
@@ -4331,16 +4560,19 @@ Thank you! 🦈`;
             } else {
                 let html = '';
 
+                // Show forwarded (pending) commissions
                 if (affForwarded.length > 0) {
-                    html += `
+                    const salesOnly = affForwarded.filter(s => !s.isReferral);
+                    if (salesOnly.length > 0) {
+                        html += `
                             <div style="margin-bottom:8px;">
-                                <span style="font-size:11px;font-weight:600;color:var(--text-secondary);">⏳ Forwarded Commissions</span>
-                                <span style="font-size:10px;color:var(--text-muted);margin-left:6px;">(${affForwarded.length})</span>
+                                <span style="font-size:11px;font-weight:600;color:var(--text-secondary);">⏳ Forwarded Sales</span>
+                                <span style="font-size:10px;color:var(--text-muted);margin-left:6px;">(${salesOnly.length})</span>
                                 ${isRealtimeConnected ? `<span style="font-size:9px;color:var(--text-green);margin-left:6px;">● Live</span>` : ''}
                             </div>
                         `;
-                    affForwarded.forEach(s => {
-                        html += `
+                        salesOnly.forEach(s => {
+                            html += `
                                 <div class="commission-card" style="border-left:3px solid var(--text-gold);">
                                     <div class="header">
                                         <div>
@@ -4351,29 +4583,34 @@ Thank you! 🦈`;
                                     </div>
                                     <div class="details">
                                         📅 ${new Date(s.date).toLocaleDateString()} · <span style="color:var(--text-gold);">📤 Forwarded</span>
+                                        ${s.isReferral ? ' · 🤝 Referral Commission' : ''}
                                     </div>
                                     ${s.paid_key ? `
                                             <div class="key-row">🔑 ${s.paid_key}</div>
                                             <div class="actions">
                                                 <button class="key-copy-btn" onclick="copyKeyToClipboard('${s.paid_key}')">📋 Copy Key</button>
-                                                <button class="withdraw-btn" onclick="withdrawSingleKey('${s.paid_key}', 20000)">💰 Withdraw</button>
+                                                <button class="withdraw-btn" onclick="withdrawSingleKey('${s.paid_key}', ${s.amount || 20000})">💰 Withdraw</button>
                                             </div>
                                         ` : ''}
                                 </div>
                             `;
-                    });
+                        });
+                    }
                 }
 
+                // Show paid commissions
                 if (affPaid.length > 0) {
-                    html += `
+                    const paidSales = affPaid.filter(s => !s.isReferral);
+                    if (paidSales.length > 0) {
+                        html += `
                             <div style="margin:12px 0 8px 0;">
                                 <span style="font-size:11px;font-weight:600;color:var(--text-secondary);">✅ Paid Commissions</span>
-                                <span style="font-size:10px;color:var(--text-muted);margin-left:6px;">(${affPaid.length})</span>
+                                <span style="font-size:10px;color:var(--text-muted);margin-left:6px;">(${paidSales.length})</span>
                             </div>
                         `;
-                    affPaid.forEach(s => {
-                        const paidDate = s.paid_at ? new Date(s.paid_at).toLocaleDateString() : 'Unknown';
-                        html += `
+                        paidSales.forEach(s => {
+                            const paidDate = s.paid_at ? new Date(s.paid_at).toLocaleDateString() : 'Unknown';
+                            html += `
                                 <div class="commission-card" style="border-left:3px solid var(--text-green);opacity:0.8;">
                                     <div class="header">
                                         <div>
@@ -4385,20 +4622,24 @@ Thank you! 🦈`;
                                     <div class="details">
                                         📅 ${new Date(s.date).toLocaleDateString()} · <span style="color:var(--text-green);">✅ Paid</span>
                                         ${s.paid_at ? ` · 💳 ${paidDate}` : ''}
+                                        ${s.isReferral ? ' · 🤝 Referral Commission' : ''}
                                     </div>
                                     ${s.paid_key ? `
                                             <div class="key-row" style="color:var(--text-muted);">🔑 ${s.paid_key} <span style="color:var(--text-green);">(Used - One Time)</span></div>
                                         ` : ''}
                                 </div>
                             `;
-                    });
+                        });
+                    }
                 }
 
-                if (affForwarded.length > 0) {
+                // Withdraw All button
+                const salesForwarded = affForwarded.filter(s => !s.isReferral);
+                if (salesForwarded.length > 0) {
                     html += `
                             <div style="margin-top:12px;">
                                 <button onclick="withdrawAllKeys()" style="background:var(--text-red);color:white;border:none;border-radius:8px;padding:10px;font-weight:600;font-size:13px;cursor:pointer;width:100%;font-family:inherit;transition:all .2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-                                    💰 Withdraw All (${affForwarded.length} keys · ${(affForwarded.length * 20000).toLocaleString()} UGX)
+                                    💰 Withdraw All (${salesForwarded.length} keys · ${(salesForwarded.length * 20000).toLocaleString()} UGX)
                                 </button>
                             </div>
                         `;
@@ -4407,7 +4648,10 @@ Thank you! 🦈`;
                 commissionList.innerHTML = html;
             }
 
+            // Update Chart
             await updateChart();
+
+            // Goals
             updateGoals();
 
             console.log('✅ Dashboard rendered successfully');
@@ -4420,6 +4664,18 @@ Thank you! 🦈`;
             loadTheme();
             initSupabase();
 
+            // Check for invite link params
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref');
+            const mode = urlParams.get('mode');
+
+            if (refCode && mode === 'invite') {
+                console.log('🔗 Invite link detected from:', refCode);
+                setTimeout(() => {
+                    showRegisterModal();
+                }, 1500);
+            }
+
             setTimeout(() => {
                 if (!localStorage.getItem('popupShown')) {
                     showPopup();
@@ -4431,6 +4687,7 @@ Thank you! 🦈`;
                 console.log('🔄 Session found for:', currentAffiliate.code);
 
                 await loadSalesFromSupabase(currentAffiliate.code);
+                await loadReferralData();
                 goToPage(1);
                 await renderDashboard();
 
@@ -4442,6 +4699,7 @@ Thank you! 🦈`;
                     if (currentAffiliate && !isRefreshing) {
                         isRefreshing = true;
                         await loadSalesFromSupabase(currentAffiliate.code);
+                        await loadReferralData();
                         await renderDashboard();
                         isRefreshing = false;
                     }
@@ -4456,7 +4714,7 @@ Thank you! 🦈`;
             // Setup pull to refresh
             setupPullToRefresh();
 
-            console.log('🦈 SHARPI Affiliate App v3.0 - CORRECT WORKFLOW');
+            console.log('🦈 SHARPI Affiliate App v3.0 - WITH REFERRAL SYSTEM');
             console.log('✅ ONLY FORWARDED sales = commission');
             console.log('✅ Realtime listener - NO filter');
             console.log('✅ Auto-refresh every 15 seconds');
@@ -4465,6 +4723,9 @@ Thank you! 🦈`;
             console.log('✅ Withdrawal modal with mobile money details');
             console.log('✅ Phone number confirmation (enter twice)');
             console.log('✅ Pull to refresh: slide down from top');
+            console.log('✅ Affiliate referral system: 10% commission on referrals');
+            console.log('✅ Invite link unlocks after Goal 1 completed');
+            console.log('✅ FIXED: Infinite recursion bug resolved');
         })();
 
         // ============================================================
@@ -4500,12 +4761,16 @@ Thank you! 🦈`;
         window.shareOnTwitter = shareOnTwitter;
         window.shareOnFacebook = shareOnFacebook;
         window.copyAffiliateLink = copyAffiliateLink;
+        window.copyInviteLink = copyInviteLink;
+        window.shareInviteLink = shareInviteLink;
         window.updateSlider = updateSlider;
         window.openWhatsApp = openWhatsApp;
         window.openWhatsAppWithContext = openWhatsAppWithContext;
         window.triggerProfilePhotoUpload = triggerProfilePhotoUpload;
         window.handleDashboardProfileUpload = handleDashboardProfileUpload;
         window.getShareLink = getShareLink;
+        window.getAffiliateInviteLink = getAffiliateInviteLink;
+        window.canInviteAffiliates = canInviteAffiliates;
         window.showPopup = showPopup;
         window.closePopup = closePopup;
         window.copyKeyToClipboard = copyKeyToClipboard;
