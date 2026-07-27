@@ -1,0 +1,50 @@
+{
+  "name": "SHARPI Affiliate",
+  "short_name": "SHARPI",
+  "description": "SHARPI Affiliate Dashboard - Earn 20,000 UGX per sale",
+  "start_url": "/?mode=affiliate",
+  "display": "standalone",
+  "background_color": "#f4f7fc",
+  "theme_color": "#0b1e33",
+  "orientation": "portrait",
+  "categories": ["finance", "business"],
+  "lang": "en",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "iosicon1.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "iosicon2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your affiliate dashboard",
+      "url": "/",
+      "icons": [
+        {
+          "src": "iosicon1.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Register",
+      "short_name": "Register",
+      "description": "Create affiliate account",
+      "url": "/?register=true"
+    }
+  ],
+  "scope": "/",
+  "id": "/",
+  "display_override": ["standalone", "minimal-ui"]
+}
