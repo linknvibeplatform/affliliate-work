@@ -2805,6 +2805,7 @@
     <script>
         // ============================================================
         // AFFILIATE DASHBOARD – COMPLETE FIXED VERSION
+        // READS AMOUNTS FROM DATABASE - NO HARDCODING
         // ============================================================
 
         // ============================================================
@@ -3345,7 +3346,7 @@
         }
 
         // ============================================================
-        // LOAD SALES – ONLY FORWARDED + PAID (CORS FIXED)
+        // LOAD SALES – READS AMOUNTS FROM DATABASE (NO HARDCODING)
         // ============================================================
         async function loadSalesFromSupabase(code) {
             if (!supabaseClient || !code) {
@@ -3375,11 +3376,13 @@
                     
                     if (retryError) throw retryError;
                     const allData = retryData || [];
+                    
+                    // ✅ FIXED: Read amount from database - NO HARDCODING
                     const mappedSales = allData.map(s => ({
                         id: s.id,
                         userName: s.user_name || 'Unknown',
                         package: s.package || 'Package',
-                        amount: 20000, // ✅ FIXED: Always 20,000 UGX for commission
+                        amount: s.amount || 0, // Read from database
                         promoCode: s.promo_code,
                         date: s.created_at || new Date().toISOString(),
                         status: s.status || 'forwarded',
@@ -3400,17 +3403,19 @@
                     affForwarded = mappedSales.filter(s => s.status === 'forwarded');
                     affPaid = mappedSales.filter(s => s.status === 'paid');
                     console.log(`✅ Loaded: ${affForwarded.length} forwarded, ${affPaid.length} paid`);
+                    console.log(`📊 Amounts loaded from database:`, affForwarded.map(s => ({ userName: s.userName, amount: s.amount })));
                     return true;
                 }
 
                 const allData = data || [];
                 console.log(`📊 Found ${allData.length} forwarded/paid sales for affiliate`);
 
+                // ✅ FIXED: Read amount from database - NO HARDCODING
                 const mappedSales = allData.map(s => ({
                     id: s.id,
                     userName: s.user_name || 'Unknown',
                     package: s.package || 'Package',
-                    amount: 20000, // ✅ FIXED: Always 20,000 UGX for commission
+                    amount: s.amount || 0, // Read from database
                     promoCode: s.promo_code,
                     date: s.created_at || new Date().toISOString(),
                     status: s.status || 'forwarded',
@@ -3432,6 +3437,7 @@
                 affPaid = mappedSales.filter(s => s.status === 'paid');
 
                 console.log(`✅ Loaded: ${affForwarded.length} forwarded, ${affPaid.length} paid`);
+                console.log(`📊 Amounts loaded from database:`, affForwarded.map(s => ({ userName: s.userName, amount: s.amount })));
 
                 return true;
             } catch (e) {
@@ -3609,7 +3615,7 @@
         }
 
         // ============================================================
-        // GET DASHBOARD STATS - WITH CORRECT AMOUNTS
+        // GET DASHBOARD STATS - READS FROM DATABASE
         // ============================================================
         function getDashboardStats() {
             if (!currentAffiliate) return null;
@@ -3618,17 +3624,13 @@
             const salesForwarded = affForwarded.filter(s => !s.isReferral);
             const salesPaid = affPaid.filter(s => !s.isReferral);
 
-            // ✅ CORRECT: Each sale is 20,000 UGX (100%)
-            const forwardedCount = salesForwarded.length;
-            const forwardedTotal = forwardedCount * 20000;
-
-            const paidCount = salesPaid.length;
-            const paidTotal = paidCount * 20000;
-
+            // ✅ CORRECT: Sum amounts from database (no hardcoding)
+            const forwardedTotal = salesForwarded.reduce((sum, s) => sum + (s.amount || 0), 0);
+            const paidTotal = salesPaid.reduce((sum, s) => sum + (s.amount || 0), 0);
+            const totalEarned = forwardedTotal + paidTotal;
             const totalSales = salesForwarded.length + salesPaid.length;
-            const totalEarned = totalSales * 20000;
 
-            // Referral earnings (10% = 2,000 UGX each)
+            // Referral earnings (from referral_earnings table)
             const referralTotal = referralData.pendingEarnings || 0;
 
             // Total available balance = forwarded sales + referral earnings
@@ -3806,7 +3808,7 @@ Thank you! 🦈`;
         }
 
         // ============================================================
-        // WITHDRAW FUNCTIONS - WITH CORRECT AMOUNTS
+        // WITHDRAW FUNCTIONS - WITH CORRECT AMOUNTS FROM DATABASE
         // ============================================================
         function withdrawSingleKey(key, amount) {
             if (!key) {
@@ -3814,17 +3816,17 @@ Thank you! 🦈`;
                 return;
             }
 
-            // Find the sale or referral earning
+            // Find the sale
             const sale = affForwarded.find(s => s.paid_key === key);
             if (sale) {
-                showWithdrawalModal([key], 20000, 'single');
+                showWithdrawalModal([key], sale.amount || 0, 'single');
                 return;
             }
 
             // Check if it's a referral earning
             const referralEarning = referralData.earnings.find(e => e.id === key || e.paid_key === key);
             if (referralEarning) {
-                showWithdrawalModal([key], referralEarning.amount || 2000, 'single');
+                showWithdrawalModal([key], referralEarning.amount || 0, 'single');
                 return;
             }
 
@@ -3836,19 +3838,19 @@ Thank you! 🦈`;
             const allKeys = [];
             let totalAmount = 0;
 
-            // Add sales keys (20,000 UGX each)
+            // Add sales keys with their amounts from database
             affForwarded.forEach(s => {
                 if (s.paid_key) {
-                    allKeys.push({ key: s.paid_key, amount: 20000 });
-                    totalAmount += 20000;
+                    allKeys.push({ key: s.paid_key, amount: s.amount || 0 });
+                    totalAmount += (s.amount || 0);
                 }
             });
 
-            // Add referral earning keys (2,000 UGX each)
+            // Add referral earning keys with their amounts from database
             referralData.earnings.forEach(e => {
                 if (e.paid_key) {
-                    allKeys.push({ key: e.paid_key, amount: e.amount || 2000 });
-                    totalAmount += (e.amount || 2000);
+                    allKeys.push({ key: e.paid_key, amount: e.amount || 0 });
+                    totalAmount += (e.amount || 0);
                 }
             });
 
@@ -4004,7 +4006,10 @@ Thank you! 🦈`;
         // ============================================================
         function updateSlider() {
             const val = parseInt(document.getElementById('inviteSlider').value);
-            const earnings = val * 20000;
+            // Get the first sale amount or default to 20000
+            const firstSale = affForwarded.find(s => !s.isReferral);
+            const perSaleAmount = firstSale ? firstSale.amount : 20000;
+            const earnings = val * perSaleAmount;
             document.getElementById('sliderValue').textContent = val;
             document.getElementById('sliderEarnings').textContent = earnings.toLocaleString() + ' UGX';
         }
@@ -4490,7 +4495,7 @@ Thank you! 🦈`;
                         await renderDashboard();
 
                         if (row.status === 'forwarded') {
-                            showToast('📤 New sale forwarded to you! +20,000 UGX', 'success');
+                            showToast(`📤 New sale forwarded to you! +${row.amount || '20,000'} UGX`, 'success');
                         } else if (row.status === 'paid') {
                             showToast('✅ Commission paid! Check your Paid Off balance.', 'success');
                         }
@@ -4509,7 +4514,7 @@ Thank you! 🦈`;
                             console.log('📡 New referral earning detected!');
                             await loadReferralData();
                             await renderDashboard();
-                            showToast('🤝 New referral commission earned! +2,000 UGX', 'success');
+                            showToast(`🤝 New referral commission earned! +${row.amount || '2,000'} UGX`, 'success');
                         }
                     })
                     .subscribe((status) => {
@@ -4605,7 +4610,7 @@ Thank you! 🦈`;
         }
 
         // ============================================================
-        // RENDER DASHBOARD - FIXED WITH CORRECT AMOUNTS
+        // RENDER DASHBOARD - READS AMOUNTS FROM DATABASE
         // ============================================================
         async function renderDashboard() {
             if (!currentAffiliate) {
@@ -4637,7 +4642,7 @@ Thank you! 🦈`;
             document.getElementById('cardHolderName').textContent = currentAffiliate.name.toUpperCase() || 'AFFILIATE';
             document.getElementById('cardBalance').textContent = stats.balance.toLocaleString() + ' UGX';
 
-            // Balance Card - Combined earnings (20,000 UGX per sale)
+            // Balance Card - Using amounts from database
             document.getElementById('balanceAmount').textContent = stats.balance.toLocaleString() + ' UGX';
             document.getElementById('balanceTotalEarned').textContent = stats.totalEarned.toLocaleString() + ' UGX';
             document.getElementById('balanceForwarded').textContent = stats.forwarded.toLocaleString() + ' UGX';
@@ -4767,15 +4772,14 @@ Thank you! 🦈`;
             }
 
             // ============================================================
-            // COMMISSIONS LIST – ONLY FORWARDED (PENDING) CARDS
-            // PAID CARDS ARE AUTO-DISCARDED
+            // COMMISSIONS LIST – DISPLAYS AMOUNTS FROM DATABASE
             // ============================================================
             const commissionList = document.getElementById('commissionList');
 
             // Build combined list of pending items (sales + referral earnings)
             let pendingItems = [];
 
-            // Add forwarded sales (20,000 UGX each)
+            // Add forwarded sales with amounts from database
             affForwarded.forEach(s => {
                 if (!s.isReferral) {
                     pendingItems.push({
@@ -4783,7 +4787,7 @@ Thank you! 🦈`;
                         id: s.id,
                         userName: s.userName,
                         package: s.package,
-                        amount: 20000, // ✅ Fixed: Always 20,000 UGX
+                        amount: s.amount || 0, // From database
                         date: s.date,
                         paid_key: s.paid_key,
                         is_referral: s.is_referral || false,
@@ -4795,7 +4799,7 @@ Thank you! 🦈`;
                 }
             });
 
-            // Add referral earnings (2,000 UGX each)
+            // Add referral earnings with amounts from database
             referralData.earnings.forEach(e => {
                 if (e.status === 'forwarded') {
                     pendingItems.push({
@@ -4803,12 +4807,12 @@ Thank you! 🦈`;
                         id: e.id,
                         userName: e.child_name || 'Referral Affiliate',
                         package: 'Referral',
-                        amount: e.amount || 2000, // 10% = 2,000 UGX
+                        amount: e.amount || 0, // From database
                         date: e.created_at || new Date().toISOString(),
                         paid_key: e.paid_key || null,
                         is_referral: true,
                         child_amount: 0,
-                        parent_amount: e.amount || 2000,
+                        parent_amount: e.amount || 0,
                         isSplit: true,
                         raw: e,
                         parent_code: e.parent_code
@@ -4829,7 +4833,6 @@ Thank you! 🦈`;
             } else {
                 let html = '';
 
-                // Show count of pending items
                 html += `
                     <div style="margin-bottom:8px;">
                         <span style="font-size:11px;font-weight:600;color:var(--text-secondary);">⏳ Pending Commissions</span>
@@ -4841,11 +4844,20 @@ Thank you! 🦈`;
                 pendingItems.forEach(item => {
                     const isSplit = item.isSplit;
                     const isReferral = item.type === 'referral';
-                    const amount = item.amount || 20000;
+                    const amount = item.amount || 0;
                     const splitInfo = isSplit ? ` (90/10 Split)` : ` (100%)`;
                     const typeLabel = isReferral ? '🤝 Referral (10%)' : '💰 Sale';
                     const cardColor = isReferral ? 'var(--text-purple)' : 'var(--text-gold)';
                     const borderColor = isReferral ? '3px solid var(--text-purple)' : '3px solid var(--text-gold)';
+
+                    // Build split info from database values
+                    let splitDetails = '';
+                    if (isSplit && !isReferral && item.child_amount > 0) {
+                        splitDetails = ` · Child: ${(item.child_amount).toLocaleString()} UGX (90%) | Parent: ${(item.parent_amount || 0).toLocaleString()} UGX (10%)`;
+                    }
+                    if (isReferral) {
+                        splitDetails = ` · You earned 10% (${amount.toLocaleString()} UGX)`;
+                    }
 
                     html += `
                         <div class="commission-card" style="border-left: ${borderColor};">
@@ -4854,15 +4866,14 @@ Thank you! 🦈`;
                                     <span style="font-weight:600;font-size:13px;color:var(--text-primary);">${item.userName}</span>
                                     <span style="font-size:11px;color:var(--text-secondary);margin-left:6px;">${item.package}</span>
                                     ${isSplit ? `<span style="font-size:9px;color:var(--text-purple);margin-left:4px;">🤝 Split</span>` : ''}
-                                    <span style="font-size:9px;color:${cardColor};margin-left:4px;">${typeLabel} ${splitInfo}</span>
+                                    <span style="font-size:9px;color:${cardColor};margin-left:4px;">${typeLabel}</span>
                                 </div>
                                 <div class="amount">${amount.toLocaleString()} UGX</div>
                             </div>
                             <div class="details">
                                 📅 ${new Date(item.date).toLocaleDateString()} · <span style="color:var(--text-gold);">📤 Forwarded</span>
                                 ${isReferral ? ` · Parent Affiliate: ${item.parent_code || 'N/A'}` : ''}
-                                ${isSplit && !isReferral ? ` · Child: ${(item.child_amount || 18000).toLocaleString()} UGX (90%) | Parent: ${(item.parent_amount || 2000).toLocaleString()} UGX (10%)` : ''}
-                                ${isReferral ? ` · You earned 10% (${item.amount.toLocaleString()} UGX)` : ''}
+                                ${splitDetails}
                             </div>
                             ${item.paid_key ? `
                                     <div class="key-row">🔑 ${item.paid_key}</div>
@@ -4881,15 +4892,15 @@ Thank you! 🦈`;
             }
 
             // ============================================================
-            // WITHDRAW ALL CARD - Includes both sales AND referral earnings
+            // WITHDRAW ALL CARD - Calculates from database amounts
             // ============================================================
             // Count total pending keys (sales + referrals)
             const salesKeys = affForwarded.filter(s => !s.isReferral && s.paid_key).length;
             const referralKeys = referralData.earnings.filter(e => e.status === 'forwarded' && e.paid_key).length;
             const totalPendingKeys = salesKeys + referralKeys;
             
-            // Calculate total amount (sales: 20,000 each, referrals: 2,000 each)
-            const salesAmount = affForwarded.filter(s => !s.isReferral).length * 20000;
+            // Calculate total amount from database values
+            const salesAmount = affForwarded.filter(s => !s.isReferral).reduce((sum, s) => sum + (s.amount || 0), 0);
             const referralAmount = referralData.pendingEarnings || 0;
             const withdrawAllAmount = salesAmount + referralAmount;
             
@@ -4972,9 +4983,9 @@ Thank you! 🦈`;
             setupPullToRefresh();
 
             console.log('🦈 SHARPI Affiliate App v3.0 - COMPLETE FIXED');
-            console.log('✅ 100% = 20,000 UGX (1 party)');
-            console.log('✅ 90% = 18,000 UGX / 10% = 2,000 UGX (2 parties)');
-            console.log('✅ 10% referral earnings have their own payment keys');
+            console.log('✅ Reads amounts from database - NO HARDCODING');
+            console.log('✅ 1 Party: 20,000 UGX | 2 Parties: 18,000/2,000 UGX');
+            console.log('✅ Referral earnings have their own payment keys');
             console.log('✅ Withdraw All includes sales + referral earnings');
             console.log('✅ Paid cards auto-discarded (only pending shown)');
             console.log('✅ CORS fixed with custom headers and retry logic');
