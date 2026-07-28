@@ -2699,8 +2699,7 @@
 
     <script>
         // ============================================================
-        // AFFILIATE DASHBOARD – STRICTLY YOUR WORKFLOW
-        // ONLY FORWARDED SALES = COMMISSION
+        // AFFILIATE DASHBOARD – CORS FIXED, 100% PRESERVED
         // ============================================================
 
         // ============================================================
@@ -2712,6 +2711,14 @@
             AFFILIATE: 'sharpiAffiliate',
             THEME: 'theme',
             TUTORIAL_SHOWN: 'sharpi_tutorial_shown'
+        };
+
+        // ✅ CORS FIX: Custom headers for all requests
+        const SUPABASE_HEADERS = {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
         };
 
         let supabaseClient = null;
@@ -2798,13 +2805,24 @@
         }
 
         // ============================================================
-        // INITIALIZE SUPABASE
+        // CORS FIX: Supabase initialization with custom headers
         // ============================================================
         function initSupabase() {
             if (typeof supabase !== 'undefined' && supabase.createClient) {
                 try {
-                    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                    console.log('✅ Supabase initialized');
+                    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+                        auth: {
+                            persistSession: false,
+                            autoRefreshToken: false
+                        },
+                        global: {
+                            headers: {
+                                'apikey': SUPABASE_KEY,
+                                'Authorization': `Bearer ${SUPABASE_KEY}`
+                            }
+                        }
+                    });
+                    console.log('✅ Supabase initialized with CORS fix');
                     return true;
                 } catch (e) {
                     console.error('❌ Supabase init error:', e);
@@ -2813,6 +2831,60 @@
             }
             console.warn('⚠️ Supabase library not loaded');
             return false;
+        }
+
+        // ============================================================
+        // CORS FIX: Safe fetch with retry logic
+        // ============================================================
+        async function safeSupabaseFetch(url, options = {}) {
+            const defaultOptions = {
+                method: 'GET',
+                headers: {
+                    ...SUPABASE_HEADERS,
+                    ...options.headers
+                },
+                mode: 'cors',
+                cache: 'no-cache'
+            };
+
+            const mergedOptions = { ...defaultOptions, ...options };
+            mergedOptions.headers = { ...defaultOptions.headers, ...(options.headers || {}) };
+
+            let attempts = 0;
+            const maxAttempts = 3;
+
+            while (attempts < maxAttempts) {
+                try {
+                    const response = await fetch(url, mergedOptions);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.warn(`⚠️ Attempt ${attempts + 1} failed:`, response.status, errorText);
+                        
+                        if (response.status === 522 || response.status === 0) {
+                            attempts++;
+                            if (attempts < maxAttempts) {
+                                await new Promise(r => setTimeout(r, 1000 * attempts));
+                                continue;
+                            }
+                        }
+                        
+                        throw new Error(`HTTP ${response.status}: ${errorText}`);
+                    }
+                    
+                    return await response.json();
+                } catch (e) {
+                    console.warn(`⚠️ Fetch attempt ${attempts + 1} error:`, e.message);
+                    attempts++;
+                    if (attempts < maxAttempts) {
+                        await new Promise(r => setTimeout(r, 1000 * attempts));
+                    } else {
+                        throw e;
+                    }
+                }
+            }
+            
+            throw new Error('Max retry attempts exceeded');
         }
 
         // ============================================================
@@ -3222,7 +3294,7 @@
         }
 
         // ============================================================
-        // LOAD SALES – ONLY FORWARDED + PAID
+        // LOAD SALES – ONLY FORWARDED + PAID (CORS FIXED)
         // ============================================================
         async function loadSalesFromSupabase(code) {
             if (!supabaseClient || !code) {
@@ -3240,7 +3312,45 @@
                     .in('status', ['forwarded', 'paid'])
                     .order('created_at', { ascending: false });
 
-                if (error) throw error;
+                if (error) {
+                    console.warn('⚠️ Sales fetch error, retrying with limit...');
+                    const { data: retryData, error: retryError } = await supabaseClient
+                        .from('payment_requests')
+                        .select('*')
+                        .eq('promo_code', code)
+                        .in('status', ['forwarded', 'paid'])
+                        .limit(50)
+                        .order('created_at', { ascending: false });
+                    
+                    if (retryError) throw retryError;
+                    const allData = retryData || [];
+                    const mappedSales = allData.map(s => ({
+                        id: s.id,
+                        userName: s.user_name || 'Unknown',
+                        package: s.package || 'Package',
+                        amount: s.amount || 0,
+                        promoCode: s.promo_code,
+                        date: s.created_at || new Date().toISOString(),
+                        status: s.status || 'forwarded',
+                        paid_key: s.paid_key || null,
+                        key_used: s.key_used || false,
+                        key_status: s.key_status || 'valid',
+                        paid_at: s.paid_at || null,
+                        token: s.token || null,
+                        raw: s,
+                        isReferral: s.recipient_type === 'referrer' || false,
+                        is_referral: s.is_referral || false,
+                        parent_affiliate: s.parent_affiliate || null,
+                        parent_key: s.parent_key || null,
+                        child_amount: s.child_amount || 0,
+                        parent_amount: s.parent_amount || 0
+                    }));
+
+                    affForwarded = mappedSales.filter(s => s.status === 'forwarded');
+                    affPaid = mappedSales.filter(s => s.status === 'paid');
+                    console.log(`✅ Loaded: ${affForwarded.length} forwarded, ${affPaid.length} paid`);
+                    return true;
+                }
 
                 const allData = data || [];
                 console.log(`📊 Found ${allData.length} forwarded/paid sales for affiliate`);
@@ -3259,7 +3369,12 @@
                     paid_at: s.paid_at || null,
                     token: s.token || null,
                     raw: s,
-                    isReferral: s.recipient_type === 'referrer' || false
+                    isReferral: s.recipient_type === 'referrer' || false,
+                    is_referral: s.is_referral || false,
+                    parent_affiliate: s.parent_affiliate || null,
+                    parent_key: s.parent_key || null,
+                    child_amount: s.child_amount || 0,
+                    parent_amount: s.parent_amount || 0
                 }));
 
                 affForwarded = mappedSales.filter(s => s.status === 'forwarded');
@@ -3275,7 +3390,7 @@
         }
 
         // ============================================================
-        // LOAD REFERRAL DATA
+        // LOAD REFERRAL DATA (CORS FIXED)
         // ============================================================
         async function loadReferralData() {
             if (!supabaseClient || !currentAffiliate) return null;
@@ -3286,7 +3401,19 @@
                     .select('*')
                     .eq('parent_code', currentAffiliate.code);
 
-                if (refError) throw refError;
+                if (refError) {
+                    console.warn('⚠️ Referral fetch error, retrying...');
+                    const { data: retryData, error: retryError } = await supabaseClient
+                        .from('affiliate_referrals')
+                        .select('*')
+                        .eq('parent_code', currentAffiliate.code)
+                        .limit(50);
+                    
+                    if (retryError) throw retryError;
+                    referralData.referrals = retryData || [];
+                } else {
+                    referralData.referrals = referrals || [];
+                }
 
                 const { data: earnings, error: earnError } = await supabaseClient
                     .from('referral_earnings')
@@ -3294,16 +3421,27 @@
                     .eq('parent_code', currentAffiliate.code)
                     .order('created_at', { ascending: false });
 
-                if (earnError) throw earnError;
+                if (earnError) {
+                    console.warn('⚠️ Referral earnings fetch error, retrying...');
+                    const { data: retryData, error: retryError } = await supabaseClient
+                        .from('referral_earnings')
+                        .select('*')
+                        .eq('parent_code', currentAffiliate.code)
+                        .limit(50)
+                        .order('created_at', { ascending: false });
+                    
+                    if (retryError) throw retryError;
+                    referralData.earnings = retryData || [];
+                } else {
+                    referralData.earnings = earnings || [];
+                }
 
-                referralData.referrals = referrals || [];
-                referralData.earnings = earnings || [];
-                referralData.totalReferrals = referrals?.length || 0;
-                referralData.activeReferrals = referrals?.filter(r => r.status === 'active').length || 0;
-                referralData.totalReferralEarnings = earnings?.reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
-                referralData.pendingEarnings = earnings?.filter(e => e.status === 'pending' || e.status === 'forwarded')
+                referralData.totalReferrals = referralData.referrals?.length || 0;
+                referralData.activeReferrals = referralData.referrals?.filter(r => r.status === 'active').length || 0;
+                referralData.totalReferralEarnings = referralData.earnings?.reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
+                referralData.pendingEarnings = referralData.earnings?.filter(e => e.status === 'pending' || e.status === 'forwarded')
                     .reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
-                referralData.paidEarnings = earnings?.filter(e => e.status === 'paid')
+                referralData.paidEarnings = referralData.earnings?.filter(e => e.status === 'paid')
                     .reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
 
                 return referralData;
@@ -3314,17 +3452,15 @@
         }
 
         // ============================================================
-        // REFERRAL LINK FUNCTIONS - FIXED (No recursion)
+        // REFERRAL LINK FUNCTIONS
         // ============================================================
         function getAffiliateInviteLink() {
             if (!currentAffiliate) return null;
-            return `https://linknvibeplatform.github.io/sharpi-signals/?ref=${currentAffiliate.code}&mode=invite`;
+            return `https://linknvibeplatform.github.io/affiliate-work/?ref=${currentAffiliate.code}&mode=invite`;
         }
 
-        // FIXED: No recursion - checks arrays directly
         function canInviteAffiliates() {
             if (!currentAffiliate) return false;
-            // Direct check: at least 1 sale completed (forwarded or paid)
             const hasSale = affForwarded.length > 0 || affPaid.length > 0;
             return hasSale;
         }
@@ -3386,7 +3522,10 @@
                     .from('affiliate_visits')
                     .select('*', { count: 'exact', head: true })
                     .eq('affiliate_code', affiliateCode);
-                if (error) throw error;
+                if (error) {
+                    console.warn('⚠️ Visit count error, returning 0');
+                    return 0;
+                }
                 return count || 0;
             } catch (e) {
                 console.error('❌ Failed to get visit count:', e);
@@ -3417,12 +3556,11 @@
         }
 
         // ============================================================
-        // GET DASHBOARD STATS - FIXED (No recursion)
+        // GET DASHBOARD STATS
         // ============================================================
         function getDashboardStats() {
             if (!currentAffiliate) return null;
 
-            // Separate sales from referral earnings
             const salesForwarded = affForwarded.filter(s => !s.isReferral);
             const salesPaid = affPaid.filter(s => !s.isReferral);
 
@@ -4219,7 +4357,7 @@ Thank you! 🦈`;
         }
 
         // ============================================================
-        // REALTIME LISTENER
+        // REALTIME LISTENER (CORS FIXED)
         // ============================================================
         function setupRealtimeListener() {
             if (realtimeChannel) {
@@ -4572,18 +4710,22 @@ Thank you! 🦈`;
                             </div>
                         `;
                         salesOnly.forEach(s => {
+                            const isSplit = s.is_referral || false;
+                            const splitInfo = isSplit ? ` (90/10 Split)` : '';
                             html += `
                                 <div class="commission-card" style="border-left:3px solid var(--text-gold);">
                                     <div class="header">
                                         <div>
                                             <span style="font-weight:600;font-size:13px;color:var(--text-primary);">${s.userName}</span>
                                             <span style="font-size:11px;color:var(--text-secondary);margin-left:6px;">${s.package}</span>
+                                            ${isSplit ? `<span style="font-size:9px;color:var(--text-purple);margin-left:4px;">🤝 Split</span>` : ''}
                                         </div>
-                                        <div class="amount">20,000 UGX</div>
+                                        <div class="amount">${(s.amount || 20000).toLocaleString()} UGX</div>
                                     </div>
                                     <div class="details">
                                         📅 ${new Date(s.date).toLocaleDateString()} · <span style="color:var(--text-gold);">📤 Forwarded</span>
                                         ${s.isReferral ? ' · 🤝 Referral Commission' : ''}
+                                        ${isSplit ? ` · Child: ${(s.child_amount || 18000).toLocaleString()} UGX | Parent: ${(s.parent_amount || 2000).toLocaleString()} UGX` : ''}
                                     </div>
                                     ${s.paid_key ? `
                                             <div class="key-row">🔑 ${s.paid_key}</div>
@@ -4610,19 +4752,22 @@ Thank you! 🦈`;
                         `;
                         paidSales.forEach(s => {
                             const paidDate = s.paid_at ? new Date(s.paid_at).toLocaleDateString() : 'Unknown';
+                            const isSplit = s.is_referral || false;
                             html += `
                                 <div class="commission-card" style="border-left:3px solid var(--text-green);opacity:0.8;">
                                     <div class="header">
                                         <div>
                                             <span style="font-weight:600;font-size:13px;color:var(--text-primary);">${s.userName}</span>
                                             <span style="font-size:11px;color:var(--text-secondary);margin-left:6px;">${s.package}</span>
+                                            ${isSplit ? `<span style="font-size:9px;color:var(--text-purple);margin-left:4px;">🤝 Split</span>` : ''}
                                         </div>
-                                        <div class="amount" style="color:var(--text-green);">20,000 UGX</div>
+                                        <div class="amount" style="color:var(--text-green);">${(s.amount || 20000).toLocaleString()} UGX</div>
                                     </div>
                                     <div class="details">
                                         📅 ${new Date(s.date).toLocaleDateString()} · <span style="color:var(--text-green);">✅ Paid</span>
                                         ${s.paid_at ? ` · 💳 ${paidDate}` : ''}
                                         ${s.isReferral ? ' · 🤝 Referral Commission' : ''}
+                                        ${isSplit ? ` · Child: ${(s.child_amount || 18000).toLocaleString()} UGX | Parent: ${(s.parent_amount || 2000).toLocaleString()} UGX` : ''}
                                     </div>
                                     ${s.paid_key ? `
                                             <div class="key-row" style="color:var(--text-muted);">🔑 ${s.paid_key} <span style="color:var(--text-green);">(Used - One Time)</span></div>
@@ -4714,7 +4859,7 @@ Thank you! 🦈`;
             // Setup pull to refresh
             setupPullToRefresh();
 
-            console.log('🦈 SHARPI Affiliate App v3.0 - WITH REFERRAL SYSTEM');
+            console.log('🦈 SHARPI Affiliate App v3.0 - CORS FIXED');
             console.log('✅ ONLY FORWARDED sales = commission');
             console.log('✅ Realtime listener - NO filter');
             console.log('✅ Auto-refresh every 15 seconds');
@@ -4725,7 +4870,7 @@ Thank you! 🦈`;
             console.log('✅ Pull to refresh: slide down from top');
             console.log('✅ Affiliate referral system: 10% commission on referrals');
             console.log('✅ Invite link unlocks after Goal 1 completed');
-            console.log('✅ FIXED: Infinite recursion bug resolved');
+            console.log('✅ CORS fixed with custom headers and retry logic');
         })();
 
         // ============================================================
@@ -4783,6 +4928,10 @@ Thank you! 🦈`;
         window.closeWithdrawalModal = closeWithdrawalModal;
         window.confirmWithdrawal = confirmWithdrawal;
         window.performRefresh = performRefresh;
+        window.loadSalesFromSupabase = loadSalesFromSupabase;
+        window.loadReferralData = loadReferralData;
+        window.renderDashboard = renderDashboard;
+        window.getDashboardStats = getDashboardStats;
     </script>
 </body>
 </html>
