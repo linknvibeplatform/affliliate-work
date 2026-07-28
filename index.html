@@ -2807,8 +2807,7 @@
 
     <script>
         // ============================================================
-        // AFFILIATE DASHBOARD – COMPLETE DEBUGGED VERSION
-        // ROOT CAUSE FIXED: ALWAYS USES child_amount FOR COMMISSIONS
+        // AFFILIATE DASHBOARD – COMPLETE FIXED VERSION
         // ============================================================
 
         // ============================================================
@@ -3349,8 +3348,7 @@
         }
 
         // ============================================================
-        // ✅ FIXED: LOAD SALES – ALWAYS USES child_amount FOR COMMISSIONS
-        // ROOT CAUSE: The dashboard was using 'amount' (9.99) instead of 'child_amount' (20,000/18,000)
+        // ✅ FIXED: LOAD SALES – READS CORRECT AMOUNTS FROM DATABASE
         // ============================================================
         async function loadSalesFromSupabase(code) {
             if (!supabaseClient || !code) {
@@ -3381,15 +3379,12 @@
                     if (retryError) throw retryError;
                     const allData = retryData || [];
                     
-                    // ✅ ROOT CAUSE FIX: ALWAYS use child_amount for commissions
-                    // The admin sets child_amount = 20000 for 1-party, and child_amount = 18000 for 2-party child
-                    // The purchase amount (9.99) is stored in 'amount' and should NEVER be used for commission display
+                    // ✅ FIXED: Read the correct amount from the database
                     const mappedSales = allData.map(s => {
-                        // ✅ CORRECT: Use child_amount as the commission amount
-                        // For this affiliate (promo_code = code), child_amount is their commission
-                        let commissionAmount = s.child_amount || 20000;
-                        let isReferral = s.is_referral || false;
-                        let splitType = isReferral ? 'child' : '1-party';
+                        // Determine if this is a referral sale for this affiliate
+                        const isReferral = s.is_referral || false;
+                        // Use child_amount (commission) or fallback to amount
+                        let commissionAmount = s.child_amount || s.amount || 20000;
                         
                         // Log for debugging
                         console.log(`📊 Sale ${s.id}: child_amount=${s.child_amount}, amount=${s.amount}, is_referral=${s.is_referral}, commission=${commissionAmount}`);
@@ -3398,7 +3393,7 @@
                             id: s.id,
                             userName: s.user_name || 'Unknown',
                             package: s.package || 'Package',
-                            amount: commissionAmount, // ✅ CORRECT: This is the commission amount
+                            amount: commissionAmount, // ✅ Correct commission amount
                             promoCode: s.promo_code,
                             date: s.created_at || new Date().toISOString(),
                             status: s.status || 'forwarded',
@@ -3414,26 +3409,23 @@
                             parent_key: s.parent_key || null,
                             child_amount: s.child_amount || 0,
                             parent_amount: s.parent_amount || 0,
-                            splitType: splitType,
-                            purchase_amount: s.amount || 0 // Store but NEVER display this value
+                            splitType: isReferral ? 'child' : '1-party'
                         };
                     });
 
                     affForwarded = mappedSales.filter(s => s.status === 'forwarded');
                     affPaid = mappedSales.filter(s => s.status === 'paid');
                     console.log(`✅ Loaded: ${affForwarded.length} forwarded, ${affPaid.length} paid`);
-                    console.log(`📊 Commission amounts (using child_amount):`, affForwarded.map(s => ({ userName: s.userName, amount: s.amount, splitType: s.splitType, child_amount: s.child_amount })));
                     return true;
                 }
 
                 const allData = data || [];
                 console.log(`📊 Found ${allData.length} forwarded/paid sales for affiliate`);
 
-                // ✅ ROOT CAUSE FIX: ALWAYS use child_amount for commissions
+                // ✅ FIXED: Read the correct amount from the database
                 const mappedSales = allData.map(s => {
-                    let commissionAmount = s.child_amount || 20000;
-                    let isReferral = s.is_referral || false;
-                    let splitType = isReferral ? 'child' : '1-party';
+                    const isReferral = s.is_referral || false;
+                    let commissionAmount = s.child_amount || s.amount || 20000;
                     
                     console.log(`📊 Sale ${s.id}: child_amount=${s.child_amount}, amount=${s.amount}, is_referral=${s.is_referral}, commission=${commissionAmount}`);
                     
@@ -3441,7 +3433,7 @@
                         id: s.id,
                         userName: s.user_name || 'Unknown',
                         package: s.package || 'Package',
-                        amount: commissionAmount, // ✅ CORRECT: This is the commission amount
+                        amount: commissionAmount, // ✅ Correct commission amount
                         promoCode: s.promo_code,
                         date: s.created_at || new Date().toISOString(),
                         status: s.status || 'forwarded',
@@ -3457,8 +3449,7 @@
                         parent_key: s.parent_key || null,
                         child_amount: s.child_amount || 0,
                         parent_amount: s.parent_amount || 0,
-                        splitType: splitType,
-                        purchase_amount: s.amount || 0
+                        splitType: isReferral ? 'child' : '1-party'
                     };
                 });
 
@@ -3466,7 +3457,6 @@
                 affPaid = mappedSales.filter(s => s.status === 'paid');
 
                 console.log(`✅ Loaded: ${affForwarded.length} forwarded, ${affPaid.length} paid`);
-                console.log(`📊 Commission amounts (using child_amount):`, affForwarded.map(s => ({ userName: s.userName, amount: s.amount, splitType: s.splitType, child_amount: s.child_amount })));
 
                 return true;
             } catch (e) {
@@ -3476,7 +3466,7 @@
         }
 
         // ============================================================
-        // LOAD REFERRAL EARNINGS (10% commissions)
+        // LOAD REFERRAL EARNINGS (WITH PAID_KEY)
         // ============================================================
         async function loadReferralData() {
             if (!supabaseClient || !currentAffiliate) return null;
@@ -3501,6 +3491,7 @@
                     referralData.referrals = referrals || [];
                 }
 
+                // ✅ FIXED: Get referral earnings with paid_key
                 const { data: earnings, error: earnError } = await supabaseClient
                     .from('referral_earnings')
                     .select('*')
@@ -3530,6 +3521,8 @@
                 referralData.pendingEarnings = referralData.earnings?.filter(e => e.status === 'forwarded')
                     .reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
                 referralData.paidEarnings = 0;
+
+                console.log(`📊 Loaded ${referralData.earnings.length} referral earnings with keys:`, referralData.earnings.map(e => ({ id: e.id, amount: e.amount, paid_key: e.paid_key })));
 
                 return referralData;
             } catch (e) {
@@ -3643,7 +3636,7 @@
         }
 
         // ============================================================
-        // GET DASHBOARD STATS - USES CORRECT COMMISSION AMOUNTS
+        // GET DASHBOARD STATS
         // ============================================================
         function getDashboardStats() {
             if (!currentAffiliate) return null;
@@ -3651,16 +3644,12 @@
             const salesForwarded = affForwarded.filter(s => !s.isReferral);
             const salesPaid = affPaid.filter(s => !s.isReferral);
 
-            // ✅ CORRECT: Sum commission amounts from child_amount
             const forwardedTotal = salesForwarded.reduce((sum, s) => sum + (s.amount || 0), 0);
             const paidTotal = salesPaid.reduce((sum, s) => sum + (s.amount || 0), 0);
             const totalEarned = forwardedTotal + paidTotal;
             const totalSales = salesForwarded.length + salesPaid.length;
 
-            // Referral earnings (from referral_earnings table)
             const referralTotal = referralData.pendingEarnings || 0;
-
-            // Total available balance = forwarded sales + referral earnings
             const balance = forwardedTotal + referralTotal;
 
             return {
@@ -3835,7 +3824,7 @@ Thank you! 🦈`;
         }
 
         // ============================================================
-        // WITHDRAW FUNCTIONS - WITH CORRECT COMMISSION AMOUNTS
+        // WITHDRAW FUNCTIONS
         // ============================================================
         function withdrawSingleKey(key, amount) {
             if (!key) {
@@ -3849,7 +3838,8 @@ Thank you! 🦈`;
                 return;
             }
 
-            const referralEarning = referralData.earnings.find(e => e.id === key || e.paid_key === key);
+            // ✅ FIXED: Check referral earnings for the key
+            const referralEarning = referralData.earnings.find(e => e.paid_key === key);
             if (referralEarning) {
                 showWithdrawalModal([key], referralEarning.amount || 0, 'single');
                 return;
@@ -3858,19 +3848,22 @@ Thank you! 🦈`;
             showToast('❌ This key is not ready for withdrawal', 'error');
         }
 
+        // ✅ FIXED: Withdraw All includes referral earnings with keys
         function withdrawAllKeys() {
             const allKeys = [];
             let totalAmount = 0;
 
+            // Add sales keys
             affForwarded.forEach(s => {
-                if (s.paid_key) {
+                if (s.paid_key && s.paid_key !== 'null' && s.paid_key !== '') {
                     allKeys.push({ key: s.paid_key, amount: s.amount || 0 });
                     totalAmount += (s.amount || 0);
                 }
             });
 
+            // ✅ FIXED: Add referral earning keys (now with paid_key)
             referralData.earnings.forEach(e => {
-                if (e.paid_key) {
+                if (e.paid_key && e.paid_key !== 'null' && e.paid_key !== '') {
                     allKeys.push({ key: e.paid_key, amount: e.amount || 0 });
                     totalAmount += (e.amount || 0);
                 }
@@ -4630,7 +4623,7 @@ Thank you! 🦈`;
         }
 
         // ============================================================
-        // RENDER DASHBOARD - USES CORRECT COMMISSION AMOUNTS
+        // RENDER DASHBOARD - FIXED WITH CORRECT KEYS AND AMOUNTS
         // ============================================================
         async function renderDashboard() {
             if (!currentAffiliate) {
@@ -4662,7 +4655,7 @@ Thank you! 🦈`;
             document.getElementById('cardHolderName').textContent = currentAffiliate.name.toUpperCase() || 'AFFILIATE';
             document.getElementById('cardBalance').textContent = stats.balance.toLocaleString() + ' UGX';
 
-            // Balance Card - Using commission amounts
+            // Balance Card
             document.getElementById('balanceAmount').textContent = stats.balance.toLocaleString() + ' UGX';
             document.getElementById('balanceTotalEarned').textContent = stats.totalEarned.toLocaleString() + ' UGX';
             document.getElementById('balanceForwarded').textContent = stats.forwarded.toLocaleString() + ' UGX';
@@ -4753,6 +4746,7 @@ Thank you! 🦈`;
                         <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border-glass-light);font-size:11px;">
                             <span style="color:var(--text-secondary);">${e.child_code || 'Affiliate'}</span>
                             <span style="color:var(--text-gold);">${e.amount.toLocaleString()} UGX</span>
+                            ${e.paid_key ? `<span style="color:var(--text-green);font-size:9px;">🔑 Has Key</span>` : `<span style="color:var(--text-red);font-size:9px;">⏳ No Key</span>`}
                             <span style="color:var(--text-muted);font-size:9px;">📤 Forwarded</span>
                         </div>
                     `;
@@ -4792,13 +4786,13 @@ Thank you! 🦈`;
             }
 
             // ============================================================
-            // COMMISSIONS LIST – DISPLAYS CORRECT COMMISSION AMOUNTS
+            // COMMISSIONS LIST – DISPLAYS CORRECT AMOUNTS WITH KEYS
             // ============================================================
             const commissionList = document.getElementById('commissionList');
 
             let pendingItems = [];
 
-            // Add forwarded sales with commission amounts (from child_amount)
+            // Add forwarded sales
             affForwarded.forEach(s => {
                 if (!s.isReferral) {
                     pendingItems.push({
@@ -4806,31 +4800,33 @@ Thank you! 🦈`;
                         id: s.id,
                         userName: s.userName,
                         package: s.package,
-                        amount: s.amount || 0, // This is now the commission amount (child_amount)
+                        amount: s.amount || 0,
                         date: s.date,
-                        paid_key: s.paid_key,
+                        paid_key: s.paid_key || null,
                         is_referral: s.is_referral || false,
                         child_amount: s.child_amount || 0,
                         parent_amount: s.parent_amount || 0,
                         isSplit: s.is_referral || false,
                         raw: s,
                         percentage: s.is_referral ? '90%' : '100%',
-                        splitType: s.splitType || '1-party'
+                        splitType: s.splitType || '1-party',
+                        parent_affiliate: s.parent_affiliate || null,
+                        parent_key: s.parent_key || null
                     });
                 }
             });
 
-            // Add referral earnings (10% commissions)
+            // ✅ FIXED: Add referral earnings with paid_key
             referralData.earnings.forEach(e => {
                 if (e.status === 'forwarded') {
                     pendingItems.push({
-                        type: 'referral',
+                        type: 'referral_earning',
                         id: e.id,
                         userName: e.child_name || 'Referral Affiliate',
                         package: 'Referral',
                         amount: e.amount || 0,
                         date: e.created_at || new Date().toISOString(),
-                        paid_key: e.paid_key || null,
+                        paid_key: e.paid_key || null, // ✅ Now has payment key
                         is_referral: true,
                         child_amount: 0,
                         parent_amount: e.amount || 0,
@@ -4843,6 +4839,7 @@ Thank you! 🦈`;
                 }
             });
 
+            // Sort by date (newest first)
             pendingItems.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             if (pendingItems.length === 0) {
@@ -4865,12 +4862,13 @@ Thank you! 🦈`;
 
                 pendingItems.forEach(item => {
                     const isSplit = item.isSplit;
-                    const isReferral = item.type === 'referral';
-                    const amount = item.amount || 0; // This is now the correct commission amount
+                    const isReferral = item.type === 'referral_earning';
+                    const amount = item.amount || 0;
                     const percentageLabel = item.percentage || (isReferral ? '10%' : '100%');
                     const typeLabel = isReferral ? '🤝 Referral' : '💰 Sale';
                     const cardColor = isReferral ? 'var(--text-purple)' : 'var(--text-gold)';
                     const borderColor = isReferral ? '3px solid var(--text-purple)' : '3px solid var(--text-gold)';
+                    const hasKey = item.paid_key && item.paid_key !== 'null' && item.paid_key !== '';
 
                     let splitDetails = '';
                     if (isSplit && !isReferral && item.child_amount > 0) {
@@ -4897,14 +4895,14 @@ Thank you! 🦈`;
                                 ${splitDetails}
                                 ${item.splitType ? ` · Type: ${item.splitType}` : ''}
                             </div>
-                            ${item.paid_key ? `
+                            ${hasKey ? `
                                     <div class="key-row">🔑 ${item.paid_key}</div>
                                     <div class="actions">
                                         <button class="key-copy-btn" onclick="copyKeyToClipboard('${item.paid_key}')">📋 Copy Key</button>
                                         <button class="withdraw-btn" onclick="withdrawSingleKey('${item.paid_key}', ${amount})">💰 Withdraw</button>
                                     </div>
                                 ` : `
-                                    <div style="font-size:10px;color:var(--text-muted);margin-top:4px;">⏳ Waiting for payment key...</div>
+                                    <div style="font-size:10px;color:var(--text-red);margin-top:4px;">⏳ No payment key assigned yet</div>
                                 `}
                         </div>
                     `;
@@ -4914,19 +4912,23 @@ Thank you! 🦈`;
             }
 
             // ============================================================
-            // WITHDRAW ALL CARD - Calculates from commission amounts
+            // WITHDRAW ALL CARD
             // ============================================================
-            const salesKeys = affForwarded.filter(s => !s.isReferral && s.paid_key).length;
-            const referralKeys = referralData.earnings.filter(e => e.status === 'forwarded' && e.paid_key).length;
+            // Count total pending keys (sales + referral earnings with keys)
+            const salesKeys = affForwarded.filter(s => !s.isReferral && s.paid_key && s.paid_key !== 'null' && s.paid_key !== '')
+                .length;
+            const referralKeys = referralData.earnings.filter(e => e.status === 'forwarded' && e.paid_key && e.paid_key !== 'null' &&
+                e.paid_key !== '').length;
             const totalPendingKeys = salesKeys + referralKeys;
-            
+
+            // Calculate total amount
             const salesAmount = affForwarded.filter(s => !s.isReferral).reduce((sum, s) => sum + (s.amount || 0), 0);
             const referralAmount = referralData.pendingEarnings || 0;
             const withdrawAllAmount = salesAmount + referralAmount;
-            
+
             document.getElementById('withdrawAllAmount').textContent = withdrawAllAmount.toLocaleString() + ' UGX';
             document.getElementById('withdrawAllKeys').textContent = totalPendingKeys + ' keys pending';
-            
+
             const withdrawBtn = document.getElementById('withdrawAllBtn');
             if (totalPendingKeys === 0) {
                 withdrawBtn.disabled = true;
@@ -5002,13 +5004,12 @@ Thank you! 🦈`;
             // Setup pull to refresh
             setupPullToRefresh();
 
-            console.log('🦈 SHARPI Affiliate App v3.0 - ROOT CAUSE ELIMINATED');
-            console.log('✅ ALWAYS uses child_amount for commissions');
-            console.log('✅ NEVER uses purchase amount (9.99)');
-            console.log('✅ 1 Party: 20,000 UGX (from child_amount)');
-            console.log('✅ 2 Parties Child: 18,000 UGX (from child_amount)');
-            console.log('✅ 2 Parties Parent: 2,000 UGX (from parent_amount)');
-            console.log('✅ The 9.99 is NEVER displayed anywhere');
+            console.log('🦈 SHARPI Affiliate App v3.0 - COMPLETE FIXED');
+            console.log('✅ Reads correct amounts from database (child_amount)');
+            console.log('✅ Referral earnings have paid_key from admin');
+            console.log('✅ Withdraw All includes sales + referral earnings with keys');
+            console.log('✅ Payment keys display for all forwarded items');
+            console.log('✅ CORS fixed with custom headers and retry logic');
         })();
 
         // ============================================================
