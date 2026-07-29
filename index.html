@@ -49,6 +49,8 @@
             --bg-tier-card: rgba(255, 255, 255, 0.5);
             --bg-info-card: rgba(255, 255, 255, 0.35);
             --bg-readmore: rgba(255, 255, 255, 0.5);
+            --bg-withdraw-sales: linear-gradient(135deg, rgba(52, 211, 153, 0.08), rgba(251, 191, 36, 0.08));
+            --bg-withdraw-referrals: linear-gradient(135deg, rgba(167, 139, 250, 0.08), rgba(52, 211, 153, 0.08));
             --text-primary: #0b1e33;
             --text-secondary: #1a2f44;
             --text-muted: #475569;
@@ -115,6 +117,8 @@
             --bg-tier-card: rgba(30, 45, 70, 0.6);
             --bg-info-card: rgba(30, 45, 70, 0.5);
             --bg-readmore: rgba(30, 45, 70, 0.6);
+            --bg-withdraw-sales: linear-gradient(135deg, rgba(52, 211, 153, 0.08), rgba(251, 191, 36, 0.08));
+            --bg-withdraw-referrals: linear-gradient(135deg, rgba(167, 139, 250, 0.08), rgba(52, 211, 153, 0.08));
             --text-primary: #e8edf5;
             --text-secondary: #c8d2e0;
             --text-muted: #8a9bb5;
@@ -1262,6 +1266,14 @@
             background: rgba(248, 113, 113, 0.1);
             color: var(--text-red)
         }
+        .status-badge.withdrawn {
+            background: rgba(251, 191, 36, 0.1);
+            color: var(--text-gold)
+        }
+        .status-badge.pending-withdraw {
+            background: rgba(251, 191, 36, 0.15);
+            color: var(--text-gold)
+        }
         .key-copy-btn {
             background: transparent;
             border: 1px solid var(--border-glass);
@@ -1332,7 +1344,7 @@
             color: white
         }
         .withdraw-btn:disabled {
-            opacity: .3;
+            opacity: .4;
             cursor: not-allowed;
             border-color: var(--text-muted);
             color: var(--text-muted)
@@ -1340,6 +1352,16 @@
         .withdraw-btn:disabled:hover {
             background: transparent;
             color: var(--text-muted)
+        }
+        .withdraw-btn.pending {
+            border-color: var(--text-gold);
+            color: var(--text-gold);
+            opacity: .7;
+            cursor: default
+        }
+        .withdraw-btn.pending:hover {
+            background: transparent;
+            color: var(--text-gold)
         }
         .commission-card {
             background: var(--bg-card);
@@ -1381,6 +1403,16 @@
             margin-top: 8px;
             flex-wrap: wrap
         }
+        .commission-card.pending-withdraw {
+            opacity: .7;
+            border-color: var(--border-gold);
+            border-left: 3px solid var(--text-gold);
+        }
+        .commission-card.paid-off {
+            opacity: .6;
+            border-color: var(--border-green);
+            border-left: 3px solid var(--text-green);
+        }
         .realtime-dot {
             display: inline-block;
             width: 6px;
@@ -1400,6 +1432,90 @@
                 opacity: .3;
                 transform: scale(.8)
             }
+        }
+        /* WITHDRAW CARDS - NEW TWO BUTTON STYLES */
+        .withdraw-card {
+            border-radius: 16px;
+            padding: 16px 18px;
+            border: 1px solid var(--border-glass-light);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: all var(--transition);
+        }
+        .withdraw-card:hover {
+            transform: translateY(-2px);
+        }
+        .withdraw-card .withdraw-info {
+            flex: 1;
+            min-width: 120px;
+        }
+        .withdraw-card .withdraw-info .label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+        .withdraw-card .withdraw-info .amount {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .withdraw-card .withdraw-info .keys-count {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+        .withdraw-card .withdraw-btn-large {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+        .withdraw-card .withdraw-btn-large:hover {
+            transform: scale(0.97);
+            opacity: 0.9;
+        }
+        .withdraw-card .withdraw-btn-large:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .withdraw-card .withdraw-btn-large:disabled:hover {
+            opacity: 0.4;
+            transform: none;
+        }
+        .withdraw-card.sales {
+            background: var(--bg-withdraw-sales);
+            border-color: var(--border-gold);
+        }
+        .withdraw-card.sales .withdraw-btn-large {
+            background: var(--text-gold);
+            color: #0b1e33;
+        }
+        .withdraw-card.referrals {
+            background: var(--bg-withdraw-referrals);
+            border-color: var(--border-purple);
+        }
+        .withdraw-card.referrals .withdraw-btn-large {
+            background: var(--text-purple);
+            color: white;
+        }
+        [data-theme="dark"] .withdraw-card.sales .withdraw-btn-large {
+            background: #fbbf24;
+            color: #070b14;
+        }
+        [data-theme="dark"] .withdraw-card.referrals .withdraw-btn-large {
+            background: #8b5cf6;
+            color: white;
         }
         @media(max-width:480px) {
             .hero-illustration>div:first-child {
@@ -1433,6 +1549,14 @@
             }
             .tier-grid {
                 grid-template-columns: 1fr
+            }
+            .withdraw-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            .withdraw-card .withdraw-btn-large {
+                width: 100%;
+                justify-content: center;
             }
         }
         @media(min-width:481px) and (max-height:700px) {
@@ -1572,6 +1696,13 @@
                 flex-direction: column !important;
                 text-align: center !important;
                 padding: 16px !important;
+            }
+            .withdraw-card .withdraw-info .amount {
+                font-size: 18px !important;
+            }
+            .withdraw-card .withdraw-btn-large {
+                font-size: 12px !important;
+                padding: 8px 16px !important;
             }
         }
         .popup-overlay {
@@ -2252,57 +2383,6 @@
         .referral-card .referral-link-section .link-status.locked {
             color: var(--text-muted);
         }
-        /* WITHDRAW ALL CARD */
-        .withdraw-all-card {
-            background: linear-gradient(135deg, #1a2f44, #0b1e33);
-            border-radius: 16px;
-            padding: 16px 18px;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 4px;
-        }
-        .withdraw-all-card .balance-info .total-label {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.6);
-        }
-        .withdraw-all-card .balance-info .total-amount {
-            font-size: 22px;
-            font-weight: 700;
-            color: #fbbf24;
-        }
-        .withdraw-all-card .balance-info .total-keys {
-            font-size: 10px;
-            color: rgba(255, 255, 255, 0.4);
-        }
-        .withdraw-all-btn {
-            background: var(--text-red);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: inherit;
-        }
-        .withdraw-all-btn:hover {
-            opacity: 0.9;
-            transform: scale(0.97);
-        }
-        .withdraw-all-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .withdraw-all-btn:disabled:hover {
-            opacity: 0.4;
-            transform: none;
-        }
         /* Referral commission card */
         .referral-commission-card {
             background: var(--bg-card);
@@ -2345,7 +2425,7 @@
             margin-top: 8px;
             flex-wrap: wrap;
         }
-        /* REFERRAL EARNING CARD - FIXED WITH KEY + WITHDRAW */
+        /* REFERRAL EARNING CARD */
         .referral-earning-card {
             background: var(--bg-card);
             border-radius: 16px;
@@ -2425,8 +2505,8 @@
         <div class="withdrawal-modal-overlay" id="withdrawalModal">
             <div class="withdrawal-modal">
                 <button onclick="closeWithdrawalModal()" style="position:absolute;top:12px;right:16px;font-size:22px;cursor:pointer;color:var(--text-muted);background:none;border:none;font-weight:300;line-height:1;">✕</button>
-                <div class="modal-title">💰 Withdrawal Request</div>
-                <div class="modal-subtitle">Complete your withdrawal details below</div>
+                <div class="modal-title" id="modalTitle">💰 Withdrawal Request</div>
+                <div class="modal-subtitle" id="modalSubtitle">Complete your withdrawal details below</div>
                 <div class="summary-box" id="withdrawalSummary">
                     <div class="summary-row"><span class="label">📋 Keys:</span><span class="value" id="modalKeyCount">0</span></div>
                     <div class="summary-row"><span class="label">💰 Total Amount:</span><span class="value" id="modalTotalAmount">0 UGX</span></div>
@@ -2674,15 +2754,30 @@
                     </div>
                 </div>
 
-                <!-- WITHDRAW ALL CARD -->
-                <div class="withdraw-all-card" id="withdrawAllCard">
-                    <div class="balance-info">
-                        <div class="total-label">💰 Total Available Balance</div>
-                        <div class="total-amount" id="withdrawAllAmount">0 UGX</div>
-                        <div class="total-keys" id="withdrawAllKeys">0 keys pending</div>
+                <!-- ============================================================
+                TWO SEPARATE WITHDRAW CARDS - SALES & REFERRALS
+                ============================================================ -->
+                <!-- WITHDRAW SALES CARD -->
+                <div class="withdraw-card sales" id="withdrawSalesCard">
+                    <div class="withdraw-info">
+                        <div class="label">📊 Sales Earnings</div>
+                        <div class="amount" id="withdrawSalesAmount">0 UGX</div>
+                        <div class="keys-count" id="withdrawSalesKeys">0 keys pending</div>
                     </div>
-                    <button class="withdraw-all-btn" id="withdrawAllBtn" onclick="withdrawAllKeys()">
-                        💰 Withdraw All
+                    <button class="withdraw-btn-large" id="withdrawSalesBtn" onclick="withdrawAllSales()">
+                        💰 Withdraw Sales
+                    </button>
+                </div>
+
+                <!-- WITHDRAW REFERRALS CARD -->
+                <div class="withdraw-card referrals" id="withdrawReferralsCard">
+                    <div class="withdraw-info">
+                        <div class="label">🤝 Referral Earnings</div>
+                        <div class="amount" id="withdrawReferralsAmount">0 UGX</div>
+                        <div class="keys-count" id="withdrawReferralsKeys">0 keys pending</div>
+                    </div>
+                    <button class="withdraw-btn-large" id="withdrawReferralsBtn" onclick="withdrawAllReferrals()">
+                        🤝 Withdraw Referrals
                     </button>
                 </div>
 
@@ -2854,8 +2949,10 @@
     <script>
         // ============================================================
         // AFFILIATE DASHBOARD – COMPLETE FIXED VERSION
-        // FIXED: Parent (10%) referral earnings NOW display payment keys + withdraw buttons
-        // FIXED: referral_earnings items now render with key + withdraw like regular sales
+        // FIXED: Withdraw button changes to "Pending Withdraw" and disables
+        // FIXED: Cards remain visible until admin marks as PAID
+        // FIXED: Cards show "⏳ Pending Withdraw" status
+        // FIXED: When admin pays, cards disappear (status = 'paid')
         // ============================================================
 
         // ============================================================
@@ -2910,6 +3007,9 @@
         let touchStartY = 0;
         let isPulling = false;
         let pullThreshold = 80;
+
+        // Set to track keys that are pending withdrawal (user clicked withdraw)
+        let pendingWithdrawKeys = new Set();
 
         // ============================================================
         // LOGIN ATTEMPT TRACKING FOR RATE LIMITING
@@ -3407,6 +3507,7 @@
             try {
                 console.log('🔄 Loading forwarded sales for affiliate:', code);
 
+                // Load both forwarded and paid sales
                 const { data, error } = await supabaseClient
                     .from('payment_requests')
                     .select('*')
@@ -3450,12 +3551,13 @@
                             parent_key: s.parent_key || null,
                             child_amount: s.child_amount || 0,
                             parent_amount: s.parent_amount || 0,
-                            splitType: s.is_referral ? 'child' : '1-party'
+                            splitType: s.is_referral ? 'child' : '1-party',
+                            recipient_type: s.recipient_type || null
                         };
                     });
 
-                    affForwarded = mappedSales.filter(s => s.status === 'forwarded');
-                    affPaid = mappedSales.filter(s => s.status === 'paid');
+                    affForwarded = mappedSales.filter(s => s.status === 'forwarded' && s.promo_code === code);
+                    affPaid = mappedSales.filter(s => s.status === 'paid' && s.promo_code === code);
                     console.log(`✅ Loaded: ${affForwarded.length} forwarded, ${affPaid.length} paid`);
                     return true;
                 }
@@ -3486,12 +3588,13 @@
                         parent_key: s.parent_key || null,
                         child_amount: s.child_amount || 0,
                         parent_amount: s.parent_amount || 0,
-                        splitType: s.is_referral ? 'child' : '1-party'
+                        splitType: s.is_referral ? 'child' : '1-party',
+                        recipient_type: s.recipient_type || null
                     };
                 });
 
-                affForwarded = mappedSales.filter(s => s.status === 'forwarded');
-                affPaid = mappedSales.filter(s => s.status === 'paid');
+                affForwarded = mappedSales.filter(s => s.status === 'forwarded' && s.promo_code === code);
+                affPaid = mappedSales.filter(s => s.status === 'paid' && s.promo_code === code);
 
                 console.log(`✅ Loaded: ${affForwarded.length} forwarded, ${affPaid.length} paid`);
                 return true;
@@ -3531,7 +3634,7 @@
                     .from('referral_earnings')
                     .select('*')
                     .eq('parent_code', currentAffiliate.code)
-                    .eq('status', 'forwarded')
+                    .in('status', ['forwarded', 'paid'])
                     .order('created_at', { ascending: false });
 
                 if (earnError) {
@@ -3540,7 +3643,7 @@
                         .from('referral_earnings')
                         .select('*')
                         .eq('parent_code', currentAffiliate.code)
-                        .eq('status', 'forwarded')
+                        .in('status', ['forwarded', 'paid'])
                         .limit(50)
                         .order('created_at', { ascending: false });
 
@@ -3555,10 +3658,11 @@
                 referralData.totalReferralEarnings = referralData.earnings?.reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
                 referralData.pendingEarnings = referralData.earnings?.filter(e => e.status === 'forwarded')
                     .reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
-                referralData.paidEarnings = 0;
+                referralData.paidEarnings = referralData.earnings?.filter(e => e.status === 'paid')
+                    .reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
 
                 console.log(`📊 Loaded ${referralData.earnings.length} referral earnings with keys:`, referralData.earnings
-                    .map(e => ({ id: e.id, amount: e.amount, paid_key: e.paid_key })));
+                    .map(e => ({ id: e.id, amount: e.amount, paid_key: e.paid_key, status: e.status })));
 
                 return referralData;
             } catch (e) {
@@ -3672,6 +3776,91 @@
         }
 
         // ============================================================
+        // GET SALES KEYS (For Withdraw Sales)
+        // ============================================================
+        function getSalesKeys() {
+            const allKeys = [];
+            let totalAmount = 0;
+
+            affForwarded.forEach(s => {
+                // Only include sales records that are not already withdrawn (pending withdraw or paid)
+                if (s.paid_key && s.paid_key !== 'null' && s.paid_key !== '') {
+                    // Only include if it's a child record or a direct sale
+                    if (s.splitType === 'child' || s.splitType === '1-party') {
+                        // Check if already marked as paid (status paid) or pending withdraw
+                        // We still include pending withdraw keys so they show in the total
+                        // But they will be disabled in the UI
+                        allKeys.push({ key: s.paid_key, amount: s.amount || 0, status: s.status });
+                        totalAmount += (s.amount || 0);
+                    }
+                }
+            });
+
+            return { keys: allKeys, totalAmount, count: allKeys.length };
+        }
+
+        // ============================================================
+        // GET REFERRAL KEYS (For Withdraw Referrals)
+        // ============================================================
+        function getReferralKeys() {
+            const allKeys = [];
+            let totalAmount = 0;
+
+            referralData.earnings.forEach(e => {
+                if (e.paid_key && e.paid_key !== 'null' && e.paid_key !== '') {
+                    allKeys.push({ key: e.paid_key, amount: e.amount || 0, status: e.status });
+                    totalAmount += (e.amount || 0);
+                }
+            });
+
+            return { keys: allKeys, totalAmount, count: allKeys.length };
+        }
+
+        // ============================================================
+        // WITHDRAW ALL SALES
+        // ============================================================
+        function withdrawAllSales() {
+            const salesData = getSalesKeys();
+            // Filter out keys that are already pending withdraw or paid
+            const availableKeys = salesData.keys.filter(k => 
+                k.status !== 'paid' && !pendingWithdrawKeys.has(k.key)
+            );
+            if (availableKeys.length === 0) {
+                showToast('❌ No sales keys available to withdraw', 'error');
+                return;
+            }
+            const keyArray = availableKeys.map(k => k.key);
+            withdrawalData.mode = 'sales';
+            
+            // Mark all these keys as pending withdraw
+            keyArray.forEach(key => pendingWithdrawKeys.add(key));
+            
+            showWithdrawalModal(keyArray, availableKeys.reduce((sum, k) => sum + k.amount, 0), 'sales');
+        }
+
+        // ============================================================
+        // WITHDRAW ALL REFERRALS
+        // ============================================================
+        function withdrawAllReferrals() {
+            const referralData = getReferralKeys();
+            // Filter out keys that are already pending withdraw or paid
+            const availableKeys = referralData.keys.filter(k => 
+                k.status !== 'paid' && !pendingWithdrawKeys.has(k.key)
+            );
+            if (availableKeys.length === 0) {
+                showToast('❌ No referral keys available to withdraw', 'error');
+                return;
+            }
+            const keyArray = availableKeys.map(k => k.key);
+            withdrawalData.mode = 'referrals';
+            
+            // Mark all these keys as pending withdraw
+            keyArray.forEach(key => pendingWithdrawKeys.add(key));
+            
+            showWithdrawalModal(keyArray, availableKeys.reduce((sum, k) => sum + k.amount, 0), 'referrals');
+        }
+
+        // ============================================================
         // GET DASHBOARD STATS
         // ============================================================
         function getDashboardStats() {
@@ -3688,6 +3877,10 @@
             const referralTotal = referralData.pendingEarnings || 0;
             const balance = forwardedTotal + referralTotal;
 
+            // Get separate sales and referral data for withdraw buttons
+            const salesData = getSalesKeys();
+            const referralKeyData = getReferralKeys();
+
             return {
                 totalSales,
                 totalEarned,
@@ -3702,7 +3895,11 @@
                 totalReferrals: referralData.totalReferrals || 0,
                 activeReferrals: referralData.activeReferrals || 0,
                 affiliateCode: currentAffiliate.code,
-                affiliateName: currentAffiliate.name
+                affiliateName: currentAffiliate.name,
+                salesKeys: salesData.count,
+                salesTotal: salesData.totalAmount,
+                referralKeys: referralKeyData.count,
+                referralTotal: referralKeyData.totalAmount
             };
         }
 
@@ -3712,7 +3909,17 @@
         function showWithdrawalModal(keys, totalAmount, mode) {
             withdrawalData.keys = keys;
             withdrawalData.totalAmount = totalAmount;
-            withdrawalData.mode = mode;
+            withdrawalData.mode = mode || 'sales';
+
+            const typeLabels = {
+                'sales': 'Sales',
+                'referrals': 'Referral',
+                'single': 'Single'
+            };
+            const typeLabel = typeLabels[mode] || 'All';
+
+            document.getElementById('modalTitle').textContent = `💰 ${typeLabel} Withdrawal`;
+            document.getElementById('modalSubtitle').textContent = `Complete your ${typeLabel.toLowerCase()} withdrawal details below`;
 
             document.getElementById('modalKeyCount').textContent = keys.length + ' key' + (keys.length > 1 ? 's' : '');
             document.getElementById('modalTotalAmount').textContent = totalAmount.toLocaleString() + ' UGX';
@@ -3819,6 +4026,13 @@
             const affiliateName = currentAffiliate ? currentAffiliate.name : 'Affiliate';
             const affiliateContact = currentAffiliate ? currentAffiliate.contact : 'N/A';
 
+            const typeLabels = {
+                'sales': 'SALES',
+                'referrals': 'REFERRAL',
+                'single': 'SINGLE'
+            };
+            const typeLabel = typeLabels[withdrawalData.mode] || 'ALL';
+
             let keysString = '';
             if (withdrawalData.keys.length > 0) {
                 keysString = withdrawalData.keys.join('\n');
@@ -3826,7 +4040,7 @@
                 keysString = 'No keys provided';
             }
 
-            const message = `💰 WITHDRAWAL REQUEST
+            const message = `💰 ${typeLabel} WITHDRAWAL REQUEST
 
 👤 Affiliate: ${affiliateName}
 🆔 Code: ${affiliateCode}
@@ -3860,7 +4074,7 @@ Thank you! 🦈`;
         }
 
         // ============================================================
-        // WITHDRAW FUNCTIONS
+        // WITHDRAW SINGLE KEY (Individual card withdrawal)
         // ============================================================
         function withdrawSingleKey(key, amount) {
             if (!key) {
@@ -3868,50 +4082,82 @@ Thank you! 🦈`;
                 return;
             }
 
-            // ✅ Check affForwarded first (regular sales)
-            const sale = affForwarded.find(s => s.paid_key === key);
-            if (sale) {
-                showWithdrawalModal([key], sale.amount || 0, 'single');
+            // Check if already pending withdraw
+            if (pendingWithdrawKeys.has(key)) {
+                showToast('⏳ This key is already pending withdrawal', 'warning');
                 return;
             }
 
-            // ✅ Check referralData.earnings (parent 10% commissions)
+            // Check if already paid
+            const sale = affForwarded.find(s => s.paid_key === key && s.status === 'paid');
+            if (sale) {
+                showToast('💵 This key has already been paid', 'warning');
+                return;
+            }
+
+            // Check affForwarded first (regular sales)
+            const saleItem = affForwarded.find(s => s.paid_key === key);
+            if (saleItem && saleItem.status !== 'paid') {
+                pendingWithdrawKeys.add(key);
+                showWithdrawalModal([key], saleItem.amount || 0, 'single');
+                // Update the UI to show pending status
+                updateCardStatus(key, 'pending');
+                return;
+            }
+
+            // Check referralData.earnings
             const referralEarning = referralData.earnings.find(e => e.paid_key === key);
-            if (referralEarning) {
+            if (referralEarning && referralEarning.status !== 'paid') {
+                pendingWithdrawKeys.add(key);
                 showWithdrawalModal([key], referralEarning.amount || 0, 'single');
+                // Update the UI to show pending status
+                updateCardStatus(key, 'pending');
                 return;
             }
 
             showToast('❌ This key is not ready for withdrawal', 'error');
         }
 
-        function withdrawAllKeys() {
-            const allKeys = [];
-            let totalAmount = 0;
-
-            // ✅ Include ALL forwarded sales
-            affForwarded.forEach(s => {
-                if (s.paid_key && s.paid_key !== 'null' && s.paid_key !== '') {
-                    allKeys.push({ key: s.paid_key, amount: s.amount || 0 });
-                    totalAmount += (s.amount || 0);
+        // ============================================================
+        // UPDATE CARD STATUS (UI helper)
+        // ============================================================
+        function updateCardStatus(key, status) {
+            // Find the card in the DOM
+            const cards = document.querySelectorAll('.commission-card, .referral-earning-card, .referral-commission-card');
+            cards.forEach(card => {
+                const keyRow = card.querySelector('.key-row');
+                if (keyRow && keyRow.textContent.includes(key)) {
+                    if (status === 'pending') {
+                        card.classList.add('pending-withdraw');
+                        const actionsDiv = card.querySelector('.actions');
+                        if (actionsDiv) {
+                            const withdrawBtn = actionsDiv.querySelector('.withdraw-btn');
+                            if (withdrawBtn) {
+                                withdrawBtn.disabled = true;
+                                withdrawBtn.className = 'withdraw-btn pending';
+                                withdrawBtn.textContent = '⏳ Pending';
+                            }
+                        }
+                        // Add status badge
+                        const detailsDiv = card.querySelector('.details');
+                        if (detailsDiv) {
+                            const existingBadge = detailsDiv.querySelector('.status-badge');
+                            if (existingBadge) {
+                                existingBadge.textContent = '⏳ Pending Withdraw';
+                                existingBadge.className = 'status-badge pending-withdraw';
+                            } else {
+                                const badge = document.createElement('span');
+                                badge.className = 'status-badge pending-withdraw';
+                                badge.textContent = '⏳ Pending Withdraw';
+                                detailsDiv.appendChild(badge);
+                            }
+                        }
+                    } else if (status === 'paid') {
+                        card.classList.add('paid-off');
+                        card.style.display = 'none';
+                    }
                 }
             });
-
-            // ✅ Include referral earnings (parent 10%)
-            referralData.earnings.forEach(e => {
-                if (e.paid_key && e.paid_key !== 'null' && e.paid_key !== '') {
-                    allKeys.push({ key: e.paid_key, amount: e.amount || 0 });
-                    totalAmount += (e.amount || 0);
-                }
-            });
-
-            if (allKeys.length === 0) {
-                showToast('❌ No pending keys to withdraw', 'error');
-                return;
-            }
-
-            const keyArray = allKeys.map(k => k.key);
-            showWithdrawalModal(keyArray, totalAmount, 'all');
         }
 
         // ============================================================
@@ -4540,6 +4786,13 @@ Thank you! 🦈`;
 
                         console.log('✅ FORWARDED/PAID sale detected for this affiliate!');
 
+                        // If the key is now PAID, remove from pending set and refresh
+                        if (row.status === 'paid') {
+                            if (row.paid_key) {
+                                pendingWithdrawKeys.delete(row.paid_key);
+                            }
+                        }
+
                         const dot = document.getElementById('realtimeDot');
                         if (dot) dot.style.display = 'inline-block';
 
@@ -4556,6 +4809,24 @@ Thank you! 🦈`;
                         setTimeout(() => {
                             if (dot) dot.style.display = 'none';
                         }, 3000);
+                    })
+                    .on('postgres_changes', {
+                        event: 'UPDATE',
+                        schema: 'public',
+                        table: 'referral_earnings'
+                    }, async (payload) => {
+                        const row = payload.new;
+                        if (row.parent_code === currentAffiliate.code) {
+                            console.log('📡 Referral earning update detected:', row.status);
+                            if (row.status === 'paid' && row.paid_key) {
+                                pendingWithdrawKeys.delete(row.paid_key);
+                            }
+                            await loadReferralData();
+                            await renderDashboard();
+                            if (row.status === 'paid') {
+                                showToast('✅ Referral commission paid!', 'success');
+                            }
+                        }
                     })
                     .on('postgres_changes', {
                         event: 'INSERT',
@@ -4663,7 +4934,7 @@ Thank you! 🦈`;
         }
 
         // ============================================================
-        // ✅ FIXED: RENDER DASHBOARD – NOW SHOWS KEYS FOR REFERRAL EARNINGS
+        // ✅ FIXED: RENDER DASHBOARD – WITH PENDING WITHDRAW STATUS
         // ============================================================
         async function renderDashboard() {
             if (!currentAffiliate) {
@@ -4737,6 +5008,48 @@ Thank you! 🦈`;
             }
 
             // ============================================================
+            // WITHDRAW SALES CARD
+            // ============================================================
+            const salesData = getSalesKeys();
+            // Count available keys (not pending withdraw and not paid)
+            const availableSalesKeys = salesData.keys.filter(k => 
+                k.status !== 'paid' && !pendingWithdrawKeys.has(k.key)
+            );
+            const totalSalesAmount = availableSalesKeys.reduce((sum, k) => sum + k.amount, 0);
+            
+            document.getElementById('withdrawSalesAmount').textContent = totalSalesAmount.toLocaleString() + ' UGX';
+            document.getElementById('withdrawSalesKeys').textContent = availableSalesKeys.length + ' keys pending';
+            const salesBtn = document.getElementById('withdrawSalesBtn');
+            if (availableSalesKeys.length === 0) {
+                salesBtn.disabled = true;
+                salesBtn.textContent = '💰 No Sales Keys';
+            } else {
+                salesBtn.disabled = false;
+                salesBtn.textContent = `💰 Withdraw Sales (${availableSalesKeys.length})`;
+            }
+
+            // ============================================================
+            // WITHDRAW REFERRALS CARD
+            // ============================================================
+            const referralKeyData = getReferralKeys();
+            // Count available keys (not pending withdraw and not paid)
+            const availableReferralKeys = referralKeyData.keys.filter(k => 
+                k.status !== 'paid' && !pendingWithdrawKeys.has(k.key)
+            );
+            const totalReferralAmount = availableReferralKeys.reduce((sum, k) => sum + k.amount, 0);
+            
+            document.getElementById('withdrawReferralsAmount').textContent = totalReferralAmount.toLocaleString() + ' UGX';
+            document.getElementById('withdrawReferralsKeys').textContent = availableReferralKeys.length + ' keys pending';
+            const referralBtn = document.getElementById('withdrawReferralsBtn');
+            if (availableReferralKeys.length === 0) {
+                referralBtn.disabled = true;
+                referralBtn.textContent = '🤝 No Referral Keys';
+            } else {
+                referralBtn.disabled = false;
+                referralBtn.textContent = `🤝 Withdraw Referrals (${availableReferralKeys.length})`;
+            }
+
+            // ============================================================
             // REFERRAL CARD UPDATE
             // ============================================================
             const canInvite = canInviteAffiliates();
@@ -4784,13 +5097,20 @@ Thank you! 🦈`;
                 let html = '';
                 pendingReferrals.slice(0, 5).forEach(e => {
                     const hasKey = e.paid_key && e.paid_key !== 'null' && e.paid_key !== '';
+                    const isPending = pendingWithdrawKeys.has(e.paid_key);
                     html += `
                         <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border-glass-light);font-size:11px;align-items:center;flex-wrap:wrap;gap:4px;">
                             <span style="color:var(--text-secondary);">${e.child_code || 'Affiliate'}</span>
                             <span style="color:var(--text-gold);">${e.amount.toLocaleString()} UGX</span>
                             ${hasKey ? `<span style="color:var(--text-green);font-size:9px;">🔑 Has Key</span>` : `<span style="color:var(--text-red);font-size:9px;">⏳ No Key</span>`}
                             <span style="color:var(--text-muted);font-size:9px;">📤 Forwarded</span>
-                            ${hasKey ? `<button class="withdraw-btn" style="font-size:8px;padding:2px 8px;" onclick="withdrawSingleKey('${e.paid_key}', ${e.amount})">💰 Withdraw</button>` : ''}
+                            ${hasKey ? 
+                                (isPending ? 
+                                    `<span style="color:var(--text-gold);font-size:9px;">⏳ Pending Withdraw</span>` : 
+                                    `<button class="withdraw-btn" style="font-size:8px;padding:2px 8px;" onclick="withdrawSingleKey('${e.paid_key}', ${e.amount})">💰 Withdraw</button>`
+                                ) : 
+                                ''
+                            }
                         </div>
                     `;
                 });
@@ -4831,37 +5151,42 @@ Thank you! 🦈`;
             }
 
             // ============================================================
-            // ✅ FIXED: COMMISSIONS LIST – INCLUDES REFERRAL EARNINGS WITH KEYS
+            // COMMISSIONS LIST – INCLUDES PENDING WITHDRAW STATUS
             // ============================================================
             const commissionList = document.getElementById('commissionList');
 
             let pendingItems = [];
 
-            // Add ALL forwarded sales
+            // Add ALL forwarded sales (excluding referral-only records)
             affForwarded.forEach(s => {
-                pendingItems.push({
-                    type: 'sale',
-                    id: s.id,
-                    userName: s.userName,
-                    package: s.package,
-                    amount: s.amount || 0,
-                    date: s.date,
-                    paid_key: s.paid_key || null,
-                    is_referral: s.is_referral || false,
-                    child_amount: s.child_amount || 0,
-                    parent_amount: s.parent_amount || 0,
-                    isSplit: s.is_referral || false,
-                    raw: s,
-                    percentage: s.is_referral ? '90%' : '100%',
-                    splitType: s.splitType || '1-party',
-                    parent_affiliate: s.parent_affiliate || null,
-                    parent_key: s.parent_key || null
-                });
+                // Only include sales that are not referral-only records
+                if (s.splitType === 'child' || s.splitType === '1-party') {
+                    pendingItems.push({
+                        type: 'sale',
+                        id: s.id,
+                        userName: s.userName,
+                        package: s.package,
+                        amount: s.amount || 0,
+                        date: s.date,
+                        paid_key: s.paid_key || null,
+                        is_referral: s.is_referral || false,
+                        child_amount: s.child_amount || 0,
+                        parent_amount: s.parent_amount || 0,
+                        isSplit: s.is_referral || false,
+                        raw: s,
+                        percentage: s.is_referral ? '90%' : '100%',
+                        splitType: s.splitType || '1-party',
+                        parent_affiliate: s.parent_affiliate || null,
+                        parent_key: s.parent_key || null,
+                        status: s.status || 'forwarded'
+                    });
+                }
             });
 
-            // ✅ FIXED: Add referral earnings WITH PAID_KEY
+            // Add referral earnings (parent 10% commissions)
             referralData.earnings.forEach(e => {
-                if (e.status === 'forwarded') {
+                // Only show forwarded (not paid)
+                if (e.status === 'forwarded' || e.status === 'paid') {
                     pendingItems.push({
                         type: 'referral_earning',
                         id: e.id,
@@ -4869,7 +5194,7 @@ Thank you! 🦈`;
                         package: '🤝 Referral (10%)',
                         amount: e.amount || 0,
                         date: e.created_at || new Date().toISOString(),
-                        paid_key: e.paid_key || null, // ✅ KEY IS HERE
+                        paid_key: e.paid_key || null,
                         is_referral: true,
                         child_amount: 0,
                         parent_amount: e.amount || 0,
@@ -4877,7 +5202,8 @@ Thank you! 🦈`;
                         raw: e,
                         parent_code: e.parent_code,
                         percentage: '10%',
-                        splitType: 'parent'
+                        splitType: 'parent',
+                        status: e.status || 'forwarded'
                     });
                 }
             });
@@ -4912,6 +5238,11 @@ Thank you! 🦈`;
                     const cardColor = isReferral ? 'var(--text-purple)' : 'var(--text-gold)';
                     const borderColor = isReferral ? '3px solid var(--text-purple)' : '3px solid var(--text-gold)';
                     const hasKey = item.paid_key && item.paid_key !== 'null' && item.paid_key !== '';
+                    const isPending = hasKey && pendingWithdrawKeys.has(item.paid_key);
+                    const isPaid = item.status === 'paid';
+
+                    // If paid, skip rendering (hide it)
+                    if (isPaid) return;
 
                     let splitDetails = '';
                     if (isSplit && !isReferral && item.child_amount > 0) {
@@ -4922,14 +5253,20 @@ Thank you! 🦈`;
                         splitDetails = ` · You earned 10% (${amount.toLocaleString()} UGX)`;
                     }
 
+                    let statusBadge = '';
+                    if (isPending) {
+                        statusBadge = `<span class="status-badge pending-withdraw">⏳ Pending Withdraw</span>`;
+                    }
+
                     html += `
-                        <div class="commission-card" style="border-left: ${borderColor};">
+                        <div class="commission-card ${isPending ? 'pending-withdraw' : ''}" style="border-left: ${borderColor};">
                             <div class="header">
                                 <div>
                                     <span style="font-weight:600;font-size:13px;color:var(--text-primary);">${item.userName}</span>
                                     <span style="font-size:11px;color:var(--text-secondary);margin-left:6px;">${item.package}</span>
                                     ${isSplit ? `<span style="font-size:9px;color:var(--text-purple);margin-left:4px;">🤝 Split ${percentageLabel}</span>` : `<span style="font-size:9px;color:var(--text-green);margin-left:4px;">✅ ${percentageLabel}</span>`}
                                     <span style="font-size:9px;color:${cardColor};margin-left:4px;">${typeLabel}</span>
+                                    ${statusBadge}
                                 </div>
                                 <div class="amount">${amount.toLocaleString()} UGX</div>
                             </div>
@@ -4943,7 +5280,10 @@ Thank you! 🦈`;
                                     <div class="key-row">🔑 ${item.paid_key}</div>
                                     <div class="actions">
                                         <button class="key-copy-btn" onclick="copyKeyToClipboard('${item.paid_key}')">📋 Copy Key</button>
-                                        <button class="withdraw-btn" onclick="withdrawSingleKey('${item.paid_key}', ${amount})">💰 Withdraw</button>
+                                        ${isPending ? 
+                                            `<button class="withdraw-btn pending" disabled>⏳ Pending</button>` : 
+                                            `<button class="withdraw-btn" onclick="withdrawSingleKey('${item.paid_key}', ${amount})">💰 Withdraw</button>`
+                                        }
                                     </div>
                                 ` : `
                                     <div style="font-size:10px;color:var(--text-red);margin-top:4px;">⏳ No payment key assigned yet</div>
@@ -4953,31 +5293,6 @@ Thank you! 🦈`;
                 });
 
                 commissionList.innerHTML = html;
-            }
-
-            // ============================================================
-            // WITHDRAW ALL CARD – INCLUDES REFERRAL EARNINGS
-            // ============================================================
-            const salesKeys = affForwarded.filter(s => s.paid_key && s.paid_key !== 'null' && s.paid_key !== '')
-                .length;
-            const referralKeys = referralData.earnings.filter(e => e.status === 'forwarded' && e.paid_key && e.paid_key !== 'null' &&
-                e.paid_key !== '').length;
-            const totalPendingKeys = salesKeys + referralKeys;
-
-            const salesAmount = affForwarded.reduce((sum, s) => sum + (s.amount || 0), 0);
-            const referralAmount = referralData.pendingEarnings || 0;
-            const withdrawAllAmount = salesAmount + referralAmount;
-
-            document.getElementById('withdrawAllAmount').textContent = withdrawAllAmount.toLocaleString() + ' UGX';
-            document.getElementById('withdrawAllKeys').textContent = totalPendingKeys + ' keys pending';
-
-            const withdrawBtn = document.getElementById('withdrawAllBtn');
-            if (totalPendingKeys === 0) {
-                withdrawBtn.disabled = true;
-                withdrawBtn.textContent = '💰 No keys to withdraw';
-            } else {
-                withdrawBtn.disabled = false;
-                withdrawBtn.textContent = '💰 Withdraw All (' + totalPendingKeys + ' keys)';
             }
 
             // Update Chart
@@ -5046,10 +5361,12 @@ Thank you! 🦈`;
             // Setup pull to refresh
             setupPullToRefresh();
 
-            console.log('🦈 SHARPI Affiliate App v3.1 - COMPLETE FIXED');
-            console.log('✅ FIX: Parent (10%) referral earnings now display payment keys');
-            console.log('✅ FIX: referral_earnings items now render with key + withdraw buttons');
-            console.log('✅ FIX: Withdraw All includes referral earnings');
+            console.log('🦈 SHARPI Affiliate App v5.0 - COMPLETE FIXED');
+            console.log('✅ FIXED: Withdraw button changes to "Pending Withdraw" and disables');
+            console.log('✅ FIXED: Cards remain visible until admin marks as PAID');
+            console.log('✅ FIXED: Cards show "⏳ Pending Withdraw" status');
+            console.log('✅ FIXED: When admin pays, cards disappear (status = paid)');
+            console.log('✅ NEW: Two separate withdraw buttons (Sales & Referrals)');
             console.log('✅ ALL original features preserved');
         })();
 
@@ -5099,8 +5416,11 @@ Thank you! 🦈`;
         window.showPopup = showPopup;
         window.closePopup = closePopup;
         window.copyKeyToClipboard = copyKeyToClipboard;
-        window.withdrawAllKeys = withdrawAllKeys;
+        window.withdrawAllSales = withdrawAllSales;
+        window.withdrawAllReferrals = withdrawAllReferrals;
         window.withdrawSingleKey = withdrawSingleKey;
+        window.getSalesKeys = getSalesKeys;
+        window.getReferralKeys = getReferralKeys;
         window.loginAffiliate = loginAffiliate;
         window.registerAffiliate = registerAffiliate;
         window.logoutAffiliate = logoutAffiliate;
@@ -5112,6 +5432,8 @@ Thank you! 🦈`;
         window.loadReferralData = loadReferralData;
         window.renderDashboard = renderDashboard;
         window.getDashboardStats = getDashboardStats;
+        window.updateCardStatus = updateCardStatus;
+        window.pendingWithdrawKeys = pendingWithdrawKeys;
     </script>
 </body>
 </html>
