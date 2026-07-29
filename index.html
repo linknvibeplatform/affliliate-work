@@ -62,12 +62,14 @@
             --text-skyblue: #0ea5e9;
             --text-lightblue: #60a5fa;
             --text-cyan: #22d3ee;
+            --text-purple: #8b5cf6;
             --border-glass: rgba(255, 255, 255, 0.7);
             --border-glass-light: rgba(255, 255, 255, 0.5);
             --border-glass-dark: rgba(255, 255, 255, 0.3);
             --border-red: rgba(230, 57, 70, 0.15);
             --border-gold: rgba(245, 176, 66, 0.15);
             --border-green: rgba(37, 211, 102, 0.15);
+            --border-purple: rgba(139, 92, 246, 0.15);
             --shadow-card: 0 20px 40px -12px rgba(0, 20, 40, 0.12);
             --shadow-bank: 0 24px 48px -12px rgba(11, 30, 51, 0.5);
             --shadow-leaderboard: 0 20px 40px -12px rgba(0, 0, 0, 0.15), 0 8px 24px -8px rgba(0, 0, 0, 0.08);
@@ -126,12 +128,14 @@
             --text-skyblue: #38bdf8;
             --text-lightblue: #93c5fd;
             --text-cyan: #22d3ee;
+            --text-purple: #a78bfa;
             --border-glass: rgba(255, 255, 255, 0.12);
             --border-glass-light: rgba(255, 255, 255, 0.08);
             --border-glass-dark: rgba(255, 255, 255, 0.05);
             --border-red: rgba(248, 113, 113, 0.2);
             --border-gold: rgba(251, 191, 36, 0.2);
             --border-green: rgba(52, 211, 153, 0.2);
+            --border-purple: rgba(167, 139, 250, 0.2);
             --shadow-card: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
             --shadow-bank: 0 24px 48px -12px rgba(0, 0, 0, 0.6);
             --shadow-leaderboard: 0 20px 40px -12px rgba(0, 0, 0, 0.4), 0 8px 24px -8px rgba(0, 0, 0, 0.3);
@@ -2341,6 +2345,48 @@
             margin-top: 8px;
             flex-wrap: wrap;
         }
+        /* REFERRAL EARNING CARD - FIXED WITH KEY + WITHDRAW */
+        .referral-earning-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 14px 16px;
+            border: 1px solid var(--border-purple);
+            margin-bottom: 10px;
+            border-left: 3px solid var(--text-purple);
+        }
+        .referral-earning-card .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .referral-earning-card .header .amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-purple);
+        }
+        .referral-earning-card .details {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        .referral-earning-card .key-row {
+            font-family: monospace;
+            font-size: 10px;
+            color: var(--text-purple);
+            background: rgba(167, 139, 250, 0.08);
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-top: 4px;
+            word-break: break-all;
+        }
+        .referral-earning-card .actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
     </style>
 </head>
 <body>
@@ -2808,8 +2854,8 @@
     <script>
         // ============================================================
         // AFFILIATE DASHBOARD – COMPLETE FIXED VERSION
-        // FIXED: Child affiliate now displays 90% commission
-        // FIXED: ALL forwarded sales are displayed (not filtered by is_referral)
+        // FIXED: Parent (10%) referral earnings NOW display payment keys + withdraw buttons
+        // FIXED: referral_earnings items now render with key + withdraw like regular sales
         // ============================================================
 
         // ============================================================
@@ -3350,7 +3396,7 @@
         }
 
         // ============================================================
-        // ✅ FIXED: LOAD SALES – ALL FORWARDED SALES INCLUDED (NOT FILTERED BY is_referral)
+        // LOAD SALES FROM SUPABASE
         // ============================================================
         async function loadSalesFromSupabase(code) {
             if (!supabaseClient || !code) {
@@ -3377,22 +3423,18 @@
                         .in('status', ['forwarded', 'paid'])
                         .limit(50)
                         .order('created_at', { ascending: false });
-                    
+
                     if (retryError) throw retryError;
                     const allData = retryData || [];
-                    
-                    // ✅ FIXED: Map ALL forwarded sales, regardless of is_referral
+
                     const mappedSales = allData.map(s => {
-                        // Use child_amount as the commission amount (set by admin)
                         let commissionAmount = s.child_amount || s.amount || 20000;
-                        
-                        console.log(`📊 Sale ${s.id}: child_amount=${s.child_amount}, amount=${s.amount}, is_referral=${s.is_referral}, commission=${commissionAmount}`);
-                        
+
                         return {
                             id: s.id,
                             userName: s.user_name || 'Unknown',
                             package: s.package || 'Package',
-                            amount: commissionAmount, // ✅ Correct commission amount
+                            amount: commissionAmount,
                             promoCode: s.promo_code,
                             date: s.created_at || new Date().toISOString(),
                             status: s.status || 'forwarded',
@@ -3415,24 +3457,20 @@
                     affForwarded = mappedSales.filter(s => s.status === 'forwarded');
                     affPaid = mappedSales.filter(s => s.status === 'paid');
                     console.log(`✅ Loaded: ${affForwarded.length} forwarded, ${affPaid.length} paid`);
-                    console.log(`📊 Forwarded sales:`, affForwarded.map(s => ({ userName: s.userName, amount: s.amount, is_referral: s.is_referral })));
                     return true;
                 }
 
                 const allData = data || [];
                 console.log(`📊 Found ${allData.length} forwarded/paid sales for affiliate`);
 
-                // ✅ FIXED: Map ALL forwarded sales, regardless of is_referral
                 const mappedSales = allData.map(s => {
                     let commissionAmount = s.child_amount || s.amount || 20000;
-                    
-                    console.log(`📊 Sale ${s.id}: child_amount=${s.child_amount}, amount=${s.amount}, is_referral=${s.is_referral}, commission=${commissionAmount}`);
-                    
+
                     return {
                         id: s.id,
                         userName: s.user_name || 'Unknown',
                         package: s.package || 'Package',
-                        amount: commissionAmount, // ✅ Correct commission amount
+                        amount: commissionAmount,
                         promoCode: s.promo_code,
                         date: s.created_at || new Date().toISOString(),
                         status: s.status || 'forwarded',
@@ -3456,8 +3494,6 @@
                 affPaid = mappedSales.filter(s => s.status === 'paid');
 
                 console.log(`✅ Loaded: ${affForwarded.length} forwarded, ${affPaid.length} paid`);
-                console.log(`📊 Forwarded sales:`, affForwarded.map(s => ({ userName: s.userName, amount: s.amount, is_referral: s.is_referral })));
-
                 return true;
             } catch (e) {
                 console.error('❌ Sales load error:', e);
@@ -3466,7 +3502,7 @@
         }
 
         // ============================================================
-        // LOAD REFERRAL EARNINGS (WITH PAID_KEY)
+        // LOAD REFERRAL DATA
         // ============================================================
         async function loadReferralData() {
             if (!supabaseClient || !currentAffiliate) return null;
@@ -3484,7 +3520,7 @@
                         .select('*')
                         .eq('parent_code', currentAffiliate.code)
                         .limit(50);
-                    
+
                     if (retryError) throw retryError;
                     referralData.referrals = retryData || [];
                 } else {
@@ -3507,7 +3543,7 @@
                         .eq('status', 'forwarded')
                         .limit(50)
                         .order('created_at', { ascending: false });
-                    
+
                     if (retryError) throw retryError;
                     referralData.earnings = retryData || [];
                 } else {
@@ -3521,7 +3557,8 @@
                     .reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
                 referralData.paidEarnings = 0;
 
-                console.log(`📊 Loaded ${referralData.earnings.length} referral earnings with keys:`, referralData.earnings.map(e => ({ id: e.id, amount: e.amount, paid_key: e.paid_key })));
+                console.log(`📊 Loaded ${referralData.earnings.length} referral earnings with keys:`, referralData.earnings
+                    .map(e => ({ id: e.id, amount: e.amount, paid_key: e.paid_key })));
 
                 return referralData;
             } catch (e) {
@@ -3640,7 +3677,6 @@
         function getDashboardStats() {
             if (!currentAffiliate) return null;
 
-            // ✅ FIXED: Include ALL forwarded sales, not just non-referral ones
             const salesForwarded = affForwarded;
             const salesPaid = affPaid;
 
@@ -3832,12 +3868,14 @@ Thank you! 🦈`;
                 return;
             }
 
+            // ✅ Check affForwarded first (regular sales)
             const sale = affForwarded.find(s => s.paid_key === key);
             if (sale) {
                 showWithdrawalModal([key], sale.amount || 0, 'single');
                 return;
             }
 
+            // ✅ Check referralData.earnings (parent 10% commissions)
             const referralEarning = referralData.earnings.find(e => e.paid_key === key);
             if (referralEarning) {
                 showWithdrawalModal([key], referralEarning.amount || 0, 'single');
@@ -3851,7 +3889,7 @@ Thank you! 🦈`;
             const allKeys = [];
             let totalAmount = 0;
 
-            // ✅ FIXED: Include ALL forwarded sales
+            // ✅ Include ALL forwarded sales
             affForwarded.forEach(s => {
                 if (s.paid_key && s.paid_key !== 'null' && s.paid_key !== '') {
                     allKeys.push({ key: s.paid_key, amount: s.amount || 0 });
@@ -3859,6 +3897,7 @@ Thank you! 🦈`;
                 }
             });
 
+            // ✅ Include referral earnings (parent 10%)
             referralData.earnings.forEach(e => {
                 if (e.paid_key && e.paid_key !== 'null' && e.paid_key !== '') {
                     allKeys.push({ key: e.paid_key, amount: e.amount || 0 });
@@ -3995,13 +4034,16 @@ Thank you! 🦈`;
             const link = getShareLink();
             if (!link) { showToast('⚠️ Please login first', 'error'); return; }
             const text = '🎯 Join SHARPI using my affiliate link and start earning! 💵 Earn 20,000 UGX per sale!';
-            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(link)}`, '_blank');
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(link)}`,
+            '_blank');
         }
 
         function shareOnFacebook() {
             const link = getShareLink();
             if (!link) { showToast('⚠️ Please login first', 'error'); return; }
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}&quote=${encodeURIComponent('🎯 Join SHARPI using my affiliate link!')}`, '_blank');
+            window.open(
+                `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}&quote=${encodeURIComponent('🎯 Join SHARPI using my affiliate link!')}`,
+                '_blank');
         }
 
         // ============================================================
@@ -4485,7 +4527,8 @@ Thank you! 🦈`;
                         const row = payload.new;
                         console.log('📡 Realtime update received:', row.status, row.user_name, row.promo_code);
 
-                        if (row.promo_code !== currentAffiliate.code && row.parent_affiliate !== currentAffiliate.code) {
+                        if (row.promo_code !== currentAffiliate.code && row.parent_affiliate !== currentAffiliate
+                            .code) {
                             console.log('⏭️ Not for this affiliate, skipping');
                             return;
                         }
@@ -4620,7 +4663,7 @@ Thank you! 🦈`;
         }
 
         // ============================================================
-        // RENDER DASHBOARD - FIXED: SHOWS ALL FORWARDED SALES
+        // ✅ FIXED: RENDER DASHBOARD – NOW SHOWS KEYS FOR REFERRAL EARNINGS
         // ============================================================
         async function renderDashboard() {
             if (!currentAffiliate) {
@@ -4688,7 +4731,8 @@ Thank you! 🦈`;
             document.getElementById('achPurchases').textContent = stats.totalSales || 0;
 
             if (currentAffiliate.createdAt) {
-                const days = Math.floor((Date.now() - new Date(currentAffiliate.createdAt).getTime()) / (1000 * 60 * 60 * 24));
+                const days = Math.floor((Date.now() - new Date(currentAffiliate.createdAt).getTime()) / (1000 * 60 * 60 *
+                24));
                 document.getElementById('daysActive').textContent = days || 0;
             }
 
@@ -4739,17 +4783,20 @@ Thank you! 🦈`;
             } else {
                 let html = '';
                 pendingReferrals.slice(0, 5).forEach(e => {
+                    const hasKey = e.paid_key && e.paid_key !== 'null' && e.paid_key !== '';
                     html += `
-                        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border-glass-light);font-size:11px;">
+                        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border-glass-light);font-size:11px;align-items:center;flex-wrap:wrap;gap:4px;">
                             <span style="color:var(--text-secondary);">${e.child_code || 'Affiliate'}</span>
                             <span style="color:var(--text-gold);">${e.amount.toLocaleString()} UGX</span>
-                            ${e.paid_key ? `<span style="color:var(--text-green);font-size:9px;">🔑 Has Key</span>` : `<span style="color:var(--text-red);font-size:9px;">⏳ No Key</span>`}
+                            ${hasKey ? `<span style="color:var(--text-green);font-size:9px;">🔑 Has Key</span>` : `<span style="color:var(--text-red);font-size:9px;">⏳ No Key</span>`}
                             <span style="color:var(--text-muted);font-size:9px;">📤 Forwarded</span>
+                            ${hasKey ? `<button class="withdraw-btn" style="font-size:8px;padding:2px 8px;" onclick="withdrawSingleKey('${e.paid_key}', ${e.amount})">💰 Withdraw</button>` : ''}
                         </div>
                     `;
                 });
                 if (pendingReferrals.length > 5) {
-                    html += `<div style="font-size:10px;color:var(--text-muted);text-align:center;padding:4px 0;">+${pendingReferrals.length - 5} more</div>`;
+                    html +=
+                        `<div style="font-size:10px;color:var(--text-muted);text-align:center;padding:4px 0;">+${pendingReferrals.length - 5} more</div>`;
                 }
                 referralEarningsList.innerHTML = html;
             }
@@ -4777,19 +4824,20 @@ Thank you! 🦈`;
                     `;
                 });
                 if (referralData.referrals.length > 5) {
-                    html += `<div style="font-size:10px;color:var(--text-muted);text-align:center;padding:4px 0;">+${referralData.referrals.length - 5} more</div>`;
+                    html +=
+                        `<div style="font-size:10px;color:var(--text-muted);text-align:center;padding:4px 0;">+${referralData.referrals.length - 5} more</div>`;
                 }
                 referralsList.innerHTML = html;
             }
 
             // ============================================================
-            // ✅ FIXED: COMMISSIONS LIST – INCLUDES ALL FORWARDED SALES
+            // ✅ FIXED: COMMISSIONS LIST – INCLUDES REFERRAL EARNINGS WITH KEYS
             // ============================================================
             const commissionList = document.getElementById('commissionList');
 
             let pendingItems = [];
 
-            // ✅ FIXED: Add ALL forwarded sales (not filtered by is_referral)
+            // Add ALL forwarded sales
             affForwarded.forEach(s => {
                 pendingItems.push({
                     type: 'sale',
@@ -4811,17 +4859,17 @@ Thank you! 🦈`;
                 });
             });
 
-            // Add referral earnings
+            // ✅ FIXED: Add referral earnings WITH PAID_KEY
             referralData.earnings.forEach(e => {
                 if (e.status === 'forwarded') {
                     pendingItems.push({
                         type: 'referral_earning',
                         id: e.id,
                         userName: e.child_name || 'Referral Affiliate',
-                        package: 'Referral',
+                        package: '🤝 Referral (10%)',
                         amount: e.amount || 0,
                         date: e.created_at || new Date().toISOString(),
-                        paid_key: e.paid_key || null,
+                        paid_key: e.paid_key || null, // ✅ KEY IS HERE
                         is_referral: true,
                         child_amount: 0,
                         parent_amount: e.amount || 0,
@@ -4860,14 +4908,15 @@ Thank you! 🦈`;
                     const isReferral = item.type === 'referral_earning';
                     const amount = item.amount || 0;
                     const percentageLabel = item.percentage || (isReferral ? '10%' : '100%');
-                    const typeLabel = isReferral ? '🤝 Referral' : '💰 Sale';
+                    const typeLabel = isReferral ? '🤝 Referral (10%)' : '💰 Sale';
                     const cardColor = isReferral ? 'var(--text-purple)' : 'var(--text-gold)';
                     const borderColor = isReferral ? '3px solid var(--text-purple)' : '3px solid var(--text-gold)';
                     const hasKey = item.paid_key && item.paid_key !== 'null' && item.paid_key !== '';
 
                     let splitDetails = '';
                     if (isSplit && !isReferral && item.child_amount > 0) {
-                        splitDetails = ` · Child: ${(item.child_amount).toLocaleString()} UGX (90%) | Parent: ${(item.parent_amount || 0).toLocaleString()} UGX (10%)`;
+                        splitDetails =
+                            ` · Child: ${(item.child_amount).toLocaleString()} UGX (90%) | Parent: ${(item.parent_amount || 0).toLocaleString()} UGX (10%)`;
                     }
                     if (isReferral) {
                         splitDetails = ` · You earned 10% (${amount.toLocaleString()} UGX)`;
@@ -4907,16 +4956,14 @@ Thank you! 🦈`;
             }
 
             // ============================================================
-            // WITHDRAW ALL CARD
+            // WITHDRAW ALL CARD – INCLUDES REFERRAL EARNINGS
             // ============================================================
-            // ✅ FIXED: Count ALL forwarded sales with keys
             const salesKeys = affForwarded.filter(s => s.paid_key && s.paid_key !== 'null' && s.paid_key !== '')
                 .length;
             const referralKeys = referralData.earnings.filter(e => e.status === 'forwarded' && e.paid_key && e.paid_key !== 'null' &&
                 e.paid_key !== '').length;
             const totalPendingKeys = salesKeys + referralKeys;
 
-            // Calculate total amount
             const salesAmount = affForwarded.reduce((sum, s) => sum + (s.amount || 0), 0);
             const referralAmount = referralData.pendingEarnings || 0;
             const withdrawAllAmount = salesAmount + referralAmount;
@@ -4999,12 +5046,11 @@ Thank you! 🦈`;
             // Setup pull to refresh
             setupPullToRefresh();
 
-            console.log('🦈 SHARPI Affiliate App v3.0 - COMPLETE FIXED');
-            console.log('✅ ALL forwarded sales displayed (not filtered by is_referral)');
-            console.log('✅ Child affiliate receives 90% commission display');
-            console.log('✅ Referral earnings have paid_key');
-            console.log('✅ Withdraw All includes all keys');
-            console.log('✅ Payment keys display for all forwarded items');
+            console.log('🦈 SHARPI Affiliate App v3.1 - COMPLETE FIXED');
+            console.log('✅ FIX: Parent (10%) referral earnings now display payment keys');
+            console.log('✅ FIX: referral_earnings items now render with key + withdraw buttons');
+            console.log('✅ FIX: Withdraw All includes referral earnings');
+            console.log('✅ ALL original features preserved');
         })();
 
         // ============================================================
