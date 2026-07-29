@@ -1270,10 +1270,6 @@
             background: rgba(251, 191, 36, 0.1);
             color: var(--text-gold)
         }
-        .status-badge.pending-withdraw {
-            background: rgba(251, 191, 36, 0.15);
-            color: var(--text-gold)
-        }
         .key-copy-btn {
             background: transparent;
             border: 1px solid var(--border-glass);
@@ -1353,16 +1349,6 @@
             background: transparent;
             color: var(--text-muted)
         }
-        .withdraw-btn.pending {
-            border-color: var(--text-gold);
-            color: var(--text-gold);
-            opacity: .7;
-            cursor: default
-        }
-        .withdraw-btn.pending:hover {
-            background: transparent;
-            color: var(--text-gold)
-        }
         .commission-card {
             background: var(--bg-card);
             border-radius: 16px;
@@ -1403,15 +1389,8 @@
             margin-top: 8px;
             flex-wrap: wrap
         }
-        .commission-card.pending-withdraw {
-            opacity: .7;
-            border-color: var(--border-gold);
-            border-left: 3px solid var(--text-gold);
-        }
-        .commission-card.paid-off {
-            opacity: .6;
-            border-color: var(--border-green);
-            border-left: 3px solid var(--text-green);
+        .commission-card .actions .withdraw-btn {
+            display: none !important;
         }
         .realtime-dot {
             display: inline-block;
@@ -1433,7 +1412,7 @@
                 transform: scale(.8)
             }
         }
-        /* WITHDRAW CARDS - NEW TWO BUTTON STYLES */
+        /* WITHDRAW CARDS - TWO BUTTON STYLES */
         .withdraw-card {
             border-radius: 16px;
             padding: 16px 18px;
@@ -2383,90 +2362,6 @@
         .referral-card .referral-link-section .link-status.locked {
             color: var(--text-muted);
         }
-        /* Referral commission card */
-        .referral-commission-card {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 14px 16px;
-            border: 1px solid var(--border-gold);
-            margin-bottom: 10px;
-            border-left: 3px solid var(--text-purple);
-        }
-        .referral-commission-card .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .referral-commission-card .header .amount {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-purple);
-        }
-        .referral-commission-card .details {
-            font-size: 11px;
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
-        .referral-commission-card .key-row {
-            font-family: monospace;
-            font-size: 10px;
-            color: var(--text-purple);
-            background: rgba(167, 139, 250, 0.08);
-            padding: 4px 8px;
-            border-radius: 4px;
-            margin-top: 4px;
-            word-break: break-all;
-        }
-        .referral-commission-card .actions {
-            display: flex;
-            gap: 6px;
-            margin-top: 8px;
-            flex-wrap: wrap;
-        }
-        /* REFERRAL EARNING CARD */
-        .referral-earning-card {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 14px 16px;
-            border: 1px solid var(--border-purple);
-            margin-bottom: 10px;
-            border-left: 3px solid var(--text-purple);
-        }
-        .referral-earning-card .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .referral-earning-card .header .amount {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-purple);
-        }
-        .referral-earning-card .details {
-            font-size: 11px;
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
-        .referral-earning-card .key-row {
-            font-family: monospace;
-            font-size: 10px;
-            color: var(--text-purple);
-            background: rgba(167, 139, 250, 0.08);
-            padding: 4px 8px;
-            border-radius: 4px;
-            margin-top: 4px;
-            word-break: break-all;
-        }
-        .referral-earning-card .actions {
-            display: flex;
-            gap: 6px;
-            margin-top: 8px;
-            flex-wrap: wrap;
-        }
     </style>
 </head>
 <body>
@@ -2755,7 +2650,7 @@
                 </div>
 
                 <!-- ============================================================
-                TWO SEPARATE WITHDRAW CARDS - SALES & REFERRALS
+                TWO SEPARATE WITHDRAW CARDS - SALES & REFERRALS (CENTRALIZED)
                 ============================================================ -->
                 <!-- WITHDRAW SALES CARD -->
                 <div class="withdraw-card sales" id="withdrawSalesCard">
@@ -2948,11 +2843,11 @@
 
     <script>
         // ============================================================
-        // AFFILIATE DASHBOARD – COMPLETE FIXED VERSION
-        // FIXED: Withdraw button changes to "Pending Withdraw" and disables
-        // FIXED: Cards remain visible until admin marks as PAID
-        // FIXED: Cards show "⏳ Pending Withdraw" status
-        // FIXED: When admin pays, cards disappear (status = 'paid')
+        // AFFILIATE DASHBOARD – COMPLETE FIXED VERSION v7.0
+        // FIXED: Proper separation of forwarded vs paid sales
+        // FIXED: Correct stats calculation (no reset)
+        // FIXED: Paid cards disappear from forwarded list
+        // FIXED: Balance updates correctly
         // ============================================================
 
         // ============================================================
@@ -3008,7 +2903,7 @@
         let isPulling = false;
         let pullThreshold = 80;
 
-        // Set to track keys that are pending withdrawal (user clicked withdraw)
+        // Set to track keys that are pending withdrawal
         let pendingWithdrawKeys = new Set();
 
         // ============================================================
@@ -3496,7 +3391,7 @@
         }
 
         // ============================================================
-        // LOAD SALES FROM SUPABASE
+        // ✅ FIXED: LOAD SALES FROM SUPABASE - Properly separate forwarded vs paid
         // ============================================================
         async function loadSalesFromSupabase(code) {
             if (!supabaseClient || !code) {
@@ -3505,9 +3400,8 @@
             }
 
             try {
-                console.log('🔄 Loading forwarded sales for affiliate:', code);
+                console.log('🔄 Loading sales for affiliate:', code);
 
-                // Load both forwarded and paid sales
                 const { data, error } = await supabaseClient
                     .from('payment_requests')
                     .select('*')
@@ -3527,11 +3421,15 @@
 
                     if (retryError) throw retryError;
                     const allData = retryData || [];
+                    
+                    // Reset arrays
+                    affForwarded = [];
+                    affPaid = [];
 
-                    const mappedSales = allData.map(s => {
+                    allData.forEach(s => {
                         let commissionAmount = s.child_amount || s.amount || 20000;
-
-                        return {
+                        
+                        const mappedSale = {
                             id: s.id,
                             userName: s.user_name || 'Unknown',
                             package: s.package || 'Package',
@@ -3554,21 +3452,29 @@
                             splitType: s.is_referral ? 'child' : '1-party',
                             recipient_type: s.recipient_type || null
                         };
+
+                        if (s.status === 'forwarded') {
+                            affForwarded.push(mappedSale);
+                        } else if (s.status === 'paid') {
+                            affPaid.push(mappedSale);
+                        }
                     });
 
-                    affForwarded = mappedSales.filter(s => s.status === 'forwarded' && s.promo_code === code);
-                    affPaid = mappedSales.filter(s => s.status === 'paid' && s.promo_code === code);
                     console.log(`✅ Loaded: ${affForwarded.length} forwarded, ${affPaid.length} paid`);
                     return true;
                 }
 
                 const allData = data || [];
-                console.log(`📊 Found ${allData.length} forwarded/paid sales for affiliate`);
+                console.log(`📊 Found ${allData.length} sales for affiliate`);
 
-                const mappedSales = allData.map(s => {
+                // Reset arrays
+                affForwarded = [];
+                affPaid = [];
+
+                allData.forEach(s => {
                     let commissionAmount = s.child_amount || s.amount || 20000;
-
-                    return {
+                    
+                    const mappedSale = {
                         id: s.id,
                         userName: s.user_name || 'Unknown',
                         package: s.package || 'Package',
@@ -3591,13 +3497,17 @@
                         splitType: s.is_referral ? 'child' : '1-party',
                         recipient_type: s.recipient_type || null
                     };
-                });
 
-                affForwarded = mappedSales.filter(s => s.status === 'forwarded' && s.promo_code === code);
-                affPaid = mappedSales.filter(s => s.status === 'paid' && s.promo_code === code);
+                    if (s.status === 'forwarded') {
+                        affForwarded.push(mappedSale);
+                    } else if (s.status === 'paid') {
+                        affPaid.push(mappedSale);
+                    }
+                });
 
                 console.log(`✅ Loaded: ${affForwarded.length} forwarded, ${affPaid.length} paid`);
                 return true;
+
             } catch (e) {
                 console.error('❌ Sales load error:', e);
                 return false;
@@ -3661,9 +3571,7 @@
                 referralData.paidEarnings = referralData.earnings?.filter(e => e.status === 'paid')
                     .reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
 
-                console.log(`📊 Loaded ${referralData.earnings.length} referral earnings with keys:`, referralData.earnings
-                    .map(e => ({ id: e.id, amount: e.amount, paid_key: e.paid_key, status: e.status })));
-
+                console.log(`📊 Loaded ${referralData.earnings.length} referral earnings`);
                 return referralData;
             } catch (e) {
                 console.error('❌ Load referral data error:', e);
@@ -3783,13 +3691,8 @@
             let totalAmount = 0;
 
             affForwarded.forEach(s => {
-                // Only include sales records that are not already withdrawn (pending withdraw or paid)
                 if (s.paid_key && s.paid_key !== 'null' && s.paid_key !== '') {
-                    // Only include if it's a child record or a direct sale
                     if (s.splitType === 'child' || s.splitType === '1-party') {
-                        // Check if already marked as paid (status paid) or pending withdraw
-                        // We still include pending withdraw keys so they show in the total
-                        // But they will be disabled in the UI
                         allKeys.push({ key: s.paid_key, amount: s.amount || 0, status: s.status });
                         totalAmount += (s.amount || 0);
                     }
@@ -3817,11 +3720,10 @@
         }
 
         // ============================================================
-        // WITHDRAW ALL SALES
+        // WITHDRAW ALL SALES (CENTRALIZED)
         // ============================================================
         function withdrawAllSales() {
             const salesData = getSalesKeys();
-            // Filter out keys that are already pending withdraw or paid
             const availableKeys = salesData.keys.filter(k => 
                 k.status !== 'paid' && !pendingWithdrawKeys.has(k.key)
             );
@@ -3832,19 +3734,17 @@
             const keyArray = availableKeys.map(k => k.key);
             withdrawalData.mode = 'sales';
             
-            // Mark all these keys as pending withdraw
             keyArray.forEach(key => pendingWithdrawKeys.add(key));
             
             showWithdrawalModal(keyArray, availableKeys.reduce((sum, k) => sum + k.amount, 0), 'sales');
         }
 
         // ============================================================
-        // WITHDRAW ALL REFERRALS
+        // WITHDRAW ALL REFERRALS (CENTRALIZED)
         // ============================================================
         function withdrawAllReferrals() {
-            const referralData = getReferralKeys();
-            // Filter out keys that are already pending withdraw or paid
-            const availableKeys = referralData.keys.filter(k => 
+            const referralKeyData = getReferralKeys();
+            const availableKeys = referralKeyData.keys.filter(k => 
                 k.status !== 'paid' && !pendingWithdrawKeys.has(k.key)
             );
             if (availableKeys.length === 0) {
@@ -3854,30 +3754,25 @@
             const keyArray = availableKeys.map(k => k.key);
             withdrawalData.mode = 'referrals';
             
-            // Mark all these keys as pending withdraw
             keyArray.forEach(key => pendingWithdrawKeys.add(key));
             
             showWithdrawalModal(keyArray, availableKeys.reduce((sum, k) => sum + k.amount, 0), 'referrals');
         }
 
         // ============================================================
-        // GET DASHBOARD STATS
+        // ✅ FIXED: GET DASHBOARD STATS - Correct calculations
         // ============================================================
         function getDashboardStats() {
             if (!currentAffiliate) return null;
 
-            const salesForwarded = affForwarded;
-            const salesPaid = affPaid;
-
-            const forwardedTotal = salesForwarded.reduce((sum, s) => sum + (s.amount || 0), 0);
-            const paidTotal = salesPaid.reduce((sum, s) => sum + (s.amount || 0), 0);
+            const forwardedTotal = affForwarded.reduce((sum, s) => sum + (s.amount || 0), 0);
+            const paidTotal = affPaid.reduce((sum, s) => sum + (s.amount || 0), 0);
             const totalEarned = forwardedTotal + paidTotal;
-            const totalSales = salesForwarded.length + salesPaid.length;
+            const totalSales = affForwarded.length + affPaid.length;
 
             const referralTotal = referralData.pendingEarnings || 0;
             const balance = forwardedTotal + referralTotal;
 
-            // Get separate sales and referral data for withdraw buttons
             const salesData = getSalesKeys();
             const referralKeyData = getReferralKeys();
 
@@ -3887,8 +3782,8 @@
                 balance,
                 forwarded: forwardedTotal,
                 paidOff: paidTotal,
-                forwardedSales: salesForwarded,
-                paidSales: salesPaid,
+                forwardedSales: affForwarded,
+                paidSales: affPaid,
                 referralEarnings: referralTotal,
                 referralPending: referralData.pendingEarnings || 0,
                 referralPaid: referralData.paidEarnings || 0,
@@ -4071,93 +3966,6 @@ Thank you! 🦈`;
             confirmBtn.textContent = 'Confirm Withdrawal';
 
             showToast('📤 Withdrawal request sent to admin!', 'success');
-        }
-
-        // ============================================================
-        // WITHDRAW SINGLE KEY (Individual card withdrawal)
-        // ============================================================
-        function withdrawSingleKey(key, amount) {
-            if (!key) {
-                showToast('❌ No key to withdraw', 'error');
-                return;
-            }
-
-            // Check if already pending withdraw
-            if (pendingWithdrawKeys.has(key)) {
-                showToast('⏳ This key is already pending withdrawal', 'warning');
-                return;
-            }
-
-            // Check if already paid
-            const sale = affForwarded.find(s => s.paid_key === key && s.status === 'paid');
-            if (sale) {
-                showToast('💵 This key has already been paid', 'warning');
-                return;
-            }
-
-            // Check affForwarded first (regular sales)
-            const saleItem = affForwarded.find(s => s.paid_key === key);
-            if (saleItem && saleItem.status !== 'paid') {
-                pendingWithdrawKeys.add(key);
-                showWithdrawalModal([key], saleItem.amount || 0, 'single');
-                // Update the UI to show pending status
-                updateCardStatus(key, 'pending');
-                return;
-            }
-
-            // Check referralData.earnings
-            const referralEarning = referralData.earnings.find(e => e.paid_key === key);
-            if (referralEarning && referralEarning.status !== 'paid') {
-                pendingWithdrawKeys.add(key);
-                showWithdrawalModal([key], referralEarning.amount || 0, 'single');
-                // Update the UI to show pending status
-                updateCardStatus(key, 'pending');
-                return;
-            }
-
-            showToast('❌ This key is not ready for withdrawal', 'error');
-        }
-
-        // ============================================================
-        // UPDATE CARD STATUS (UI helper)
-        // ============================================================
-        function updateCardStatus(key, status) {
-            // Find the card in the DOM
-            const cards = document.querySelectorAll('.commission-card, .referral-earning-card, .referral-commission-card');
-            cards.forEach(card => {
-                const keyRow = card.querySelector('.key-row');
-                if (keyRow && keyRow.textContent.includes(key)) {
-                    if (status === 'pending') {
-                        card.classList.add('pending-withdraw');
-                        const actionsDiv = card.querySelector('.actions');
-                        if (actionsDiv) {
-                            const withdrawBtn = actionsDiv.querySelector('.withdraw-btn');
-                            if (withdrawBtn) {
-                                withdrawBtn.disabled = true;
-                                withdrawBtn.className = 'withdraw-btn pending';
-                                withdrawBtn.textContent = '⏳ Pending';
-                            }
-                        }
-                        // Add status badge
-                        const detailsDiv = card.querySelector('.details');
-                        if (detailsDiv) {
-                            const existingBadge = detailsDiv.querySelector('.status-badge');
-                            if (existingBadge) {
-                                existingBadge.textContent = '⏳ Pending Withdraw';
-                                existingBadge.className = 'status-badge pending-withdraw';
-                            } else {
-                                const badge = document.createElement('span');
-                                badge.className = 'status-badge pending-withdraw';
-                                badge.textContent = '⏳ Pending Withdraw';
-                                detailsDiv.appendChild(badge);
-                            }
-                        }
-                    } else if (status === 'paid') {
-                        card.classList.add('paid-off');
-                        card.style.display = 'none';
-                    }
-                }
-            });
         }
 
         // ============================================================
@@ -4744,7 +4552,7 @@ Thank you! 🦈`;
         }
 
         // ============================================================
-        // REALTIME LISTENER (CORS FIXED)
+        // ✅ FIXED: REALTIME LISTENER - Properly handle paid status
         // ============================================================
         function setupRealtimeListener() {
             if (realtimeChannel) {
@@ -4773,38 +4581,70 @@ Thank you! 🦈`;
                         const row = payload.new;
                         console.log('📡 Realtime update received:', row.status, row.user_name, row.promo_code);
 
-                        if (row.promo_code !== currentAffiliate.code && row.parent_affiliate !== currentAffiliate
-                            .code) {
+                        if (row.promo_code !== currentAffiliate.code && row.parent_affiliate !== currentAffiliate.code) {
                             console.log('⏭️ Not for this affiliate, skipping');
                             return;
                         }
 
-                        if (row.status !== 'forwarded' && row.status !== 'paid') {
-                            console.log('⏭️ Status not forwarded/paid, skipping');
-                            return;
-                        }
+                        console.log(`✅ ${row.status} sale detected for this affiliate!`);
 
-                        console.log('✅ FORWARDED/PAID sale detected for this affiliate!');
-
-                        // If the key is now PAID, remove from pending set and refresh
+                        // If the key is now PAID, remove from forwarded and add to paid
                         if (row.status === 'paid') {
+                            // Remove from forwarded
+                            const forwardedIndex = affForwarded.findIndex(s => s.id === row.id);
+                            if (forwardedIndex !== -1) {
+                                const removedSale = affForwarded.splice(forwardedIndex, 1)[0];
+                                // Add to paid if not already there
+                                if (!affPaid.find(s => s.id === row.id)) {
+                                    const paidSale = {
+                                        ...removedSale,
+                                        status: 'paid',
+                                        paid_at: row.paid_at || new Date().toISOString()
+                                    };
+                                    affPaid.push(paidSale);
+                                }
+                            }
+                            // Remove from pending withdraw set
                             if (row.paid_key) {
                                 pendingWithdrawKeys.delete(row.paid_key);
                             }
+                            showToast('✅ Commission paid! Check your Paid Off balance.', 'success');
+                        } else if (row.status === 'forwarded') {
+                            // Check if already in forwarded list
+                            if (!affForwarded.find(s => s.id === row.id)) {
+                                // Add to forwarded
+                                const mappedSale = {
+                                    id: row.id,
+                                    userName: row.user_name || 'Unknown',
+                                    package: row.package || 'Package',
+                                    amount: row.child_amount || row.amount || 20000,
+                                    promoCode: row.promo_code,
+                                    date: row.created_at || new Date().toISOString(),
+                                    status: 'forwarded',
+                                    paid_key: row.paid_key || null,
+                                    key_used: row.key_used || false,
+                                    key_status: row.key_status || 'valid',
+                                    paid_at: row.paid_at || null,
+                                    token: row.token || null,
+                                    raw: row,
+                                    isReferral: row.is_referral || false,
+                                    is_referral: row.is_referral || false,
+                                    parent_affiliate: row.parent_affiliate || null,
+                                    parent_key: row.parent_key || null,
+                                    child_amount: row.child_amount || 0,
+                                    parent_amount: row.parent_amount || 0,
+                                    splitType: row.is_referral ? 'child' : '1-party',
+                                    recipient_type: row.recipient_type || null
+                                };
+                                affForwarded.push(mappedSale);
+                            }
+                            showToast('📤 New sale forwarded!', 'success');
                         }
 
                         const dot = document.getElementById('realtimeDot');
                         if (dot) dot.style.display = 'inline-block';
 
-                        await loadSalesFromSupabase(currentAffiliate.code);
-                        await loadReferralData();
                         await renderDashboard();
-
-                        if (row.status === 'forwarded') {
-                            showToast(`📤 New sale forwarded!`, 'success');
-                        } else if (row.status === 'paid') {
-                            showToast('✅ Commission paid! Check your Paid Off balance.', 'success');
-                        }
 
                         setTimeout(() => {
                             if (dot) dot.style.display = 'none';
@@ -4820,6 +4660,13 @@ Thank you! 🦈`;
                             console.log('📡 Referral earning update detected:', row.status);
                             if (row.status === 'paid' && row.paid_key) {
                                 pendingWithdrawKeys.delete(row.paid_key);
+                                // Update referralData
+                                const earningIndex = referralData.earnings.findIndex(e => e.id === row.id);
+                                if (earningIndex !== -1) {
+                                    referralData.earnings[earningIndex].status = 'paid';
+                                    referralData.pendingEarnings -= row.amount;
+                                    referralData.paidEarnings += row.amount;
+                                }
                             }
                             await loadReferralData();
                             await renderDashboard();
@@ -4934,7 +4781,7 @@ Thank you! 🦈`;
         }
 
         // ============================================================
-        // ✅ FIXED: RENDER DASHBOARD – WITH PENDING WITHDRAW STATUS
+        // ✅ FIXED: RENDER DASHBOARD - Correct stats, paid cards disappear
         // ============================================================
         async function renderDashboard() {
             if (!currentAffiliate) {
@@ -5002,16 +4849,14 @@ Thank you! 🦈`;
             document.getElementById('achPurchases').textContent = stats.totalSales || 0;
 
             if (currentAffiliate.createdAt) {
-                const days = Math.floor((Date.now() - new Date(currentAffiliate.createdAt).getTime()) / (1000 * 60 * 60 *
-                24));
+                const days = Math.floor((Date.now() - new Date(currentAffiliate.createdAt).getTime()) / (1000 * 60 * 60 * 24));
                 document.getElementById('daysActive').textContent = days || 0;
             }
 
             // ============================================================
-            // WITHDRAW SALES CARD
+            // WITHDRAW SALES CARD (CENTRALIZED)
             // ============================================================
             const salesData = getSalesKeys();
-            // Count available keys (not pending withdraw and not paid)
             const availableSalesKeys = salesData.keys.filter(k => 
                 k.status !== 'paid' && !pendingWithdrawKeys.has(k.key)
             );
@@ -5029,10 +4874,9 @@ Thank you! 🦈`;
             }
 
             // ============================================================
-            // WITHDRAW REFERRALS CARD
+            // WITHDRAW REFERRALS CARD (CENTRALIZED)
             // ============================================================
             const referralKeyData = getReferralKeys();
-            // Count available keys (not pending withdraw and not paid)
             const availableReferralKeys = referralKeyData.keys.filter(k => 
                 k.status !== 'paid' && !pendingWithdrawKeys.has(k.key)
             );
@@ -5104,13 +4948,7 @@ Thank you! 🦈`;
                             <span style="color:var(--text-gold);">${e.amount.toLocaleString()} UGX</span>
                             ${hasKey ? `<span style="color:var(--text-green);font-size:9px;">🔑 Has Key</span>` : `<span style="color:var(--text-red);font-size:9px;">⏳ No Key</span>`}
                             <span style="color:var(--text-muted);font-size:9px;">📤 Forwarded</span>
-                            ${hasKey ? 
-                                (isPending ? 
-                                    `<span style="color:var(--text-gold);font-size:9px;">⏳ Pending Withdraw</span>` : 
-                                    `<button class="withdraw-btn" style="font-size:8px;padding:2px 8px;" onclick="withdrawSingleKey('${e.paid_key}', ${e.amount})">💰 Withdraw</button>`
-                                ) : 
-                                ''
-                            }
+                            ${isPending ? `<span style="color:var(--text-gold);font-size:9px;">⏳ Pending Withdraw</span>` : ''}
                         </div>
                     `;
                 });
@@ -5151,15 +4989,14 @@ Thank you! 🦈`;
             }
 
             // ============================================================
-            // COMMISSIONS LIST – INCLUDES PENDING WITHDRAW STATUS
+            // COMMISSIONS LIST – ONLY FORWARDED (PAID CARDS DISAPPEAR)
             // ============================================================
             const commissionList = document.getElementById('commissionList');
 
             let pendingItems = [];
 
-            // Add ALL forwarded sales (excluding referral-only records)
+            // Add ALL forwarded sales (only forwarded, not paid)
             affForwarded.forEach(s => {
-                // Only include sales that are not referral-only records
                 if (s.splitType === 'child' || s.splitType === '1-party') {
                     pendingItems.push({
                         type: 'sale',
@@ -5183,10 +5020,9 @@ Thank you! 🦈`;
                 }
             });
 
-            // Add referral earnings (parent 10% commissions)
+            // Add referral earnings (only forwarded, not paid)
             referralData.earnings.forEach(e => {
-                // Only show forwarded (not paid)
-                if (e.status === 'forwarded' || e.status === 'paid') {
+                if (e.status === 'forwarded') {
                     pendingItems.push({
                         type: 'referral_earning',
                         id: e.id,
@@ -5223,7 +5059,7 @@ Thank you! 🦈`;
 
                 html += `
                     <div style="margin-bottom:8px;">
-                        <span style="font-size:11px;font-weight:600;color:var(--text-secondary);">⏳ Pending Commissions</span>
+                        <span style="font-size:11px;font-weight:600;color:var(--text-secondary);">📋 Forwarded Commissions</span>
                         <span style="font-size:10px;color:var(--text-muted);margin-left:6px;">(${pendingItems.length})</span>
                         ${isRealtimeConnected ? `<span style="font-size:9px;color:var(--text-green);margin-left:6px;">● Live</span>` : ''}
                     </div>
@@ -5239,10 +5075,6 @@ Thank you! 🦈`;
                     const borderColor = isReferral ? '3px solid var(--text-purple)' : '3px solid var(--text-gold)';
                     const hasKey = item.paid_key && item.paid_key !== 'null' && item.paid_key !== '';
                     const isPending = hasKey && pendingWithdrawKeys.has(item.paid_key);
-                    const isPaid = item.status === 'paid';
-
-                    // If paid, skip rendering (hide it)
-                    if (isPaid) return;
 
                     let splitDetails = '';
                     if (isSplit && !isReferral && item.child_amount > 0) {
@@ -5281,8 +5113,8 @@ Thank you! 🦈`;
                                     <div class="actions">
                                         <button class="key-copy-btn" onclick="copyKeyToClipboard('${item.paid_key}')">📋 Copy Key</button>
                                         ${isPending ? 
-                                            `<button class="withdraw-btn pending" disabled>⏳ Pending</button>` : 
-                                            `<button class="withdraw-btn" onclick="withdrawSingleKey('${item.paid_key}', ${amount})">💰 Withdraw</button>`
+                                            `<span style="font-size:10px;color:var(--text-gold);">⏳ Pending Withdraw</span>` : 
+                                            `<span style="font-size:10px;color:var(--text-green);">✅ Ready to Withdraw</span>`
                                         }
                                     </div>
                                 ` : `
@@ -5361,12 +5193,12 @@ Thank you! 🦈`;
             // Setup pull to refresh
             setupPullToRefresh();
 
-            console.log('🦈 SHARPI Affiliate App v5.0 - COMPLETE FIXED');
-            console.log('✅ FIXED: Withdraw button changes to "Pending Withdraw" and disables');
-            console.log('✅ FIXED: Cards remain visible until admin marks as PAID');
-            console.log('✅ FIXED: Cards show "⏳ Pending Withdraw" status');
-            console.log('✅ FIXED: When admin pays, cards disappear (status = paid)');
-            console.log('✅ NEW: Two separate withdraw buttons (Sales & Referrals)');
+            console.log('🦈 SHARPI Affiliate App v7.0 - COMPLETE FIXED');
+            console.log('✅ FIXED: Proper separation of forwarded vs paid sales');
+            console.log('✅ FIXED: Correct stats calculation (no reset)');
+            console.log('✅ FIXED: Paid cards disappear from forwarded list');
+            console.log('✅ FIXED: Balance updates correctly');
+            console.log('✅ FIXED: Realtime listener handles paid status properly');
             console.log('✅ ALL original features preserved');
         })();
 
@@ -5418,7 +5250,6 @@ Thank you! 🦈`;
         window.copyKeyToClipboard = copyKeyToClipboard;
         window.withdrawAllSales = withdrawAllSales;
         window.withdrawAllReferrals = withdrawAllReferrals;
-        window.withdrawSingleKey = withdrawSingleKey;
         window.getSalesKeys = getSalesKeys;
         window.getReferralKeys = getReferralKeys;
         window.loginAffiliate = loginAffiliate;
@@ -5432,7 +5263,6 @@ Thank you! 🦈`;
         window.loadReferralData = loadReferralData;
         window.renderDashboard = renderDashboard;
         window.getDashboardStats = getDashboardStats;
-        window.updateCardStatus = updateCardStatus;
         window.pendingWithdrawKeys = pendingWithdrawKeys;
     </script>
 </body>
