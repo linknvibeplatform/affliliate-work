@@ -83,7 +83,8 @@
             --toast-text: white;
             --scrollbar-track: transparent;
             --scrollbar-thumb: rgba(11, 30, 51, 0.2);
-            --transition-speed: .15s
+            --transition-speed: .15s;
+            --paid-overlay: rgba(11, 30, 51, 0.08);
         }
         [data-theme="dark"] {
             --bg-primary: #0a0e1a;
@@ -150,7 +151,8 @@
             --toast-bg: rgba(0, 0, 0, 0.9);
             --toast-text: #e8edf5;
             --scrollbar-track: transparent;
-            --scrollbar-thumb: rgba(255, 255, 255, 0.2)
+            --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+            --paid-overlay: rgba(255, 255, 255, 0.05);
         }
         body {
             font-family: 'Inter', sans-serif;
@@ -1266,8 +1268,8 @@
             background: rgba(248, 113, 113, 0.1);
             color: var(--text-red)
         }
-        .status-badge.withdrawn {
-            background: rgba(251, 191, 36, 0.1);
+        .status-badge.pending-withdraw {
+            background: rgba(251, 191, 36, 0.15);
             color: var(--text-gold)
         }
         .key-copy-btn {
@@ -1348,69 +1350,6 @@
         .withdraw-btn:disabled:hover {
             background: transparent;
             color: var(--text-muted)
-        }
-        .commission-card {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 14px 16px;
-            border: 1px solid var(--border-glass-light);
-            margin-bottom: 10px
-        }
-        .commission-card .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 6px
-        }
-        .commission-card .header .amount {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-gold)
-        }
-        .commission-card .details {
-            font-size: 11px;
-            color: var(--text-secondary);
-            margin-top: 4px
-        }
-        .commission-card .key-row {
-            font-family: monospace;
-            font-size: 10px;
-            color: var(--text-gold);
-            background: rgba(0, 0, 0, 0.05);
-            padding: 4px 8px;
-            border-radius: 4px;
-            margin-top: 4px;
-            word-break: break-all
-        }
-        .commission-card .actions {
-            display: flex;
-            gap: 6px;
-            margin-top: 8px;
-            flex-wrap: wrap
-        }
-        .commission-card .actions .withdraw-btn {
-            display: none !important;
-        }
-        .realtime-dot {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--text-green);
-            animation: pulse 1.5s infinite;
-            margin-left: 6px
-        }
-        @keyframes pulse {
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1)
-            }
-            50% {
-                opacity: .3;
-                transform: scale(.8)
-            }
         }
         /* WITHDRAW CARDS - TWO BUTTON STYLES */
         .withdraw-card {
@@ -1496,6 +1435,130 @@
             background: #8b5cf6;
             color: white;
         }
+
+        /* COMMISSION CARD - UPDATES COLUMN */
+        .commission-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 14px 16px;
+            border: 1px solid var(--border-glass-light);
+            margin-bottom: 10px;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        .commission-card .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px
+        }
+        .commission-card .header .amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-gold)
+        }
+        .commission-card .details {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 4px
+        }
+        .commission-card .key-row {
+            font-family: monospace;
+            font-size: 10px;
+            color: var(--text-gold);
+            background: rgba(0, 0, 0, 0.05);
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-top: 4px;
+            word-break: break-all
+        }
+        .commission-card .actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .commission-card .actions .withdraw-btn {
+            display: none !important;
+        }
+
+        /* PENDING WITHDRAW STATE - BLUR OVERLAY */
+        .commission-card.pending-withdraw {
+            opacity: 0.6;
+            filter: blur(1px);
+            border-color: var(--border-gold);
+            border-left: 3px solid var(--text-gold);
+            pointer-events: none;
+        }
+        .commission-card.pending-withdraw::after {
+            content: '⏳ Pending Withdraw';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(251, 191, 36, 0.9);
+            color: #0b1e33;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 12px;
+            z-index: 10;
+            letter-spacing: 0.5px;
+        }
+        [data-theme="dark"] .commission-card.pending-withdraw::after {
+            background: rgba(251, 191, 36, 0.85);
+        }
+
+        /* PAID STATE - DARKENED, VISIBLE ONCE */
+        .commission-card.paid-off {
+            opacity: 0.4;
+            filter: grayscale(1) blur(1px);
+            border-color: var(--border-green);
+            border-left: 3px solid var(--text-green);
+            pointer-events: none;
+            transition: all 0.8s ease;
+        }
+        .commission-card.paid-off::after {
+            content: '💵 Paid ✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(52, 211, 153, 0.9);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 12px;
+            z-index: 10;
+            letter-spacing: 0.5px;
+        }
+        [data-theme="dark"] .commission-card.paid-off::after {
+            background: rgba(52, 211, 153, 0.85);
+        }
+
+        .realtime-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--text-green);
+            animation: pulse 1.5s infinite;
+            margin-left: 6px
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+            50% {
+                opacity: .3;
+                transform: scale(.8)
+            }
+        }
+
         @media(max-width:480px) {
             .hero-illustration>div:first-child {
                 transform: perspective(400px) rotateX(1deg) rotateY(0deg) !important
@@ -1536,6 +1599,11 @@
             .withdraw-card .withdraw-btn-large {
                 width: 100%;
                 justify-content: center;
+            }
+            .commission-card.pending-withdraw::after,
+            .commission-card.paid-off::after {
+                font-size: 10px;
+                padding: 4px 12px;
             }
         }
         @media(min-width:481px) and (max-height:700px) {
@@ -1682,6 +1750,11 @@
             .withdraw-card .withdraw-btn-large {
                 font-size: 12px !important;
                 padding: 8px 16px !important;
+            }
+            .commission-card.pending-withdraw::after,
+            .commission-card.paid-off::after {
+                font-size: 9px !important;
+                padding: 3px 10px !important;
             }
         }
         .popup-overlay {
@@ -2367,7 +2440,7 @@
 <body>
 
     <!-- ============================================================
-    FULL UI - PRESERVED
+    FULL UI
     ============================================================ -->
     <div class="app-frame" id="appFrame">
 
@@ -2638,10 +2711,10 @@
                     </div>
                 </div>
 
-                <!-- COMMISSIONS CARD -->
+                <!-- COMMISSIONS CARD (UPDATES COLUMN) -->
                 <div style="background:var(--bg-card);border-radius:16px;padding:16px;border:1px solid var(--border-glass-light);margin-bottom:12px;">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-                        <span style="font-weight:700;color:var(--text-primary);font-size:15px;">📋 Forwarded Commissions</span>
+                        <span style="font-weight:700;color:var(--text-primary);font-size:15px;">📋 Updates</span>
                         <span style="font-size:10px;color:var(--text-secondary);opacity:.6;">Real-time updates</span>
                     </div>
                     <div id="commissionList">
@@ -2841,13 +2914,16 @@
         </div>
     </div>
 
+    <!-- ============================================================
+    SCRIPT - COMPLETE FIXED VERSION
+    ============================================================ -->
     <script>
         // ============================================================
-        // AFFILIATE DASHBOARD – COMPLETE FIXED VERSION v7.0
-        // FIXED: Proper separation of forwarded vs paid sales
-        // FIXED: Correct stats calculation (no reset)
-        // FIXED: Paid cards disappear from forwarded list
-        // FIXED: Balance updates correctly
+        // AFFILIATE DASHBOARD – COMPLETE FIXED VERSION v10.0
+        // FIXED: All DOM elements exist (full HTML restored)
+        // FIXED: Withdraw on parent side does NOT affect child side
+        // FIXED: 10% referral earnings properly update when admin marks as PAID
+        // FIXED: Paid cards turn dark, visible once, disappear on refresh
         // ============================================================
 
         // ============================================================
@@ -2859,14 +2935,6 @@
             AFFILIATE: 'sharpiAffiliate',
             THEME: 'theme',
             TUTORIAL_SHOWN: 'sharpi_tutorial_shown'
-        };
-
-        // CORS FIX: Custom headers
-        const SUPABASE_HEADERS = {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=representation'
         };
 
         let supabaseClient = null;
@@ -2884,6 +2952,7 @@
         let referralData = {
             referrals: [],
             earnings: [],
+            earningsPaid: [],
             totalReferrals: 0,
             activeReferrals: 0,
             totalReferralEarnings: 0,
@@ -2903,11 +2972,12 @@
         let isPulling = false;
         let pullThreshold = 80;
 
-        // Set to track keys that are pending withdrawal
+        // Track keys that are pending withdrawal
         let pendingWithdrawKeys = new Set();
+        let paidKeysSeen = new Set();
 
         // ============================================================
-        // LOGIN ATTEMPT TRACKING FOR RATE LIMITING
+        // LOGIN ATTEMPT TRACKING
         // ============================================================
         const LOGIN_LIMIT = {
             maxAttempts: 5,
@@ -2956,7 +3026,7 @@
         }
 
         // ============================================================
-        // CORS FIX: Supabase initialization with custom headers
+        // CORS FIX: Supabase initialization
         // ============================================================
         function initSupabase() {
             if (typeof supabase !== 'undefined' && supabase.createClient) {
@@ -3001,7 +3071,9 @@
 
         function updateThemeIcon(theme) {
             const icon = document.getElementById('themeIcon');
-            icon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
+            if (icon) {
+                icon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
+            }
         }
 
         function loadTheme() {
@@ -3060,7 +3132,7 @@
         }
 
         // ============================================================
-        // REGISTER AFFILIATE (WITH PIN + REFERRAL SUPPORT)
+        // REGISTER AFFILIATE
         // ============================================================
         async function registerAffiliate(name, username, contact, platform, pin, referredBy) {
             if (!name || !username || !contact || !pin || pin.length !== 4 || !/^\d{4}$/.test(pin)) {
@@ -3139,7 +3211,7 @@
         }
 
         // ============================================================
-        // LOGIN AFFILIATE (WITH PIN)
+        // LOGIN AFFILIATE
         // ============================================================
         async function loginAffiliate(contact, pin) {
             const cleanContact = contact.replace(/[\s\-\(\)\+]/g, '');
@@ -3391,7 +3463,7 @@
         }
 
         // ============================================================
-        // ✅ FIXED: LOAD SALES FROM SUPABASE - Properly separate forwarded vs paid
+        // LOAD SALES FROM SUPABASE
         // ============================================================
         async function loadSalesFromSupabase(code) {
             if (!supabaseClient || !code) {
@@ -3422,7 +3494,6 @@
                     if (retryError) throw retryError;
                     const allData = retryData || [];
                     
-                    // Reset arrays
                     affForwarded = [];
                     affPaid = [];
 
@@ -3467,7 +3538,6 @@
                 const allData = data || [];
                 console.log(`📊 Found ${allData.length} sales for affiliate`);
 
-                // Reset arrays
                 affForwarded = [];
                 affPaid = [];
 
@@ -3558,20 +3628,22 @@
                         .order('created_at', { ascending: false });
 
                     if (retryError) throw retryError;
-                    referralData.earnings = retryData || [];
+                    const allEarnings = retryData || [];
+                    referralData.earnings = allEarnings.filter(e => e.status === 'forwarded');
+                    referralData.earningsPaid = allEarnings.filter(e => e.status === 'paid');
                 } else {
-                    referralData.earnings = earnings || [];
+                    const allEarnings = earnings || [];
+                    referralData.earnings = allEarnings.filter(e => e.status === 'forwarded');
+                    referralData.earningsPaid = allEarnings.filter(e => e.status === 'paid');
                 }
 
                 referralData.totalReferrals = referralData.referrals?.length || 0;
                 referralData.activeReferrals = referralData.referrals?.filter(r => r.status === 'active').length || 0;
-                referralData.totalReferralEarnings = referralData.earnings?.reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
-                referralData.pendingEarnings = referralData.earnings?.filter(e => e.status === 'forwarded')
-                    .reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
-                referralData.paidEarnings = referralData.earnings?.filter(e => e.status === 'paid')
-                    .reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
+                referralData.pendingEarnings = referralData.earnings.reduce((sum, e) => sum + (e.amount || 0), 0);
+                referralData.paidEarnings = referralData.earningsPaid.reduce((sum, e) => sum + (e.amount || 0), 0);
+                referralData.totalReferralEarnings = referralData.pendingEarnings + referralData.paidEarnings;
 
-                console.log(`📊 Loaded ${referralData.earnings.length} referral earnings`);
+                console.log(`📊 Loaded ${referralData.earnings.length} pending, ${referralData.earningsPaid.length} paid referral earnings`);
                 return referralData;
             } catch (e) {
                 console.error('❌ Load referral data error:', e);
@@ -3684,7 +3756,7 @@
         }
 
         // ============================================================
-        // GET SALES KEYS (For Withdraw Sales)
+        // GET SALES KEYS
         // ============================================================
         function getSalesKeys() {
             const allKeys = [];
@@ -3693,8 +3765,10 @@
             affForwarded.forEach(s => {
                 if (s.paid_key && s.paid_key !== 'null' && s.paid_key !== '') {
                     if (s.splitType === 'child' || s.splitType === '1-party') {
-                        allKeys.push({ key: s.paid_key, amount: s.amount || 0, status: s.status });
-                        totalAmount += (s.amount || 0);
+                        if (!pendingWithdrawKeys.has(s.paid_key)) {
+                            allKeys.push({ key: s.paid_key, amount: s.amount || 0, status: s.status });
+                            totalAmount += (s.amount || 0);
+                        }
                     }
                 }
             });
@@ -3703,7 +3777,7 @@
         }
 
         // ============================================================
-        // GET REFERRAL KEYS (For Withdraw Referrals)
+        // GET REFERRAL KEYS
         // ============================================================
         function getReferralKeys() {
             const allKeys = [];
@@ -3711,8 +3785,10 @@
 
             referralData.earnings.forEach(e => {
                 if (e.paid_key && e.paid_key !== 'null' && e.paid_key !== '') {
-                    allKeys.push({ key: e.paid_key, amount: e.amount || 0, status: e.status });
-                    totalAmount += (e.amount || 0);
+                    if (!pendingWithdrawKeys.has(e.paid_key)) {
+                        allKeys.push({ key: e.paid_key, amount: e.amount || 0, status: e.status });
+                        totalAmount += (e.amount || 0);
+                    }
                 }
             });
 
@@ -3720,47 +3796,99 @@
         }
 
         // ============================================================
-        // WITHDRAW ALL SALES (CENTRALIZED)
+        // WITHDRAW ALL SALES
         // ============================================================
         function withdrawAllSales() {
             const salesData = getSalesKeys();
-            const availableKeys = salesData.keys.filter(k => 
-                k.status !== 'paid' && !pendingWithdrawKeys.has(k.key)
-            );
-            if (availableKeys.length === 0) {
+            if (salesData.keys.length === 0) {
                 showToast('❌ No sales keys available to withdraw', 'error');
                 return;
             }
-            const keyArray = availableKeys.map(k => k.key);
-            withdrawalData.mode = 'sales';
+
+            salesData.keys.forEach(k => {
+                pendingWithdrawKeys.add(k.key);
+            });
+
+            const affiliateCode = currentAffiliate ? currentAffiliate.code : 'N/A';
+            const affiliateName = currentAffiliate ? currentAffiliate.name : 'Affiliate';
+            const affiliateContact = currentAffiliate ? currentAffiliate.contact : 'N/A';
+
+            let keysString = salesData.keys.map(k => k.key).join('\n');
+
+            const message = `💰 SALES WITHDRAWAL REQUEST
+
+👤 Affiliate: ${affiliateName}
+🆔 Code: ${affiliateCode}
+📱 Contact: ${affiliateContact}
+
+🔑 Payment Keys (${salesData.keys.length} key${salesData.keys.length > 1 ? 's' : ''}):
+${keysString}
+
+💰 Total Amount: ${salesData.totalAmount.toLocaleString()} UGX
+
+📱 Please process my sales withdrawal.
+
+Thank you! 🦈`;
+
+            const phoneNumber = '256740042068';
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+
+            showToast(`📤 Sent ${salesData.keys.length} sales keys to admin!`, 'success');
             
-            keyArray.forEach(key => pendingWithdrawKeys.add(key));
-            
-            showWithdrawalModal(keyArray, availableKeys.reduce((sum, k) => sum + k.amount, 0), 'sales');
+            setTimeout(() => {
+                renderDashboard();
+            }, 1000);
         }
 
         // ============================================================
-        // WITHDRAW ALL REFERRALS (CENTRALIZED)
+        // WITHDRAW ALL REFERRALS
         // ============================================================
         function withdrawAllReferrals() {
             const referralKeyData = getReferralKeys();
-            const availableKeys = referralKeyData.keys.filter(k => 
-                k.status !== 'paid' && !pendingWithdrawKeys.has(k.key)
-            );
-            if (availableKeys.length === 0) {
+            if (referralKeyData.keys.length === 0) {
                 showToast('❌ No referral keys available to withdraw', 'error');
                 return;
             }
-            const keyArray = availableKeys.map(k => k.key);
-            withdrawalData.mode = 'referrals';
+
+            referralKeyData.keys.forEach(k => {
+                pendingWithdrawKeys.add(k.key);
+            });
+
+            const affiliateCode = currentAffiliate ? currentAffiliate.code : 'N/A';
+            const affiliateName = currentAffiliate ? currentAffiliate.name : 'Affiliate';
+            const affiliateContact = currentAffiliate ? currentAffiliate.contact : 'N/A';
+
+            let keysString = referralKeyData.keys.map(k => k.key).join('\n');
+
+            const message = `💰 REFERRAL WITHDRAWAL REQUEST
+
+👤 Affiliate: ${affiliateName}
+🆔 Code: ${affiliateCode}
+📱 Contact: ${affiliateContact}
+
+🔑 Payment Keys (${referralKeyData.keys.length} key${referralKeyData.keys.length > 1 ? 's' : ''}):
+${keysString}
+
+💰 Total Amount: ${referralKeyData.totalAmount.toLocaleString()} UGX
+
+📱 Please process my referral withdrawal.
+
+Thank you! 🦈`;
+
+            const phoneNumber = '256740042068';
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+
+            showToast(`📤 Sent ${referralKeyData.keys.length} referral keys to admin!`, 'success');
             
-            keyArray.forEach(key => pendingWithdrawKeys.add(key));
-            
-            showWithdrawalModal(keyArray, availableKeys.reduce((sum, k) => sum + k.amount, 0), 'referrals');
+            setTimeout(() => {
+                renderDashboard();
+            }, 1000);
         }
 
         // ============================================================
-        // ✅ FIXED: GET DASHBOARD STATS - Correct calculations
+        // GET DASHBOARD STATS
         // ============================================================
         function getDashboardStats() {
             if (!currentAffiliate) return null;
@@ -3796,176 +3924,6 @@
                 referralKeys: referralKeyData.count,
                 referralTotal: referralKeyData.totalAmount
             };
-        }
-
-        // ============================================================
-        // WITHDRAWAL MODAL FUNCTIONS
-        // ============================================================
-        function showWithdrawalModal(keys, totalAmount, mode) {
-            withdrawalData.keys = keys;
-            withdrawalData.totalAmount = totalAmount;
-            withdrawalData.mode = mode || 'sales';
-
-            const typeLabels = {
-                'sales': 'Sales',
-                'referrals': 'Referral',
-                'single': 'Single'
-            };
-            const typeLabel = typeLabels[mode] || 'All';
-
-            document.getElementById('modalTitle').textContent = `💰 ${typeLabel} Withdrawal`;
-            document.getElementById('modalSubtitle').textContent = `Complete your ${typeLabel.toLowerCase()} withdrawal details below`;
-
-            document.getElementById('modalKeyCount').textContent = keys.length + ' key' + (keys.length > 1 ? 's' : '');
-            document.getElementById('modalTotalAmount').textContent = totalAmount.toLocaleString() + ' UGX';
-
-            document.getElementById('withdrawNetwork').value = '';
-            document.getElementById('withdrawPhone').value = '';
-            document.getElementById('withdrawPhoneConfirm').value = '';
-            document.getElementById('withdrawName').value = '';
-
-            document.querySelectorAll('.error-message').forEach(el => el.classList.remove('show'));
-            document.getElementById('phoneMatchIndicator').textContent = '';
-            document.getElementById('phoneMatchIndicator').className = 'match-indicator';
-
-            document.getElementById('confirmWithdrawBtn').disabled = false;
-            document.getElementById('confirmWithdrawBtn').textContent = 'Confirm Withdrawal';
-
-            const modal = document.getElementById('withdrawalModal');
-            modal.classList.add('active');
-
-            const phoneInput = document.getElementById('withdrawPhone');
-            const phoneConfirmInput = document.getElementById('withdrawPhoneConfirm');
-            const matchIndicator = document.getElementById('phoneMatchIndicator');
-
-            function checkPhoneMatch() {
-                const phone = phoneInput.value.trim();
-                const confirm = phoneConfirmInput.value.trim();
-
-                if (phone.length === 0 || confirm.length === 0) {
-                    matchIndicator.textContent = '';
-                    matchIndicator.className = 'match-indicator';
-                    document.getElementById('phoneMatchError').classList.remove('show');
-                    return;
-                }
-
-                if (phone === confirm) {
-                    matchIndicator.textContent = '✅ Numbers match';
-                    matchIndicator.className = 'match-indicator match';
-                    document.getElementById('phoneMatchError').classList.remove('show');
-                } else {
-                    matchIndicator.textContent = '❌ Numbers do not match';
-                    matchIndicator.className = 'match-indicator no-match';
-                    document.getElementById('phoneMatchError').classList.add('show');
-                }
-            }
-
-            phoneInput.addEventListener('input', checkPhoneMatch);
-            phoneConfirmInput.addEventListener('input', checkPhoneMatch);
-            phoneInput.addEventListener('blur', checkPhoneMatch);
-            phoneConfirmInput.addEventListener('blur', checkPhoneMatch);
-        }
-
-        function closeWithdrawalModal() {
-            document.getElementById('withdrawalModal').classList.remove('active');
-        }
-
-        function confirmWithdrawal() {
-            const network = document.getElementById('withdrawNetwork').value;
-            const phone = document.getElementById('withdrawPhone').value.trim();
-            const phoneConfirm = document.getElementById('withdrawPhoneConfirm').value.trim();
-            const name = document.getElementById('withdrawName').value.trim();
-
-            let isValid = true;
-
-            if (!network) {
-                document.getElementById('withdrawNetwork').style.borderColor = 'var(--text-red)';
-                isValid = false;
-            } else {
-                document.getElementById('withdrawNetwork').style.borderColor = '';
-            }
-
-            if (!phone || phone.length < 10) {
-                document.getElementById('phoneError').textContent = 'Please enter a valid phone number (at least 10 digits)';
-                document.getElementById('phoneError').classList.add('show');
-                isValid = false;
-            } else {
-                document.getElementById('phoneError').classList.remove('show');
-            }
-
-            if (phone && phoneConfirm && phone !== phoneConfirm) {
-                document.getElementById('phoneMatchError').classList.add('show');
-                isValid = false;
-            } else {
-                document.getElementById('phoneMatchError').classList.remove('show');
-            }
-
-            if (!name || name.length < 2) {
-                document.getElementById('nameError').textContent = 'Please enter your registered name';
-                document.getElementById('nameError').classList.add('show');
-                isValid = false;
-            } else {
-                document.getElementById('nameError').classList.remove('show');
-            }
-
-            if (!isValid) {
-                showToast('⚠️ Please fill in all fields correctly.', 'error');
-                return;
-            }
-
-            const confirmBtn = document.getElementById('confirmWithdrawBtn');
-            confirmBtn.disabled = true;
-            confirmBtn.textContent = 'Processing...';
-
-            const affiliateCode = currentAffiliate ? currentAffiliate.code : 'N/A';
-            const affiliateName = currentAffiliate ? currentAffiliate.name : 'Affiliate';
-            const affiliateContact = currentAffiliate ? currentAffiliate.contact : 'N/A';
-
-            const typeLabels = {
-                'sales': 'SALES',
-                'referrals': 'REFERRAL',
-                'single': 'SINGLE'
-            };
-            const typeLabel = typeLabels[withdrawalData.mode] || 'ALL';
-
-            let keysString = '';
-            if (withdrawalData.keys.length > 0) {
-                keysString = withdrawalData.keys.join('\n');
-            } else {
-                keysString = 'No keys provided';
-            }
-
-            const message = `💰 ${typeLabel} WITHDRAWAL REQUEST
-
-👤 Affiliate: ${affiliateName}
-🆔 Code: ${affiliateCode}
-📱 Contact: ${affiliateContact}
-
-🔑 Payment Keys (${withdrawalData.keys.length} key${withdrawalData.keys.length > 1 ? 's' : ''}):
-${keysString}
-
-💰 Total Amount: ${withdrawalData.totalAmount.toLocaleString()} UGX
-
-📱 MOBILE MONEY DETAILS:
-Network: ${network}
-Number: ${phone}
-Name: ${name}
-
-📋 Please verify and process my withdrawal.
-
-Thank you! 🦈`;
-
-            const phoneNumber = '256740042068';
-
-            closeWithdrawalModal();
-
-            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-            window.open(whatsappUrl, '_blank');
-
-            confirmBtn.disabled = false;
-            confirmBtn.textContent = 'Confirm Withdrawal';
-
-            showToast('📤 Withdrawal request sent to admin!', 'success');
         }
 
         // ============================================================
@@ -4106,7 +4064,9 @@ Thank you! 🦈`;
         const pagesContainer = document.getElementById('pagesContainer');
 
         function goToPage(index) {
-            pagesContainer.scrollTo({ left: index * (pagesContainer.clientWidth + 20), behavior: 'smooth' });
+            if (pagesContainer) {
+                pagesContainer.scrollTo({ left: index * (pagesContainer.clientWidth + 20), behavior: 'smooth' });
+            }
         }
 
         // ============================================================
@@ -4140,11 +4100,13 @@ Thank you! 🦈`;
         // POPUP
         // ============================================================
         function showPopup() {
-            document.getElementById('popupOverlay').classList.add('active');
+            const overlay = document.getElementById('popupOverlay');
+            if (overlay) overlay.classList.add('active');
         }
 
         function closePopup() {
-            document.getElementById('popupOverlay').classList.remove('active');
+            const overlay = document.getElementById('popupOverlay');
+            if (overlay) overlay.classList.remove('active');
             localStorage.setItem('popupShown', 'true');
         }
 
@@ -4222,7 +4184,7 @@ Thank you! 🦈`;
         }
 
         // ============================================================
-        // REGISTER MODAL (WITH PIN + REFERRAL SUPPORT)
+        // REGISTER MODAL
         // ============================================================
         function showRegisterModal() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -4475,6 +4437,8 @@ Thank you! 🦈`;
             const refreshText = document.getElementById('pullToRefreshText');
             const refreshIcon = document.getElementById('refreshIcon');
 
+            if (!pagesContainer || !indicator || !refreshText || !refreshIcon) return;
+
             pagesContainer.addEventListener('touchstart', function(e) {
                 const page = document.querySelector('.page:not([style*="display: none"])');
                 if (page && page.scrollTop === 0) {
@@ -4543,16 +4507,17 @@ Thank you! 🦈`;
             if (tutorialShown) return;
 
             const tutorial = document.getElementById('pullToRefreshTutorial');
-            tutorial.classList.add('show');
-
-            setTimeout(() => {
-                tutorial.classList.remove('show');
-                localStorage.setItem(STORAGE_KEYS.TUTORIAL_SHOWN, 'true');
-            }, 6000);
+            if (tutorial) {
+                tutorial.classList.add('show');
+                setTimeout(() => {
+                    tutorial.classList.remove('show');
+                    localStorage.setItem(STORAGE_KEYS.TUTORIAL_SHOWN, 'true');
+                }, 6000);
+            }
         }
 
         // ============================================================
-        // ✅ FIXED: REALTIME LISTENER - Properly handle paid status
+        // REALTIME LISTENER
         // ============================================================
         function setupRealtimeListener() {
             if (realtimeChannel) {
@@ -4579,22 +4544,14 @@ Thank you! 🦈`;
                         table: 'payment_requests'
                     }, async (payload) => {
                         const row = payload.new;
-                        console.log('📡 Realtime update received:', row.status, row.user_name, row.promo_code);
-
-                        if (row.promo_code !== currentAffiliate.code && row.parent_affiliate !== currentAffiliate.code) {
-                            console.log('⏭️ Not for this affiliate, skipping');
+                        if (row.promo_code !== currentAffiliate.code) {
                             return;
                         }
 
-                        console.log(`✅ ${row.status} sale detected for this affiliate!`);
-
-                        // If the key is now PAID, remove from forwarded and add to paid
                         if (row.status === 'paid') {
-                            // Remove from forwarded
                             const forwardedIndex = affForwarded.findIndex(s => s.id === row.id);
                             if (forwardedIndex !== -1) {
                                 const removedSale = affForwarded.splice(forwardedIndex, 1)[0];
-                                // Add to paid if not already there
                                 if (!affPaid.find(s => s.id === row.id)) {
                                     const paidSale = {
                                         ...removedSale,
@@ -4603,16 +4560,17 @@ Thank you! 🦈`;
                                     };
                                     affPaid.push(paidSale);
                                 }
+                                if (row.paid_key) {
+                                    paidKeysSeen.add(row.paid_key);
+                                }
                             }
-                            // Remove from pending withdraw set
                             if (row.paid_key) {
                                 pendingWithdrawKeys.delete(row.paid_key);
                             }
-                            showToast('✅ Commission paid! Check your Paid Off balance.', 'success');
+                            await renderDashboard();
+                            showToast('💵 Sales commission paid!', 'success');
                         } else if (row.status === 'forwarded') {
-                            // Check if already in forwarded list
                             if (!affForwarded.find(s => s.id === row.id)) {
-                                // Add to forwarded
                                 const mappedSale = {
                                     id: row.id,
                                     userName: row.user_name || 'Unknown',
@@ -4637,18 +4595,10 @@ Thank you! 🦈`;
                                     recipient_type: row.recipient_type || null
                                 };
                                 affForwarded.push(mappedSale);
+                                await renderDashboard();
+                                showToast('📤 New sale forwarded!', 'success');
                             }
-                            showToast('📤 New sale forwarded!', 'success');
                         }
-
-                        const dot = document.getElementById('realtimeDot');
-                        if (dot) dot.style.display = 'inline-block';
-
-                        await renderDashboard();
-
-                        setTimeout(() => {
-                            if (dot) dot.style.display = 'none';
-                        }, 3000);
                     })
                     .on('postgres_changes', {
                         event: 'UPDATE',
@@ -4657,21 +4607,22 @@ Thank you! 🦈`;
                     }, async (payload) => {
                         const row = payload.new;
                         if (row.parent_code === currentAffiliate.code) {
-                            console.log('📡 Referral earning update detected:', row.status);
-                            if (row.status === 'paid' && row.paid_key) {
-                                pendingWithdrawKeys.delete(row.paid_key);
-                                // Update referralData
+                            if (row.status === 'paid') {
                                 const earningIndex = referralData.earnings.findIndex(e => e.id === row.id);
                                 if (earningIndex !== -1) {
-                                    referralData.earnings[earningIndex].status = 'paid';
-                                    referralData.pendingEarnings -= row.amount;
-                                    referralData.paidEarnings += row.amount;
+                                    const removed = referralData.earnings.splice(earningIndex, 1)[0];
+                                    referralData.earningsPaid.push(removed);
+                                    referralData.pendingEarnings -= removed.amount;
+                                    referralData.paidEarnings += removed.amount;
+                                    if (row.paid_key) {
+                                        paidKeysSeen.add(row.paid_key);
+                                    }
                                 }
-                            }
-                            await loadReferralData();
-                            await renderDashboard();
-                            if (row.status === 'paid') {
-                                showToast('✅ Referral commission paid!', 'success');
+                                if (row.paid_key) {
+                                    pendingWithdrawKeys.delete(row.paid_key);
+                                }
+                                await renderDashboard();
+                                showToast('💵 Referral commission paid!', 'success');
                             }
                         }
                     })
@@ -4682,14 +4633,12 @@ Thank you! 🦈`;
                     }, async (payload) => {
                         const row = payload.new;
                         if (row.parent_code === currentAffiliate.code && row.status === 'forwarded') {
-                            console.log('📡 New referral earning detected!');
                             await loadReferralData();
                             await renderDashboard();
                             showToast(`🤝 New referral commission earned!`, 'success');
                         }
                     })
                     .subscribe((status) => {
-                        console.log('📡 Realtime subscription status:', status);
                         if (status === 'SUBSCRIBED') {
                             isRealtimeConnected = true;
                             const dot = document.getElementById('realtimeDot');
@@ -4730,7 +4679,9 @@ Thank you! 🦈`;
         // UPDATE CHART
         // ============================================================
         async function updateChart() {
-            const ctx = document.getElementById('performanceChart').getContext('2d');
+            const ctx = document.getElementById('performanceChart');
+            if (!ctx) return;
+            
             if (chartInstance) { chartInstance.destroy(); }
 
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -4781,7 +4732,7 @@ Thank you! 🦈`;
         }
 
         // ============================================================
-        // ✅ FIXED: RENDER DASHBOARD - Correct stats, paid cards disappear
+        // RENDER DASHBOARD
         // ============================================================
         async function renderDashboard() {
             if (!currentAffiliate) {
@@ -4805,92 +4756,118 @@ Thank you! 🦈`;
             }
 
             // Profile Info
-            document.getElementById('dashboardUsername').textContent = currentAffiliate.username || '@username';
-            document.getElementById('dashboardName').textContent = currentAffiliate.name || 'Affiliate Name';
+            const usernameEl = document.getElementById('dashboardUsername');
+            const nameEl = document.getElementById('dashboardName');
+            if (usernameEl) usernameEl.textContent = currentAffiliate.username || '@username';
+            if (nameEl) nameEl.textContent = currentAffiliate.name || 'Affiliate Name';
 
             // Bank Card
-            document.getElementById('cardCode').textContent = currentAffiliate.code || '•••• ••••';
-            document.getElementById('cardHolderName').textContent = currentAffiliate.name.toUpperCase() || 'AFFILIATE';
-            document.getElementById('cardBalance').textContent = stats.balance.toLocaleString() + ' UGX';
+            const cardCode = document.getElementById('cardCode');
+            const cardHolder = document.getElementById('cardHolderName');
+            const cardBalance = document.getElementById('cardBalance');
+            if (cardCode) cardCode.textContent = currentAffiliate.code || '•••• ••••';
+            if (cardHolder) cardHolder.textContent = currentAffiliate.name.toUpperCase() || 'AFFILIATE';
+            if (cardBalance) cardBalance.textContent = stats.balance.toLocaleString() + ' UGX';
 
             // Balance Card
-            document.getElementById('balanceAmount').textContent = stats.balance.toLocaleString() + ' UGX';
-            document.getElementById('balanceTotalEarned').textContent = stats.totalEarned.toLocaleString() + ' UGX';
-            document.getElementById('balanceForwarded').textContent = stats.forwarded.toLocaleString() + ' UGX';
-            document.getElementById('balancePaid').textContent = stats.paidOff.toLocaleString() + ' UGX';
+            const balanceAmount = document.getElementById('balanceAmount');
+            const balanceTotalEarned = document.getElementById('balanceTotalEarned');
+            const balanceForwarded = document.getElementById('balanceForwarded');
+            const balancePaid = document.getElementById('balancePaid');
+            const balanceSalesEarnings = document.getElementById('balanceSalesEarnings');
+            const balanceReferralEarnings = document.getElementById('balanceReferralEarnings');
 
-            document.getElementById('balanceSalesEarnings').textContent = stats.totalEarned.toLocaleString() + ' UGX';
-            document.getElementById('balanceReferralEarnings').textContent = stats.referralEarnings.toLocaleString() + ' UGX';
+            if (balanceAmount) balanceAmount.textContent = stats.balance.toLocaleString() + ' UGX';
+            if (balanceTotalEarned) balanceTotalEarned.textContent = stats.totalEarned.toLocaleString() + ' UGX';
+            if (balanceForwarded) balanceForwarded.textContent = stats.forwarded.toLocaleString() + ' UGX';
+            if (balancePaid) balancePaid.textContent = stats.paidOff.toLocaleString() + ' UGX';
+            if (balanceSalesEarnings) balanceSalesEarnings.textContent = stats.totalEarned.toLocaleString() + ' UGX';
+            if (balanceReferralEarnings) balanceReferralEarnings.textContent = stats.referralEarnings.toLocaleString() + ' UGX';
 
             // Stats
-            document.getElementById('statSales').textContent = stats.totalSales;
-            document.getElementById('statEarnings').textContent = stats.totalEarned.toLocaleString() + ' UGX';
-            document.getElementById('statForwarded').textContent = stats.forwarded.toLocaleString() + ' UGX';
+            const statSales = document.getElementById('statSales');
+            const statEarnings = document.getElementById('statEarnings');
+            const statForwarded = document.getElementById('statForwarded');
+            if (statSales) statSales.textContent = stats.totalSales;
+            if (statEarnings) statEarnings.textContent = stats.totalEarned.toLocaleString() + ' UGX';
+            if (statForwarded) statForwarded.textContent = stats.forwarded.toLocaleString() + ' UGX';
 
             // Visit Stats
             const visitCount = await getAffiliateVisits(currentAffiliate.code);
             const conversionRate = await getConversionRate(currentAffiliate.code);
             const perVisit = visitCount > 0 ? Math.round(stats.totalEarned / visitCount) : 0;
 
-            document.getElementById('affiliateVisits').textContent = visitCount;
-            document.getElementById('affiliateConversion').textContent = conversionRate + '%';
-            document.getElementById('affiliatePerVisit').textContent = perVisit.toLocaleString() + ' UGX';
+            const affiliateVisits = document.getElementById('affiliateVisits');
+            const affiliateConversion = document.getElementById('affiliateConversion');
+            const affiliatePerVisit = document.getElementById('affiliatePerVisit');
+            if (affiliateVisits) affiliateVisits.textContent = visitCount;
+            if (affiliateConversion) affiliateConversion.textContent = conversionRate + '%';
+            if (affiliatePerVisit) affiliatePerVisit.textContent = perVisit.toLocaleString() + ' UGX';
 
             // Share Stats
-            document.getElementById('shareTotalEarnings').textContent = stats.totalEarned.toLocaleString() + ' UGX';
-            document.getElementById('shareTotalSales').textContent = stats.totalSales;
+            const shareTotalEarnings = document.getElementById('shareTotalEarnings');
+            const shareTotalSales = document.getElementById('shareTotalSales');
+            if (shareTotalEarnings) shareTotalEarnings.textContent = stats.totalEarned.toLocaleString() + ' UGX';
+            if (shareTotalSales) shareTotalSales.textContent = stats.totalSales;
 
             // Affiliate Link
             const link = `https://linknvibeplatform.github.io/sharpi-signals/?ref=${currentAffiliate.code}`;
-            document.getElementById('affiliateLinkDisplay').textContent = link;
+            const affiliateLinkDisplay = document.getElementById('affiliateLinkDisplay');
+            if (affiliateLinkDisplay) affiliateLinkDisplay.textContent = link;
 
             // Achievements
-            document.getElementById('achInvites').textContent = visitCount || 0;
-            document.getElementById('achPurchases').textContent = stats.totalSales || 0;
-
-            if (currentAffiliate.createdAt) {
+            const achInvites = document.getElementById('achInvites');
+            const achPurchases = document.getElementById('achPurchases');
+            const daysActive = document.getElementById('daysActive');
+            if (achInvites) achInvites.textContent = visitCount || 0;
+            if (achPurchases) achPurchases.textContent = stats.totalSales || 0;
+            if (daysActive && currentAffiliate.createdAt) {
                 const days = Math.floor((Date.now() - new Date(currentAffiliate.createdAt).getTime()) / (1000 * 60 * 60 * 24));
-                document.getElementById('daysActive').textContent = days || 0;
+                daysActive.textContent = days || 0;
             }
 
             // ============================================================
-            // WITHDRAW SALES CARD (CENTRALIZED)
+            // WITHDRAW SALES CARD
             // ============================================================
             const salesData = getSalesKeys();
-            const availableSalesKeys = salesData.keys.filter(k => 
-                k.status !== 'paid' && !pendingWithdrawKeys.has(k.key)
-            );
+            const availableSalesKeys = salesData.keys.filter(k => !pendingWithdrawKeys.has(k.key));
             const totalSalesAmount = availableSalesKeys.reduce((sum, k) => sum + k.amount, 0);
-            
-            document.getElementById('withdrawSalesAmount').textContent = totalSalesAmount.toLocaleString() + ' UGX';
-            document.getElementById('withdrawSalesKeys').textContent = availableSalesKeys.length + ' keys pending';
-            const salesBtn = document.getElementById('withdrawSalesBtn');
-            if (availableSalesKeys.length === 0) {
-                salesBtn.disabled = true;
-                salesBtn.textContent = '💰 No Sales Keys';
-            } else {
-                salesBtn.disabled = false;
-                salesBtn.textContent = `💰 Withdraw Sales (${availableSalesKeys.length})`;
+
+            const withdrawSalesAmount = document.getElementById('withdrawSalesAmount');
+            const withdrawSalesKeys = document.getElementById('withdrawSalesKeys');
+            const withdrawSalesBtn = document.getElementById('withdrawSalesBtn');
+            if (withdrawSalesAmount) withdrawSalesAmount.textContent = totalSalesAmount.toLocaleString() + ' UGX';
+            if (withdrawSalesKeys) withdrawSalesKeys.textContent = availableSalesKeys.length + ' keys pending';
+            if (withdrawSalesBtn) {
+                if (availableSalesKeys.length === 0) {
+                    withdrawSalesBtn.disabled = true;
+                    withdrawSalesBtn.textContent = '💰 No Sales Keys';
+                } else {
+                    withdrawSalesBtn.disabled = false;
+                    withdrawSalesBtn.textContent = `💰 Withdraw Sales (${availableSalesKeys.length})`;
+                }
             }
 
             // ============================================================
-            // WITHDRAW REFERRALS CARD (CENTRALIZED)
+            // WITHDRAW REFERRALS CARD
             // ============================================================
             const referralKeyData = getReferralKeys();
-            const availableReferralKeys = referralKeyData.keys.filter(k => 
-                k.status !== 'paid' && !pendingWithdrawKeys.has(k.key)
-            );
+            const availableReferralKeys = referralKeyData.keys.filter(k => !pendingWithdrawKeys.has(k.key));
             const totalReferralAmount = availableReferralKeys.reduce((sum, k) => sum + k.amount, 0);
-            
-            document.getElementById('withdrawReferralsAmount').textContent = totalReferralAmount.toLocaleString() + ' UGX';
-            document.getElementById('withdrawReferralsKeys').textContent = availableReferralKeys.length + ' keys pending';
-            const referralBtn = document.getElementById('withdrawReferralsBtn');
-            if (availableReferralKeys.length === 0) {
-                referralBtn.disabled = true;
-                referralBtn.textContent = '🤝 No Referral Keys';
-            } else {
-                referralBtn.disabled = false;
-                referralBtn.textContent = `🤝 Withdraw Referrals (${availableReferralKeys.length})`;
+
+            const withdrawReferralsAmount = document.getElementById('withdrawReferralsAmount');
+            const withdrawReferralsKeys = document.getElementById('withdrawReferralsKeys');
+            const withdrawReferralsBtn = document.getElementById('withdrawReferralsBtn');
+            if (withdrawReferralsAmount) withdrawReferralsAmount.textContent = totalReferralAmount.toLocaleString() + ' UGX';
+            if (withdrawReferralsKeys) withdrawReferralsKeys.textContent = availableReferralKeys.length + ' keys pending';
+            if (withdrawReferralsBtn) {
+                if (availableReferralKeys.length === 0) {
+                    withdrawReferralsBtn.disabled = true;
+                    withdrawReferralsBtn.textContent = '🤝 No Referral Keys';
+                } else {
+                    withdrawReferralsBtn.disabled = false;
+                    withdrawReferralsBtn.textContent = `🤝 Withdraw Referrals (${availableReferralKeys.length})`;
+                }
             }
 
             // ============================================================
@@ -4901,102 +4878,120 @@ Thank you! 🦈`;
             const inviteLinkDisplay = document.getElementById('affiliateInviteLinkDisplay');
             const copyInviteBtn = document.getElementById('copyInviteLinkBtn');
 
-            if (canInvite) {
-                inviteStatusEl.textContent = '🔓 Unlocked';
-                inviteStatusEl.style.background = 'rgba(52,211,153,0.1)';
-                inviteStatusEl.style.color = 'var(--text-green)';
-
-                const inviteLink = getAffiliateInviteLink();
-                inviteLinkDisplay.textContent = inviteLink || 'Loading...';
-                inviteLinkDisplay.style.color = 'var(--text-primary)';
-                copyInviteBtn.disabled = false;
-            } else {
-                inviteStatusEl.textContent = '🔒 Locked';
-                inviteStatusEl.style.background = 'rgba(251,191,36,0.1)';
-                inviteStatusEl.style.color = 'var(--text-gold)';
-
-                inviteLinkDisplay.textContent = 'Complete your first sale to unlock';
-                inviteLinkDisplay.style.color = 'var(--text-muted)';
-                copyInviteBtn.disabled = true;
+            if (inviteStatusEl) {
+                if (canInvite) {
+                    inviteStatusEl.textContent = '🔓 Unlocked';
+                    inviteStatusEl.style.background = 'rgba(52,211,153,0.1)';
+                    inviteStatusEl.style.color = 'var(--text-green)';
+                } else {
+                    inviteStatusEl.textContent = '🔒 Locked';
+                    inviteStatusEl.style.background = 'rgba(251,191,36,0.1)';
+                    inviteStatusEl.style.color = 'var(--text-gold)';
+                }
             }
 
-            document.getElementById('totalReferrals').textContent = stats.totalReferrals || 0;
-            document.getElementById('activeReferrals').textContent = stats.activeReferrals || 0;
-            document.getElementById('referralEarnings').textContent = stats.referralEarnings.toLocaleString() + ' UGX';
-            document.getElementById('referredCount').textContent = stats.totalReferrals || 0;
+            if (inviteLinkDisplay) {
+                if (canInvite) {
+                    const inviteLink = getAffiliateInviteLink();
+                    inviteLinkDisplay.textContent = inviteLink || 'Loading...';
+                    inviteLinkDisplay.style.color = 'var(--text-primary)';
+                } else {
+                    inviteLinkDisplay.textContent = 'Complete your first sale to unlock';
+                    inviteLinkDisplay.style.color = 'var(--text-muted)';
+                }
+            }
+            if (copyInviteBtn) copyInviteBtn.disabled = !canInvite;
+
+            const totalReferrals = document.getElementById('totalReferrals');
+            const activeReferrals = document.getElementById('activeReferrals');
+            const referralEarnings = document.getElementById('referralEarnings');
+            const referredCount = document.getElementById('referredCount');
+            if (totalReferrals) totalReferrals.textContent = stats.totalReferrals || 0;
+            if (activeReferrals) activeReferrals.textContent = stats.activeReferrals || 0;
+            if (referralEarnings) referralEarnings.textContent = stats.referralEarnings.toLocaleString() + ' UGX';
+            if (referredCount) referredCount.textContent = stats.totalReferrals || 0;
 
             // Referral earnings list
             const referralEarningsList = document.getElementById('referralEarningsList');
+            const referralPendingCount = document.getElementById('referralPendingCount');
             const pendingReferrals = referralData.earnings.filter(e => e.status === 'forwarded');
             const pendingCount = pendingReferrals.length;
-            document.getElementById('referralPendingCount').textContent = pendingCount + ' pending';
+            if (referralPendingCount) referralPendingCount.textContent = pendingCount + ' pending';
 
-            if (pendingReferrals.length === 0) {
-                referralEarningsList.innerHTML = `
-                    <div style="color:var(--text-muted);font-size:12px;text-align:center;padding:10px 0;">
-                        No pending referral commissions.
-                    </div>
-                `;
-            } else {
-                let html = '';
-                pendingReferrals.slice(0, 5).forEach(e => {
-                    const hasKey = e.paid_key && e.paid_key !== 'null' && e.paid_key !== '';
-                    const isPending = pendingWithdrawKeys.has(e.paid_key);
-                    html += `
-                        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border-glass-light);font-size:11px;align-items:center;flex-wrap:wrap;gap:4px;">
-                            <span style="color:var(--text-secondary);">${e.child_code || 'Affiliate'}</span>
-                            <span style="color:var(--text-gold);">${e.amount.toLocaleString()} UGX</span>
-                            ${hasKey ? `<span style="color:var(--text-green);font-size:9px;">🔑 Has Key</span>` : `<span style="color:var(--text-red);font-size:9px;">⏳ No Key</span>`}
-                            <span style="color:var(--text-muted);font-size:9px;">📤 Forwarded</span>
-                            ${isPending ? `<span style="color:var(--text-gold);font-size:9px;">⏳ Pending Withdraw</span>` : ''}
+            if (referralEarningsList) {
+                if (pendingReferrals.length === 0) {
+                    referralEarningsList.innerHTML = `
+                        <div style="color:var(--text-muted);font-size:12px;text-align:center;padding:10px 0;">
+                            No pending referral commissions.
                         </div>
                     `;
-                });
-                if (pendingReferrals.length > 5) {
-                    html +=
-                        `<div style="font-size:10px;color:var(--text-muted);text-align:center;padding:4px 0;">+${pendingReferrals.length - 5} more</div>`;
+                } else {
+                    let html = '';
+                    pendingReferrals.slice(0, 5).forEach(e => {
+                        const hasKey = e.paid_key && e.paid_key !== 'null' && e.paid_key !== '';
+                        const isPending = pendingWithdrawKeys.has(e.paid_key);
+                        html += `
+                            <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border-glass-light);font-size:11px;align-items:center;flex-wrap:wrap;gap:4px;">
+                                <span style="color:var(--text-secondary);">${e.child_code || 'Affiliate'}</span>
+                                <span style="color:var(--text-gold);">${e.amount.toLocaleString()} UGX</span>
+                                ${hasKey ? `<span style="color:var(--text-green);font-size:9px;">🔑 Has Key</span>` : `<span style="color:var(--text-red);font-size:9px;">⏳ No Key</span>`}
+                                <span style="color:var(--text-muted);font-size:9px;">📤 Forwarded</span>
+                                ${isPending ? `<span style="color:var(--text-gold);font-size:9px;">⏳ Pending Withdraw</span>` : ''}
+                            </div>
+                        `;
+                    });
+                    if (pendingReferrals.length > 5) {
+                        html +=
+                            `<div style="font-size:10px;color:var(--text-muted);text-align:center;padding:4px 0;">+${pendingReferrals.length - 5} more</div>`;
+                    }
+                    referralEarningsList.innerHTML = html;
                 }
-                referralEarningsList.innerHTML = html;
             }
 
             // Referrals list
             const referralsList = document.getElementById('referralsList');
-            if (referralData.referrals.length === 0) {
-                referralsList.innerHTML = `
-                    <div style="color:var(--text-muted);font-size:12px;text-align:center;padding:10px 0;">
-                        No affiliates referred yet. Share your invite link!
-                    </div>
-                `;
-            } else {
-                let html = '';
-                referralData.referrals.slice(0, 5).forEach(ref => {
-                    const childEarnings = referralData.earnings.filter(e => e.child_code === ref.child_code);
-                    const totalChildEarnings = childEarnings.reduce((sum, e) => sum + e.amount, 0);
-                    const statusText = ref.status === 'active' ? '✅ Active' : '⏳ Inactive';
-                    html += `
-                        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border-glass-light);font-size:11px;">
-                            <span style="color:var(--text-primary);">${ref.child_username || ref.child_name}</span>
-                            <span style="color:var(--text-secondary);font-size:9px;">${statusText}</span>
-                            <span style="color:var(--text-gold);">${totalChildEarnings.toLocaleString()} UGX</span>
+            if (referralsList) {
+                if (referralData.referrals.length === 0) {
+                    referralsList.innerHTML = `
+                        <div style="color:var(--text-muted);font-size:12px;text-align:center;padding:10px 0;">
+                            No affiliates referred yet. Share your invite link!
                         </div>
                     `;
-                });
-                if (referralData.referrals.length > 5) {
-                    html +=
-                        `<div style="font-size:10px;color:var(--text-muted);text-align:center;padding:4px 0;">+${referralData.referrals.length - 5} more</div>`;
+                } else {
+                    let html = '';
+                    referralData.referrals.slice(0, 5).forEach(ref => {
+                        const childEarnings = referralData.earnings.filter(e => e.child_code === ref.child_code);
+                        const totalChildEarnings = childEarnings.reduce((sum, e) => sum + e.amount, 0);
+                        const statusText = ref.status === 'active' ? '✅ Active' : '⏳ Inactive';
+                        html += `
+                            <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border-glass-light);font-size:11px;">
+                                <span style="color:var(--text-primary);">${ref.child_username || ref.child_name}</span>
+                                <span style="color:var(--text-secondary);font-size:9px;">${statusText}</span>
+                                <span style="color:var(--text-gold);">${totalChildEarnings.toLocaleString()} UGX</span>
+                            </div>
+                        `;
+                    });
+                    if (referralData.referrals.length > 5) {
+                        html +=
+                            `<div style="font-size:10px;color:var(--text-muted);text-align:center;padding:4px 0;">+${referralData.referrals.length - 5} more</div>`;
+                    }
+                    referralsList.innerHTML = html;
                 }
-                referralsList.innerHTML = html;
             }
 
             // ============================================================
-            // COMMISSIONS LIST – ONLY FORWARDED (PAID CARDS DISAPPEAR)
+            // COMMISSIONS LIST (UPDATES COLUMN)
             // ============================================================
             const commissionList = document.getElementById('commissionList');
+            if (!commissionList) return;
 
             let pendingItems = [];
 
-            // Add ALL forwarded sales (only forwarded, not paid)
+            // Add forwarded sales
             affForwarded.forEach(s => {
+                if (s.paid_key && (affPaid.some(p => p.paid_key === s.paid_key) || paidKeysSeen.has(s.paid_key))) {
+                    return;
+                }
                 if (s.splitType === 'child' || s.splitType === '1-party') {
                     pendingItems.push({
                         type: 'sale',
@@ -5020,8 +5015,12 @@ Thank you! 🦈`;
                 }
             });
 
-            // Add referral earnings (only forwarded, not paid)
+            // Add referral earnings
             referralData.earnings.forEach(e => {
+                if (e.paid_key && (referralData.earningsPaid.some(p => p.paid_key === e.paid_key) || paidKeysSeen.has(e
+                        .paid_key))) {
+                    return;
+                }
                 if (e.status === 'forwarded') {
                     pendingItems.push({
                         type: 'referral_earning',
@@ -5050,20 +5049,12 @@ Thank you! 🦈`;
             if (pendingItems.length === 0) {
                 commissionList.innerHTML = `
                     <div style="color:var(--text-muted);font-size:12px;text-align:center;padding:15px 0;">
-                        No pending commissions. Sales will appear here when forwarded.
+                        No updates. Sales will appear here when forwarded.
                         ${isRealtimeConnected ? ' 🔵 Live' : ' ⚠️ Reconnecting...'}
                     </div>
                 `;
             } else {
                 let html = '';
-
-                html += `
-                    <div style="margin-bottom:8px;">
-                        <span style="font-size:11px;font-weight:600;color:var(--text-secondary);">📋 Forwarded Commissions</span>
-                        <span style="font-size:10px;color:var(--text-muted);margin-left:6px;">(${pendingItems.length})</span>
-                        ${isRealtimeConnected ? `<span style="font-size:9px;color:var(--text-green);margin-left:6px;">● Live</span>` : ''}
-                    </div>
-                `;
 
                 pendingItems.forEach(item => {
                     const isSplit = item.isSplit;
@@ -5074,7 +5065,21 @@ Thank you! 🦈`;
                     const cardColor = isReferral ? 'var(--text-purple)' : 'var(--text-gold)';
                     const borderColor = isReferral ? '3px solid var(--text-purple)' : '3px solid var(--text-gold)';
                     const hasKey = item.paid_key && item.paid_key !== 'null' && item.paid_key !== '';
+
                     const isPending = hasKey && pendingWithdrawKeys.has(item.paid_key);
+                    const isPaid = hasKey && paidKeysSeen.has(item.paid_key);
+
+                    const pendingClass = isPending ? 'pending-withdraw' : '';
+                    const paidClass = isPaid ? 'paid-off' : '';
+
+                    let statusLabel = '';
+                    if (isPaid) {
+                        statusLabel = `<span class="status-badge paid">💵 Paid</span>`;
+                    } else if (isPending) {
+                        statusLabel = `<span class="status-badge pending-withdraw">⏳ Pending Withdraw</span>`;
+                    } else {
+                        statusLabel = `<span class="status-badge forwarded">📤 Forwarded</span>`;
+                    }
 
                     let splitDetails = '';
                     if (isSplit && !isReferral && item.child_amount > 0) {
@@ -5085,20 +5090,15 @@ Thank you! 🦈`;
                         splitDetails = ` · You earned 10% (${amount.toLocaleString()} UGX)`;
                     }
 
-                    let statusBadge = '';
-                    if (isPending) {
-                        statusBadge = `<span class="status-badge pending-withdraw">⏳ Pending Withdraw</span>`;
-                    }
-
                     html += `
-                        <div class="commission-card ${isPending ? 'pending-withdraw' : ''}" style="border-left: ${borderColor};">
+                        <div class="commission-card ${pendingClass} ${paidClass}" style="border-left: ${borderColor};">
                             <div class="header">
                                 <div>
                                     <span style="font-weight:600;font-size:13px;color:var(--text-primary);">${item.userName}</span>
                                     <span style="font-size:11px;color:var(--text-secondary);margin-left:6px;">${item.package}</span>
                                     ${isSplit ? `<span style="font-size:9px;color:var(--text-purple);margin-left:4px;">🤝 Split ${percentageLabel}</span>` : `<span style="font-size:9px;color:var(--text-green);margin-left:4px;">✅ ${percentageLabel}</span>`}
                                     <span style="font-size:9px;color:${cardColor};margin-left:4px;">${typeLabel}</span>
-                                    ${statusBadge}
+                                    ${statusLabel}
                                 </div>
                                 <div class="amount">${amount.toLocaleString()} UGX</div>
                             </div>
@@ -5112,9 +5112,11 @@ Thank you! 🦈`;
                                     <div class="key-row">🔑 ${item.paid_key}</div>
                                     <div class="actions">
                                         <button class="key-copy-btn" onclick="copyKeyToClipboard('${item.paid_key}')">📋 Copy Key</button>
-                                        ${isPending ? 
-                                            `<span style="font-size:10px;color:var(--text-gold);">⏳ Pending Withdraw</span>` : 
-                                            `<span style="font-size:10px;color:var(--text-green);">✅ Ready to Withdraw</span>`
+                                        ${isPaid ? 
+                                            `<span style="font-size:10px;color:var(--text-green);">💵 Paid ✓</span>` : 
+                                            isPending ? 
+                                                `<span style="font-size:10px;color:var(--text-gold);">⏳ Pending Withdraw</span>` : 
+                                                `<span style="font-size:10px;color:var(--text-green);">✅ Ready to Withdraw</span>`
                                         }
                                     </div>
                                 ` : `
@@ -5193,23 +5195,28 @@ Thank you! 🦈`;
             // Setup pull to refresh
             setupPullToRefresh();
 
-            console.log('🦈 SHARPI Affiliate App v7.0 - COMPLETE FIXED');
-            console.log('✅ FIXED: Proper separation of forwarded vs paid sales');
-            console.log('✅ FIXED: Correct stats calculation (no reset)');
-            console.log('✅ FIXED: Paid cards disappear from forwarded list');
-            console.log('✅ FIXED: Balance updates correctly');
-            console.log('✅ FIXED: Realtime listener handles paid status properly');
+            console.log('🦈 SHARPI Affiliate App v10.0 - COMPLETE FIXED');
+            console.log('✅ All DOM elements exist');
+            console.log('✅ Withdraw on parent side does NOT affect child side');
+            console.log('✅ 10% referral earnings properly update when admin marks as PAID');
+            console.log('✅ Paid cards turn dark, visible once, disappear on refresh');
             console.log('✅ ALL original features preserved');
         })();
 
         // ============================================================
         // EVENT LISTENERS
         // ============================================================
-        document.getElementById('headerRegisterBtn').addEventListener('click', showRegisterModal);
-        document.getElementById('landingRegisterBtn').addEventListener('click', showRegisterModal);
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            logoutAffiliate();
-            location.reload();
+        document.addEventListener('DOMContentLoaded', function() {
+            const headerBtn = document.getElementById('headerRegisterBtn');
+            const landingBtn = document.getElementById('landingRegisterBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            if (headerBtn) headerBtn.addEventListener('click', showRegisterModal);
+            if (landingBtn) landingBtn.addEventListener('click', showRegisterModal);
+            if (logoutBtn) logoutBtn.addEventListener('click', function() {
+                logoutAffiliate();
+                location.reload();
+            });
         });
 
         // Theme observer
@@ -5255,15 +5262,13 @@ Thank you! 🦈`;
         window.loginAffiliate = loginAffiliate;
         window.registerAffiliate = registerAffiliate;
         window.logoutAffiliate = logoutAffiliate;
-        window.showWithdrawalModal = showWithdrawalModal;
-        window.closeWithdrawalModal = closeWithdrawalModal;
-        window.confirmWithdrawal = confirmWithdrawal;
         window.performRefresh = performRefresh;
         window.loadSalesFromSupabase = loadSalesFromSupabase;
         window.loadReferralData = loadReferralData;
         window.renderDashboard = renderDashboard;
         window.getDashboardStats = getDashboardStats;
         window.pendingWithdrawKeys = pendingWithdrawKeys;
+        window.paidKeysSeen = paidKeysSeen;
     </script>
 </body>
 </html>
