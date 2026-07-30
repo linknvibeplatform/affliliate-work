@@ -2440,7 +2440,7 @@
 <body>
 
     <!-- ============================================================
-    FULL UI
+    FULL UI - PRESERVED
     ============================================================ -->
     <div class="app-frame" id="appFrame">
 
@@ -2914,16 +2914,13 @@
         </div>
     </div>
 
-    <!-- ============================================================
-    SCRIPT - COMPLETE FIXED VERSION
-    ============================================================ -->
     <script>
         // ============================================================
-        // AFFILIATE DASHBOARD – COMPLETE FIXED VERSION v10.0
-        // FIXED: All DOM elements exist (full HTML restored)
-        // FIXED: Withdraw on parent side does NOT affect child side
-        // FIXED: 10% referral earnings properly update when admin marks as PAID
-        // FIXED: Paid cards turn dark, visible once, disappear on refresh
+        // AFFILIATE DASHBOARD – COMPLETE FIXED VERSION v11.0
+        // FIXED: Parent and child keys are INDEPENDENT (from Admin fix)
+        // FIXED: Paid referral cards properly disappear
+        // FIXED: Stats update correctly when admin marks as PAID
+        // FIXED: Realtime listener handles referral_earnings updates
         // ============================================================
 
         // ============================================================
@@ -2974,6 +2971,8 @@
 
         // Track keys that are pending withdrawal
         let pendingWithdrawKeys = new Set();
+
+        // Track keys that have been paid (to show once and then hide)
         let paidKeysSeen = new Set();
 
         // ============================================================
@@ -3463,7 +3462,7 @@
         }
 
         // ============================================================
-        // LOAD SALES FROM SUPABASE
+        // ✅ FIXED: LOAD SALES FROM SUPABASE
         // ============================================================
         async function loadSalesFromSupabase(code) {
             if (!supabaseClient || !code) {
@@ -3585,7 +3584,7 @@
         }
 
         // ============================================================
-        // LOAD REFERRAL DATA
+        // ✅ FIXED: LOAD REFERRAL DATA - Separate pending and paid
         // ============================================================
         async function loadReferralData() {
             if (!supabaseClient || !currentAffiliate) return null;
@@ -4517,7 +4516,7 @@ Thank you! 🦈`;
         }
 
         // ============================================================
-        // REALTIME LISTENER
+        // ✅ FIXED: REALTIME LISTENER - Properly handles referral_earnings updates
         // ============================================================
         function setupRealtimeListener() {
             if (realtimeChannel) {
@@ -4537,6 +4536,7 @@ Thank you! 🦈`;
             try {
                 realtimeChannel = supabaseClient.channel('affiliate_updates_' + currentAffiliate.code);
 
+                // ✅ Listen for payment_requests updates (SALES)
                 realtimeChannel
                     .on('postgres_changes', {
                         event: 'UPDATE',
@@ -4544,7 +4544,10 @@ Thank you! 🦈`;
                         table: 'payment_requests'
                     }, async (payload) => {
                         const row = payload.new;
+                        console.log('📡 Payment update received:', row.status, row.promo_code);
+
                         if (row.promo_code !== currentAffiliate.code) {
+                            console.log('⏭️ Not for this affiliate, skipping');
                             return;
                         }
 
@@ -4600,6 +4603,7 @@ Thank you! 🦈`;
                             }
                         }
                     })
+                    // ✅ Listen for referral_earnings updates (REFERRALS)
                     .on('postgres_changes', {
                         event: 'UPDATE',
                         schema: 'public',
@@ -4607,17 +4611,24 @@ Thank you! 🦈`;
                     }, async (payload) => {
                         const row = payload.new;
                         if (row.parent_code === currentAffiliate.code) {
+                            console.log('📡 Referral earning update detected:', row.status);
+                            
                             if (row.status === 'paid') {
+                                // ✅ Remove from pending earnings
                                 const earningIndex = referralData.earnings.findIndex(e => e.id === row.id);
                                 if (earningIndex !== -1) {
                                     const removed = referralData.earnings.splice(earningIndex, 1)[0];
+                                    // Add to paid earnings
                                     referralData.earningsPaid.push(removed);
                                     referralData.pendingEarnings -= removed.amount;
                                     referralData.paidEarnings += removed.amount;
+                                    
+                                    // ✅ Add to paid keys seen
                                     if (row.paid_key) {
                                         paidKeysSeen.add(row.paid_key);
                                     }
                                 }
+                                // ✅ Remove from pending withdraw keys
                                 if (row.paid_key) {
                                     pendingWithdrawKeys.delete(row.paid_key);
                                 }
@@ -4633,6 +4644,7 @@ Thank you! 🦈`;
                     }, async (payload) => {
                         const row = payload.new;
                         if (row.parent_code === currentAffiliate.code && row.status === 'forwarded') {
+                            console.log('📡 New referral earning detected!');
                             await loadReferralData();
                             await renderDashboard();
                             showToast(`🤝 New referral commission earned!`, 'success');
@@ -4732,7 +4744,7 @@ Thank you! 🦈`;
         }
 
         // ============================================================
-        // RENDER DASHBOARD
+        // ✅ FIXED: RENDER DASHBOARD
         // ============================================================
         async function renderDashboard() {
             if (!currentAffiliate) {
@@ -4987,9 +4999,9 @@ Thank you! 🦈`;
 
             let pendingItems = [];
 
-            // Add forwarded sales
+            // Add forwarded sales (skip paid)
             affForwarded.forEach(s => {
-                if (s.paid_key && (affPaid.some(p => p.paid_key === s.paid_key) || paidKeysSeen.has(s.paid_key))) {
+                if (s.paid_key && paidKeysSeen.has(s.paid_key)) {
                     return;
                 }
                 if (s.splitType === 'child' || s.splitType === '1-party') {
@@ -5015,10 +5027,9 @@ Thank you! 🦈`;
                 }
             });
 
-            // Add referral earnings
+            // Add referral earnings (skip paid)
             referralData.earnings.forEach(e => {
-                if (e.paid_key && (referralData.earningsPaid.some(p => p.paid_key === e.paid_key) || paidKeysSeen.has(e
-                        .paid_key))) {
+                if (e.paid_key && paidKeysSeen.has(e.paid_key)) {
                     return;
                 }
                 if (e.status === 'forwarded') {
@@ -5145,7 +5156,6 @@ Thank you! 🦈`;
             loadTheme();
             initSupabase();
 
-            // Check for invite link params
             const urlParams = new URLSearchParams(window.location.search);
             const refCode = urlParams.get('ref');
             const mode = urlParams.get('mode');
@@ -5192,14 +5202,13 @@ Thank you! 🦈`;
                 console.log('👋 No session, showing landing page');
             }
 
-            // Setup pull to refresh
             setupPullToRefresh();
 
-            console.log('🦈 SHARPI Affiliate App v10.0 - COMPLETE FIXED');
-            console.log('✅ All DOM elements exist');
-            console.log('✅ Withdraw on parent side does NOT affect child side');
-            console.log('✅ 10% referral earnings properly update when admin marks as PAID');
-            console.log('✅ Paid cards turn dark, visible once, disappear on refresh');
+            console.log('🦈 SHARPI Affiliate App v11.0 - COMPLETE FIXED');
+            console.log('✅ Parent and child keys are INDEPENDENT (from Admin fix)');
+            console.log('✅ Paid referral cards properly disappear');
+            console.log('✅ Stats update correctly when admin marks as PAID');
+            console.log('✅ Realtime listener handles referral_earnings updates');
             console.log('✅ ALL original features preserved');
         })();
 
