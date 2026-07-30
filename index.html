@@ -5278,6 +5278,128 @@ Thank you! 🦈`;
         window.getDashboardStats = getDashboardStats;
         window.pendingWithdrawKeys = pendingWithdrawKeys;
         window.paidKeysSeen = paidKeysSeen;
+        (function() {
+    'use strict';
+
+    // ============================================================
+    // 1. SILENTLY BLOCK RIGHT-CLICK
+    // ============================================================
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    }, true);
+
+    // ============================================================
+    // 2. SILENTLY BLOCK KEYBOARD SHORTCUTS
+    // ============================================================
+    document.addEventListener('keydown', function(e) {
+        const key = e.key;
+        const ctrl = e.ctrlKey || e.metaKey;
+        const shift = e.shiftKey;
+
+        // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+Shift+C
+        if (key === 'F12' ||
+            (ctrl && shift && (key === 'I' || key === 'J' || key === 'C')) ||
+            (ctrl && key === 'u')) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+    }, true);
+
+    // ============================================================
+    // 3. SILENTLY DISABLE ALL CONSOLE METHODS
+    // ============================================================
+    const noop = function() {};
+    const consoleMethods = ['log', 'warn', 'error', 'info', 'debug', 'trace', 
+                           'dir', 'dirxml', 'group', 'groupEnd', 'table', 
+                           'count', 'time', 'timeEnd'];
+    consoleMethods.forEach(function(method) {
+        console[method] = noop;
+    });
+
+    // ============================================================
+    // 4. SILENTLY BLOCK SELECTION (except on inputs)
+    // ============================================================
+    document.addEventListener('selectstart', function(e) {
+        if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+            return false;
+        }
+    }, true);
+
+    // ============================================================
+    // 5. SILENTLY BLOCK DRAGGING
+    // ============================================================
+    document.addEventListener('dragstart', function(e) {
+        e.preventDefault();
+        return false;
+    }, true);
+
+    // ============================================================
+    // 6. SILENTLY DETECT DEVTOOLS AND BREAK IT
+    // ============================================================
+    let devtoolsOpen = false;
+    const element = new Image();
+    Object.defineProperty(element, 'id', {
+        get: function() {
+            devtoolsOpen = true;
+            return '';
+        }
+    });
+
+    setInterval(function check() {
+        devtoolsOpen = false;
+        console.log('%c', element);
+        if (devtoolsOpen) {
+            // DevTools is open – silently break console further
+            ['log', 'warn', 'error', 'info', 'debug'].forEach(function(method) {
+                console[method] = noop;
+            });
+            // Optionally: break the debugger
+            try { debugger; } catch(e) {}
+        }
+    }, 1000);
+
+    // ============================================================
+    // 7. SILENTLY BLOCK VIEW-SOURCE PROTOCOL
+    // ============================================================
+    try {
+        if (window.location.protocol === 'view-source:') {
+            window.location.href = window.location.href.replace('view-source:', '');
+        }
+    } catch(e) {}
+
+    // ============================================================
+    // 8. SILENTLY BLOCK DEVTOOLS ON MOBILE
+    // ============================================================
+    if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+        }, true);
+    }
+
+    // ============================================================
+    // 9. SILENTLY OVERRIDE DEBUGGER STATEMENT
+    // ============================================================
+    window.debugger = function() { return; };
+
+    // ============================================================
+    // 10. SILENTLY REMOVE SOURCE MAPS
+    // ============================================================
+    try {
+        document.querySelectorAll('script[src*=".map"]').forEach(function(el) {
+            el.remove();
+        });
+    } catch(e) {}
+
+    console.log('🛡️ Security Active');
+})();
     </script>
 </body>
 </html>
